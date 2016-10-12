@@ -6,7 +6,7 @@
 #'
 #' @param dam the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA).
 #' @param spp_code species code to query window counts for. Possible codes are: 1 (Chinook), 2 (Coho), 3 (Steelhead), 4 (Sockeye)
-#' @param yr calendar year to query for PIT tag data
+#' @param yr calendar year to query for PIT tag data.
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
@@ -40,7 +40,7 @@ queryPITtagData = function(dam = 'GRA',
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_window_new.php'
 
   # send query to DART
-  web_req_init = GET(url_req, ua,
+  web_req = GET(url_req, ua,
                 query = list(type = 'tagid',
                              outputFormat = 'csv',
                              year = yr,
@@ -51,11 +51,6 @@ queryPITtagData = function(dam = 'GRA',
                              enddate = '12/31',
                              syear = yr,
                              eyear = yr))
-
-  # now that csv file has been created, tell R where that csv file lives on DART
-  web_req = GET('http://www.cbr.washington.edu/dart/cs/php/lib/file_wrapper.php', ua,
-                query = list(type = 'csv',
-                             fname = gsub('_.csv$', '.csv', paste('pitadultwindow_upper_tagid', dam, yr, spp_code, 'no', 1, yr, 365, yr, '.csv', sep = '_'))))
 
   # if any problems
   httr::stop_for_status(web_req,
@@ -96,8 +91,9 @@ queryPITtagData = function(dam = 'GRA',
     mutate(Date = lubridate::ymd(Date)) %>%
     filter(!is.na(Date)) %>%
     rename(SpCode = Species) %>%
-    mutate(Species = spp_name) %>%
-    select(Ladder, Species, SpCode, TagID, everything())
+    mutate(Species = spp_name,
+           Year = yr) %>%
+    select(Ladder, Year, Species, SpCode, TagID, everything())
 
   names(pit_df) = gsub(' ', '', names(pit_df))
 
