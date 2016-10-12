@@ -17,7 +17,7 @@ queryWindCnts(dam = c("LWG", "WFF", "BON", "TDA", "JDA", "MCN", "IHR", "LMN",
 
 \item{spp_code}{species code to query window counts for. Possible codes are: fc (Chinook), fk (Coho), fb (Sockeye), fs (Steelhead), fsw (Wild Steelhead), fa (Shad), fcj (Jack Chinook), fkj (Jack Coho), fbj (Jack Sockeye), fsj (Jack Steelhead), fl (Lamprey), ft (Bull Trout}
 
-\item{yr}{calendar year to query for window counts}
+\item{yr}{calendar year to query for window counts.}
 }
 \description{
 Query and download window counts from a particular by species and year using DART

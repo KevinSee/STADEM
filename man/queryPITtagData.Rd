@@ -14,7 +14,7 @@ queryPITtagData(dam = "GRA", spp_code = c("1", "2", "3", "4"), yr = NULL)
 
 \item{spp_code}{species code to query window counts for. Possible codes are: 1 (Chinook), 2 (Coho), 3 (Steelhead), 4 (Sockeye)}
 
-\item{yr}{calendar year to query for PIT tag data}
+\item{yr}{calendar year to query for PIT tag data.}
 }
 \description{
 Query and download PIT tag data about night passage and re-ascension at particular dams for specific species and year, using DART.
