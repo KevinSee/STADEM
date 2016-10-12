@@ -6,7 +6,7 @@
 #'
 #' @param dam the dam code for the dam you wish to query for window counts. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)
 #' @param spp_code species code to query window counts for. Possible codes are: fc (Chinook), fk (Coho), fb (Sockeye), fs (Steelhead), fsw (Wild Steelhead), fa (Shad), fcj (Jack Chinook), fkj (Jack Coho), fbj (Jack Sockeye), fsj (Jack Steelhead), fl (Lamprey), ft (Bull Trout
-#' @param yr calendar year to query for window counts
+#' @param yr calendar year to query for window counts.
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
@@ -50,7 +50,7 @@ queryWindCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR'
 
   # if any problems
   httr::stop_for_status(web_req,
-                  task = 'query data from DART')
+                        task = 'query data from DART')
 
   # parse the response
   parsed = httr::content(web_req,
@@ -75,7 +75,8 @@ queryWindCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR'
   win_cnts = parsed %>%
     mutate(Date = lubridate::ymd(paste(yr, Day))) %>%
     filter(!is.na(Date)) %>%
-    select(Date, matches(spp_name))
+    mutate(Year = yr) %>%
+    select(Year, Date, matches(spp_name))
 
   return(win_cnts)
 }
