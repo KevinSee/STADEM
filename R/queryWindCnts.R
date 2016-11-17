@@ -52,6 +52,9 @@ queryWindCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR'
   httr::stop_for_status(web_req,
                         task = 'query data from DART')
 
+  # what encoding to use?
+  # stringi::stri_enc_detect(content(web_req, "raw"))
+
   # parse the response
   parsed = httr::content(web_req,
                          'parsed',
@@ -73,10 +76,10 @@ queryWindCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR'
 
   # re-format slightly
   win_cnts = parsed %>%
-    mutate(Date = lubridate::ymd(paste(yr, Day))) %>%
-    filter(!is.na(Date)) %>%
-    mutate(Year = yr) %>%
-    select(Year, Date, matches(spp_name))
+    dplyr::mutate(Date = lubridate::ymd(paste(yr, Day))) %>%
+    dplyr::filter(!is.na(Date)) %>%
+    dplyr::mutate(Year = yr) %>%
+    dplyr::select(Year, Date, matches(spp_name))
 
   return(win_cnts)
 }

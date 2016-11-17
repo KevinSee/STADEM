@@ -90,7 +90,7 @@ queryPITtagData = function(dam = 'GRA',
   pit_df = parsed %>%
     mutate(Date = lubridate::ymd(Date)) %>%
     filter(!is.na(Date)) %>%
-    rename(SpCode = Species) %>%
+    dplyr::rename(SpCode = Species) %>%
     mutate(Species = spp_name,
            Year = yr) %>%
     select(Ladder, Year, Species, SpCode, TagID, everything())
