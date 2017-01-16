@@ -33,9 +33,8 @@ runJAGSmodel = function(file_name = NULL,
                         DIC = FALSE) {
 
   # which parameters to save
-  # jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.sigma', 'true.prop', 'win.prop.avg', 'win.prop.true', 'win.prop.sigma', 'reasc.avg', 'reasc.true', 'reasc.sigma', 'acf', 'org.prop', 'org.sigma', 'trap.rate.true', 'r', 'k')
-
-  jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma', 'true.prop', 'win.prop.true', 'win.prop.sigma', 'reasc.true', 'reasc.sigma', 'org.prop', 'org.sigma', 'trap.rate.true', 'r', 'k', 'prop.tagged')
+  jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma', 'true.prop', 'win.prop.true', 'win.prop.sigma', 'reasc.true', 'reasc.sigma', 'org.prop', 'org.sigma', 'trap.rate.true', #'r', 'k',
+                  'prop.tagged', 'theta', 'omega')
 
   # add some weekly parameters if desired
   if(weekly_params) jags_params = c(jags_params, 'X.all', 'X.day', 'X.night', 'X.reasc', 'X.all.wild', 'X.all.hatch', 'X.all.hnc', 'X.new.wild', 'X.new.hatch', 'X.new.hnc', 'X.night.wild', 'X.reasc.wild')
