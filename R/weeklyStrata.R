@@ -21,10 +21,10 @@ weeklyStrata = function(years,
 
   for(yr in years) {
     if(yr == years[1]) strata_dates = data.frame(start_date = ymd(paste0(yr, start_day)) + weeks(0:51)) %>%
-        mutate(end_date = start_date + days(7) - eseconds(1))
+        mutate(end_date = start_date + days(7) - dseconds(1))
     if(yr > years[1]) strata_dates = strata_dates %>%
         bind_rows(data.frame(start_date = ymd(paste0(yr, start_day)) + weeks(0:51)) %>%
-                    mutate(end_date = start_date + days(7) - eseconds(1)))
+                    mutate(end_date = start_date + days(7) - dseconds(1)))
   }
 
   strata_df = strata_dates %>%
@@ -32,7 +32,7 @@ weeklyStrata = function(years,
     bind_rows(strata_dates %>%
                 filter(month(end_date) == 6,
                        mday(end_date) > 23) %>%
-                mutate(end_date = ymd(paste0(year(start_date), '0701')) - eseconds(1))) %>%
+                mutate(end_date = ymd(paste0(year(start_date), '0701')) - dseconds(1))) %>%
     arrange(start_date)
 
   if(!is.null(end_day)) {

@@ -33,12 +33,14 @@ summariseLGRweekly = function(wind_data = NULL,
     load('R/sysdata.rda')
     trap_df = lgr_trap
     rm(lgr_trap)
+    # trap_df$Date = ymd(trap_df$Date)
   }
 
   # For trap database, summarise by spawnyear, species and day
   lgr_trap_daily = summariseLGRtrapDaily(trap_df,
                                          incl_clip_sthd,
                                          sthd_B_run)
+  lgr_trap_daily$Date = ymd(lgr_trap_daily$Date)
 
   # For PIT tag data, summarise by spawnyear, species and day
   pit_daily = summarisePITdataDaily(pit_all)
