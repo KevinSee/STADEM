@@ -6,6 +6,7 @@
 #'
 #' @param filepath file path to the excel file containing data
 #' @param week_strata vector of intervals delimiting the weekly strata to summarize mark-recapture data over. Returned as one part of the \code{summariseLGRweekly} function.
+#' @param m model type to use to estimate parameters. Standard \code{Mt} and \code{Mt.bc} use \code{closedp} and \code{closedp.bc} functions from \code{Rcapture} package. \code{Chap} used the Chapman, or modified Lincoln-Peterson estimator.
 #'
 #' @import lubridate readxl dplyr Rcapture boot msm
 #' @importFrom plyr ddply
@@ -13,7 +14,9 @@
 #' @return NULL
 
 mrTrapRate = function(filepath = NULL,
-                      week_strata = NULL) {
+                      week_strata = NULL,
+                      m = c('Mt.bc', 'Mt', 'Chap')) {
+  m = match.arg(m)
 
   trap_df = read_excel(filepath,
                        1,
@@ -49,18 +52,42 @@ mrTrapRate = function(filepath = NULL,
     dplyr::summarise(freq = n()) %>%
     ungroup()
 
-  trap_rate_mr = ddply(ch_freq,
-        .(Year, week_num_org),
-        function(x) {
-          mod = try(closedp(x[,c('M', 'C', 'R', 'freq')], dfreq=T), silent = T)
-          if(class(mod)[1] == 'try-error') return(data.frame(N = NA, N_se = NA, p = NA, p_se = NA))
-          mod_N = mod$results['Mt', c('abundance', 'stderr')]
-          p_mean = inv.logit(coef(mod$glm[['Mt']])[2:3])
-          p_se = deltamethod(list(~ 1 / (1 + exp(-x1)), ~ 1 / (1 + exp(-x2))), mean = coef(mod$glm[['Mt']])[2:3], cov = vcov(mod$glm[['Mt']])[2:3,2:3])
-          return(data.frame(trap_fish = sum(x[x$M==1,'freq']), N = mod_N[1], N_se = mod_N[2], p = p_mean[1], p_se = p_se[1]))
-        },
-        .id = 'week_num_org',
-        .progress = 'text') %>%
+  if(m == 'Mt') trap_rate_mr = ddply(ch_freq,
+                       .(Year, week_num_org),
+                       function(x) {
+                         mod = try(closedp(x[,c('M', 'C', 'R', 'freq')], dfreq=T), silent = T)
+                         if(class(mod)[1] == 'try-error') return(data.frame(N = NA, N_se = NA, p = NA, p_se = NA))
+                         mod_N = mod$results['Mt', c('abundance', 'stderr')]
+                         p_mean = inv.logit(coef(mod$glm[['Mt']])[2:3])
+                         p_se = deltamethod(list(~ 1 / (1 + exp(-x1)), ~ 1 / (1 + exp(-x2))), mean = coef(mod$glm[['Mt']])[2:3], cov = vcov(mod$glm[['Mt']])[2:3,2:3])
+                         return(data.frame(trap_fish = sum(x[x$M==1,'freq']), N = mod_N[1], N_se = mod_N[2], p = p_mean[1], p_se = p_se[1]))
+                       },
+                       .id = 'week_num_org',
+                       .progress = 'text') %>%
+    tbl_df()
+
+  if(m == 'Mt.bc') trap_rate_mr = ddply(ch_freq,
+                       .(Year, week_num_org),
+                       function(x) {
+                         mod = try(closedp.bc(x[,c('M', 'C', 'R', 'freq')], dfreq=T, m = 'Mt'), silent = T)
+                         if(class(mod)[1] == 'try-error') return(data.frame(N = NA, N_se = NA, p = NA, p_se = NA))
+                         mod_N = mod$results['Mt', c('abundance', 'stderr')]
+                         p_mean = sum(x$freq[x$M==1]) / mod_N[1]
+                         p_se = sqrt(mod_N[2]^2 * (sum(x$freq[x$M==1]) / mod_N[1]^2)^2)
+                         return(data.frame(trap_fish = sum(x[x$M==1,'freq']), N = mod_N[1], N_se = mod_N[2], p = p_mean[1], p_se = p_se[1]))
+                       },
+                       .id = 'week_num_org',
+                       .progress = 'text') %>%
+    tbl_df()
+
+  if(m == 'Chap') trap_rate_mr = trap_df %>%
+    group_by(Year, week_num_org) %>%
+    summarise(trap_fish = sum(M)) %>%
+    arrange(Year, week_num_org) %>%
+    bind_cols(trap_df %>%
+                group_by(Year, week_num_org) %>%
+                summarise_each(funs(sum), M, C, R) %>%
+                chapmanMR(rmInvalid = F)) %>%
     tbl_df()
 
   return(trap_rate_mr)

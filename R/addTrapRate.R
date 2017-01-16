@@ -37,7 +37,8 @@ addTrapRate = function(lgr_weekly = NULL,
            # trap_valid = ifelse(trap_fish < 10, F, trap_valid),
            # trap_valid = ifelse(abs(trap_est - win_cnt) / win_cnt > 10, F, trap_valid),
            trap_valid = ifelse(trap_open & trap_fish == 0 & win_cnt > 0, F, trap_valid),
-           trap_valid = ifelse(trap_rate < 0.01, F, trap_valid)) %>%
+           trap_valid = ifelse(trap_rate < 0.01, F, trap_valid),
+           trap_valid = ifelse(!trap_open, F, trap_valid)) %>%
            # trap_valid = ifelse(trap_fish == 0 & Prob_Less > 0.9 & trap_open, T, trap_valid)) %>%
     # filter(trap_valid, win_cnt > 0, (Prob_Less > 0.99 | Prob_More > 0.99)) %>%
     # filter(trap_valid, (lower_trap_lim > trap_fish | upper_trap_lim < trap_fish)) %>%

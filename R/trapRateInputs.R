@@ -8,6 +8,8 @@
 #' @param week_strata vector of intervals delimiting the weekly strata to summarize mark-recapture data over. Returned as one part of the \code{summariseLGRweekly} function.
 #' @param return_weekly Should the results be summarised on weekly basis? Default is \code{TRUE}.
 #' @param poor_cv_threshold The threshold for the CV of the mark-recapture estimate of trap rate. If an estimate exceeds this threshold, the calculated rate from DART will be used.
+#' @param m model type to use to estimate parameters. Standard \code{Mt} and \code{Mt.bc} use \code{closedp} and \code{closedp.bc} functions from \code{Rcapture} package. \code{Chap} used the Chapman, or modified Lincoln-Peterson estimator.
+
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #' @import lubridate httr readxl dplyr Rcapture boot msm
@@ -17,13 +19,16 @@
 trapRateInputs = function(filepath = NULL,
                           week_strata = NULL,
                           return_weekly = T,
-                          poor_cv_threshold = 0.7) {
+                          poor_cv_threshold = 0.7,
+                          m = c('Mt.bc', 'Mt', 'Chap')) {
 
   trap_rate_dart = queryTrapRate(week_strata,
                                  return_weekly)
 
+  m = match.arg(m)
   trap_rate_mr = mrTrapRate(filepath,
-                            week_strata)
+                            week_strata,
+                            m = m)
 
   trap_rate = trap_rate_dart %>%
     full_join(trap_rate_mr) %>%

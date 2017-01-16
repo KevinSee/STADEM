@@ -4,12 +4,15 @@
 \alias{mrTrapRate}
 \title{Mark-recapture trap rate}
 \usage{
-mrTrapRate(filepath = NULL, week_strata = NULL)
+mrTrapRate(filepath = NULL, week_strata = NULL, m = c("Mt.bc", "Mt",
+  "Chap"))
 }
 \arguments{
 \item{filepath}{file path to the excel file containing data}
 
 \item{week_strata}{vector of intervals delimiting the weekly strata to summarize mark-recapture data over. Returned as one part of the \code{summariseLGRweekly} function.}
+
+\item{m}{model type to use to estimate parameters. Standard \code{Mt} and \code{Mt.bc} use \code{closedp} and \code{closedp.bc} functions from \code{Rcapture} package. \code{Chap} used the Chapman, or modified Lincoln-Peterson estimator.}
 }
 \description{
 Estimate the trap rate at Lower Granite by using a mark-recapture model. The trap is the marking event, and detections at the weir at the top of the fish ladder is the 2nd capture event.
