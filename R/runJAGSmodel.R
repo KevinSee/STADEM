@@ -15,6 +15,7 @@
 #' @param verbose passed to the \code{jags} function
 #' @param parallel passed to the \code{jags} function
 #' @param DIC passed to the \code{jags} function
+#' @param win_model what type of distribution should be used when modeling the window counts. \code{neg_bin} is a standard negative binomial distribution. \code{neg_bin2} is a more flexible version of a negative binomial, allowing the mean-variance relationship to take different forms. \code{pois} is a Poisson distribution.
 #'
 #' @export
 #' @return NULL
@@ -30,11 +31,17 @@ runJAGSmodel = function(file_name = NULL,
                         seed = NULL,
                         verbose = FALSE,
                         parallel = TRUE,
-                        DIC = FALSE) {
+                        DIC = FALSE,
+                        win_model = c('neg_bin', 'neg_bin2', 'pois')) {
+
+  # which distribution is used to model window counts?
+  win_model = match.arg(win_model)
 
   # which parameters to save
-  jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma', 'true.prop', 'win.prop.true', 'win.prop.sigma', 'reasc.true', 'reasc.sigma', 'org.prop', 'org.sigma', 'trap.rate.true', #'r', 'k',
-                  'prop.tagged', 'theta', 'omega')
+  jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma', 'true.prop', 'win.prop.true', 'win.prop.sigma', 'reasc.true', 'reasc.sigma', 'org.prop', 'org.sigma', 'trap.rate.true', 'prop.tagged')
+
+  if(win_model == 'neg_bin')  jags_params = c(jags_params, 'r', 'k')
+  if(win_model == 'neg_bin2')  jags_params = c(jags_params, 'theta', 'omega')
 
   # add some weekly parameters if desired
   if(weekly_params) jags_params = c(jags_params, 'X.all', 'X.day', 'X.night', 'X.reasc', 'X.all.wild', 'X.all.hatch', 'X.all.hnc', 'X.new.wild', 'X.new.hatch', 'X.new.hnc', 'X.night.wild', 'X.reasc.wild')
