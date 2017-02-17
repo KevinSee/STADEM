@@ -80,15 +80,41 @@ mrTrapRate = function(filepath = NULL,
                        .progress = 'text') %>%
     tbl_df()
 
-  if(m == 'Chap') trap_rate_mr = trap_df %>%
-    group_by(Year, week_num_org) %>%
-    summarise(trap_fish = sum(M)) %>%
-    arrange(Year, week_num_org) %>%
-    bind_cols(trap_df %>%
-                group_by(Year, week_num_org) %>%
-                summarise_each(funs(sum), M, C, R) %>%
-                chapmanMR(rmInvalid = F)) %>%
-    tbl_df()
+  # if(m == 'Chap') trap_rate_mr = trap_df %>%
+  #   group_by(Year, week_num_org) %>%
+  #   summarise(trap_fish = sum(M)) %>%
+  #   arrange(Year, week_num_org) %>%
+  #   bind_cols(trap_df %>%
+  #               group_by(Year, week_num_org) %>%
+  #               summarise_each(funs(sum), M, C, R) %>%
+  #               chapmanMR(rmInvalid = F)) %>%
+  #   tbl_df()
+
+
+  if(m == 'Chap') {
+    trap_rate_mr = trap_df %>%
+      group_by(Year, week_num_org) %>%
+      summarise_each(funs(sum), M, C, R) %>%
+      mutate(trap_fish = M)
+
+    trap_rate_mr %<>%
+      left_join(ddply(trap_rate_mr,
+                      .(Year, week_num_org),
+                      function(x) {
+                        chap_mod = with(x, mrClosed(M = M,
+                                                    n = C,
+                                                    m = R,
+                                                    method = 'Chapman'))
+                        data.frame(summary(chap_mod, incl.SE = T))
+                      }) %>%
+                  tbl_df()) %>%
+      rowwise() %>%
+      mutate(p = trap_fish / N,
+             p_se = sqrt(SE^2 * (trap_fish / N^2)^2)) %>%
+      select(Year, week_num_org, trap_fish, N, SE, p, p_se)
+
+  }
+
 
   return(trap_rate_mr)
 

@@ -7,7 +7,7 @@
 runJAGSmodel(file_name = NULL, mcmc_chainLength = 100, mcmc_burn = 10,
   mcmc_thin = 2, mcmc_chains = 1, jags_data = NULL,
   weekly_params = FALSE, seed = NULL, verbose = FALSE, parallel = TRUE,
-  DIC = FALSE)
+  DIC = FALSE, win_model = c("neg_bin", "neg_bin2", "pois"))
 }
 \arguments{
 \item{file_name}{name (with file path) of file containing JAGS model}
@@ -29,6 +29,8 @@ runJAGSmodel(file_name = NULL, mcmc_chainLength = 100, mcmc_burn = 10,
 \item{parallel}{passed to the \code{jags} function}
 
 \item{DIC}{passed to the \code{jags} function}
+
+\item{win_model}{what type of distribution should be used when modeling the window counts. \code{neg_bin} is a standard negative binomial distribution. \code{neg_bin2} is a more flexible version of a negative binomial, allowing the mean-variance relationship to take different forms. \code{pois} is a Poisson distribution.}
 
 \item{mcmc_chainlength}{number of total samples in each MCMC chain}
 }
