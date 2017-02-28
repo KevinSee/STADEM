@@ -39,8 +39,8 @@ summariseLGRweekly = function(wind_data = NULL,
   # For trap database, summarise by spawnyear, species and day
   lgr_trap_daily = summariseLGRtrapDaily(trap_df,
                                          incl_clip_sthd,
-                                         sthd_B_run)
-  lgr_trap_daily$Date = ymd(lgr_trap_daily$Date)
+                                         sthd_B_run) %>%
+    mutate(Date = as.Date(Date))
 
   # For PIT tag data, summarise by spawnyear, species and day
   pit_daily = summarisePITdataDaily(pit_all)
@@ -68,7 +68,13 @@ summariseLGRweekly = function(wind_data = NULL,
     gather(Species, win_cnt, -Year, -Date, -window_open)
 
   # assign week numbers to each day
-  pit_daily$week_num_org = wind_long$week_num_org = lgr_trap_daily$week_num_org = NA
+  pit_daily = pit_daily %>%
+    mutate(week_num_org = NA)
+  wind_long = wind_long %>%
+    mutate(week_num_org = NA)
+  lgr_trap_daily = lgr_trap_daily %>%
+    mutate(week_num_org = NA)
+
   for(i in 1:length(week_strata)) {
     pit_daily$week_num_org[with(pit_daily, which(Date %within% week_strata[i]))] = i
     wind_long$week_num_org[with(wind_long, which(Date %within% week_strata[i]))] = i
