@@ -22,7 +22,7 @@ summariseLGRtrapDaily = function(trap_df,
     # filter out juveniles, keep only adults
     dplyr::filter(LGDLifeStage == 'RF',
                   # filter out sort by code fish
-                  PTAgisSxCGRAObs != 'Yes')
+                  is.na(PTAgisSxCGRAObs))
 
   if(!incl_clip_sthd) lgr_trap_filter = lgr_trap_filter %>%
       # use all Chinook in the trap, but only unclipped steelhead (to match with windown counts)
