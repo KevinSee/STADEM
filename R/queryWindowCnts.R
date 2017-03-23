@@ -18,18 +18,23 @@
 queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
                        spp_code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft'),
                        yr = NULL) {
-  # need a year
+  # need a year and species code
   stopifnot(!is.null(yr))
+  stopifnot(!is.null(spp_code))
 
-  # pull out default dam and species code
+  # pull out default dam
   dam = match.arg(dam)
-  spp_code = match.arg(spp_code)
+  spp_code = match.arg(spp_code, several.ok = T)
 
   # match up species code with species name
   spp_code_df = data.frame(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
                            code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft'))
 
-  spp_name = as.character(with(spp_code_df, Species[match(spp_code, code)]))
+  spp_name = spp_code_df %>%
+    filter(code %in% spp_code) %>%
+    select(Species) %>%
+    as.matrix() %>%
+    as.character()
 
   # assign user agent to the GitHub repo for this package
   ua = user_agent('https://github.com/KevinSee/damEscapement')
