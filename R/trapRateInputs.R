@@ -12,7 +12,7 @@
 
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
-#' @import lubridate httr readxl dplyr Rcapture boot msm
+#' @import lubridate httr readxl dplyr boot msm
 #' @export
 #' @return NULL
 
@@ -37,7 +37,8 @@ trapRateInputs = function(filepath = NULL,
     dplyr::mutate(trap_rate = p,
            trap_rate_se = p_se) %>%
     dplyr::mutate(trap_rate = ifelse(p_se / p > poor_cv_threshold | is.na(p), calc_rate, trap_rate),
-           trap_rate_se = ifelse(p_se / p > poor_cv_threshold | is.na(p), 0.001, trap_rate_se)) %>%
+           trap_rate_se = ifelse(p_se / p > poor_cv_threshold | is.na(p), 0.001, trap_rate_se),
+           trap_rate_se = ifelse(trap_rate_se == 0, 0.001, trap_rate_se)) %>%
     # set up parameters describing trap rate as a beta distribution
     dplyr::mutate(trap_alpha = ((1 - trap_rate) / trap_rate_se^2 - 1 / trap_rate) * trap_rate^2,
            trap_beta = trap_alpha * (1 / trap_rate - 1),
