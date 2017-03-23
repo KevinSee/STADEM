@@ -22,7 +22,7 @@ summarisePITdataDaily = function(pit_data,
                                      ifelse(Species == 'Steelhead' & Date >= ymd(paste0(Year, '0701')), Year + 1, Year)))
 
   # if necessary, delete Chinook that aren't "Spring/Summer"
-  if(spring_summer_chnk) pit_data %<>%
+  if(spring_summer_chnk) pit_data  = pit_data %>%
     dplyr::filter(!(Species == 'Chinook' & (Date < ymd(paste0(year(Date), '0301')) | Date > ymd(paste0(year(Date), '0817')))))
 
   # summarise rates by day
