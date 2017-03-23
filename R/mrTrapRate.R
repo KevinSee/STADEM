@@ -8,7 +8,7 @@
 #' @param week_strata vector of intervals delimiting the weekly strata to summarize mark-recapture data over. Returned as one part of the \code{summariseLGRweekly} function.
 #' @param m model type to use to estimate parameters. Standard \code{Mt} and \code{Mt.bc} use \code{closedp} and \code{closedp.bc} functions from \code{Rcapture} package. \code{Chap} used the Chapman, or modified Lincoln-Peterson estimator.
 #'
-#' @import lubridate readxl dplyr Rcapture boot msm
+#' @import lubridate readxl dplyr Rcapture FSA boot msm
 #' @importFrom plyr ddply
 #' @export
 #' @return NULL
@@ -80,39 +80,21 @@ mrTrapRate = function(filepath = NULL,
                        .progress = 'text') %>%
     tbl_df()
 
-  # if(m == 'Chap') trap_rate_mr = trap_df %>%
-  #   group_by(Year, week_num_org) %>%
-  #   summarise(trap_fish = sum(M)) %>%
-  #   arrange(Year, week_num_org) %>%
-  #   bind_cols(trap_df %>%
-  #               group_by(Year, week_num_org) %>%
-  #               summarise_each(funs(sum), M, C, R) %>%
-  #               chapmanMR(rmInvalid = F)) %>%
-  #   tbl_df()
-
-
   if(m == 'Chap') {
     trap_rate_mr = trap_df %>%
       group_by(Year, week_num_org) %>%
-      summarise_each(funs(sum), M, C, R) %>%
-      mutate(trap_fish = M)
-
-    trap_rate_mr %<>%
-      left_join(ddply(trap_rate_mr,
-                      .(Year, week_num_org),
-                      function(x) {
-                        chap_mod = with(x, mrClosed(M = M,
-                                                    n = C,
-                                                    m = R,
-                                                    method = 'Chapman'))
-                        data.frame(summary(chap_mod, incl.SE = T))
-                      }) %>%
-                  tbl_df()) %>%
-      rowwise() %>%
-      mutate(p = trap_fish / N,
-             p_se = sqrt(SE^2 * (trap_fish / N^2)^2)) %>%
-      select(Year, week_num_org, trap_fish, N, SE, p, p_se)
-
+      summarise_at(vars(M, C, R), funs(sum)) %>%
+      bind_cols(with(., mrClosed(M = M,
+                                            n = C,
+                                            m = R,
+                                            method = 'Chapman')) %>%
+                  summary(incl.SE = T) %>%
+                  as.data.frame() %>%
+                  tbl_df() %>%
+                  slice(-n())) %>%
+      mutate(p = M / N,
+             p_se = SE * (M / N^2)) %>%
+      select(Year, week_num_org, trap_fish = M, N, SE, p, p_se)
   }
 
 
