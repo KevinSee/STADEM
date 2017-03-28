@@ -113,9 +113,9 @@ writeJAGSmodel = function(file_name = NULL,
     X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
     X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
 
-    X.new.wild[i] <- round(X.all.wild[i] * (1-reasc.true[i]))
-    X.new.hnc[i] <- round(X.all.hnc[i] * (1-reasc.true[i]))
-    X.new.hatch[i] <- round(X.all.hatch[i] * (1-reasc.true[i]))
+    X.new.wild[i] <- round(X.all[i] * org.prop[i,1] * (1-reasc.true[i]))
+    X.new.hnc[i] <- round(X.all[i] * org.prop[i,2] * (1-reasc.true[i]))
+    X.new.hatch[i] <- round(X.all[i] * org.prop[i,3] * (1-reasc.true[i]))
 
     X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
     X.night.wild[i] <- X.new.wild[i] * (1-true.prop[i])
@@ -265,9 +265,9 @@ if(win_model == 'neg_bin2') {
   X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
   X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
 
-  X.new.wild[i] <- round(X.all.wild[i] * (1-reasc.true[i]))
-  X.new.hnc[i] <- round(X.all.hnc[i] * (1-reasc.true[i]))
-  X.new.hatch[i] <- round(X.all.hatch[i] * (1-reasc.true[i]))
+  X.new.wild[i] <- round(X.all[i] * org.prop[i,1] * (1-reasc.true[i]))
+  X.new.hnc[i] <- round(X.all[i] * org.prop[i,2] * (1-reasc.true[i]))
+  X.new.hatch[i] <- round(X.all[i] * org.prop[i,3] * (1-reasc.true[i]))
 
   X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
   X.night.wild[i] <- X.new.wild[i] * (1-true.prop[i])
@@ -414,9 +414,9 @@ if(win_model == 'pois') {
   X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
   X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
 
-  X.new.wild[i] <- round(X.all.wild[i] * (1-reasc.true[i]))
-  X.new.hnc[i] <- round(X.all.hnc[i] * (1-reasc.true[i]))
-  X.new.hatch[i] <- round(X.all.hatch[i] * (1-reasc.true[i]))
+  X.new.wild[i] <- round(X.all[i] * org.prop[i,1] * (1-reasc.true[i]))
+  X.new.hnc[i] <- round(X.all[i] * org.prop[i,2] * (1-reasc.true[i]))
+  X.new.hatch[i] <- round(X.all[i] * org.prop[i,3] * (1-reasc.true[i]))
 
   X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
   X.night.wild[i] <- X.new.wild[i] * (1-true.prop[i])
