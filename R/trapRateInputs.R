@@ -20,7 +20,7 @@ trapRateInputs = function(filepath = NULL,
                           week_strata = NULL,
                           return_weekly = T,
                           poor_cv_threshold = 0.7,
-                          m = c('Mt.bc', 'Mt', 'Chap')) {
+                          m = c('Mt.bc', 'Mt', 'Chap', NULL)) {
 
   trap_rate_dart = queryTrapRate(week_strata,
                                  return_weekly)
@@ -45,6 +45,22 @@ trapRateInputs = function(filepath = NULL,
            trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
            trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
     dplyr::select(Year, week_num_org, matches('trap'))
+
+  if(is.null(m)) {
+    trap_rate = trap_rate_dart %>%
+      full_join(trap_rate_mr) %>%
+      dplyr::mutate(trap_open = ifelse(trap_fish > 0, T, F),
+                    trap_open = ifelse(is.na(trap_fish) | tot_time == 0, F, trap_open)) %>%
+      dplyr::select(Year, week_num_org, trap_open, mean_goal:calc_rate) %>%
+      dplyr::mutate(trap_rate = calc_rate,
+                    trap_rate_se = 0.001) %>%
+      # set up parameters describing trap rate as a beta distribution
+      dplyr::mutate(trap_alpha = ((1 - trap_rate) / trap_rate_se^2 - 1 / trap_rate) * trap_rate^2,
+                    trap_beta = trap_alpha * (1 / trap_rate - 1),
+                    trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
+                    trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
+      dplyr::select(Year, week_num_org, matches('trap'))
+  }
 
   return(trap_rate)
 }
