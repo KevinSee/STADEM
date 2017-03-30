@@ -107,8 +107,8 @@ mrTrapRate = function(filepath = NULL,
       mutate(p = M / N,
              p_se = SE * (M / N^2)) %>%
       # using Robson & Regier criteria for valid abundance estimates
-      mutate(Valid = if_else((M * C) > (N.hat * 4), T, F)) %>%
-      # mutate(Valid = if_else((M * C) > (N.hat * 4) | data$R >= 7, T, F)) %>%
+      mutate(Valid = if_else((M * C) > (N * 4), T, F)) %>%
+      # mutate(Valid = if_else((M * C) > (N * 4) | data$R >= 7, T, F)) %>%
       select(Year, week_num_org, trap_fish = M, N, SE, p, p_se, Valid)
   }
 
