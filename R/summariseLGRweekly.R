@@ -31,7 +31,8 @@ summariseLGRweekly = function(wind_data = NULL,
 
   if(is.null(trap_df)) {
     load('R/sysdata.rda')
-    trap_df = lgr_trap
+    trap_df = lgr_trap %>%
+      rename(Date = CollectionDate)
     rm(lgr_trap)
     # trap_df$Date = ymd(trap_df$Date)
   }
@@ -46,10 +47,12 @@ summariseLGRweekly = function(wind_data = NULL,
   pit_daily = summarisePITdataDaily(pit_all)
 
   # for window counts, split by species
-  wind_open = ifelse(wind_data %>%
-                       select(-(Year:Date)) %>%
-                       is.na() %>%
-                       rowSums() > 0, F, T)
+  wind_open = wind_data %>%
+    select(-(Year:Date)) %>%
+    mutate(open = ifelse(rowSums(is.na(.)) < ncol(.), T, F)) %>%
+    select(open) %>%
+    as.matrix() %>%
+    as.vector()
 
   wind_data = wind_data %>%
     dplyr::mutate(window_open = wind_open) %>%
