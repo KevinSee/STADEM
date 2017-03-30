@@ -31,11 +31,11 @@ summariseLGRtrapDaily = function(trap_df,
     summarize(trap_fish = length(MasterID),
               Wild.morph = sum(LGDRear=='W'),
               Hatch.morph = sum(LGDRear=='H'),
-              NA.morph = sum(is.na(LGDRear)),
+              NA.morph = sum(LGDRear %in% c('U', 'NI')),
               Wild.PBT = sum(grepl('W$', SRR)),
               HNC.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AI'),
               Hatch.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AD'),
-              NA.PBT = sum(is.na(SRR)),
+              NA.PBT = sum(!(grepl('W$', SRR) | grepl('H$', SRR))),
               n_invalid = sum(LGDValid != 1),
               tot_B_run_sthd = sum(Species == 'Steelhead' & LGDFLmm >= 780 & grepl('W$', SRR))) %>%
     ungroup() %>%
