@@ -17,18 +17,13 @@ summariseLGRtrapDaily = function(trap_df,
                                  incl_clip_sthd = FALSE,
                                  sthd_B_run = FALSE) {
 
-  # summarise by spawnyear, species and day
-  lgr_trap_filter = trap_df %>%
-    # filter out juveniles, keep only adults
-    dplyr::filter(LGDLifeStage == 'RF',
-                  # filter out sort by code fish
-                  is.na(PTAgisSxCGRAObs))
-
-  if(!incl_clip_sthd) lgr_trap_filter = lgr_trap_filter %>%
+  # drop unclipped steelhead if only focusing on unclipped fish
+  if(!incl_clip_sthd) trap_df = trap_df %>%
       # use all Chinook in the trap, but only unclipped steelhead (to match with windown counts)
       dplyr::filter(Species == 'Chinook' | (Species == 'Steelhead' & LGDMarkAD == 'AI'))
 
-  lgr_trap_daily = lgr_trap_filter %>%
+  # summarise by spawnyear, species and day
+  lgr_trap_daily = trap_df %>%
     dplyr::mutate(SpawnYear = gsub('^SY', '', SpawnYear),
                   SpawnYear = as.integer(SpawnYear),
                   SpawnYear = ifelse(!is.na(SpawnYear), SpawnYear, ifelse(Species == 'Chinook', year(Date), ifelse(Species == 'Steelhead' & Date >= ymd(paste0(year(Date), '0701')), year(Date) + 1, year(Date))))) %>%
