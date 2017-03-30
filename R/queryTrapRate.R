@@ -18,7 +18,7 @@ queryTrapRate = function(week_strata = NULL,
                          return_weekly = T) {
 
   # assign user agent to the GitHub repo for this package
-  ua = user_agent('https://github.com/KevinSee/damEscapement')
+  ua = httr::user_agent('https://github.com/KevinSee/damEscapement')
 
   # compose url with query
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/lib/file_wrapper.php'
@@ -26,32 +26,60 @@ queryTrapRate = function(week_strata = NULL,
   # only use steelhead, since that covers an entire year
   spp_code = 3
 
-  trap_rate_dart = ddply(data.frame(Year = sort(unique(year(int_start(week_strata))))),
-                         .(Year),
-                         function(x) {
-                           # send query to DART
-                           web_req = GET(url_req, ua,
-                                         query = list(type = 'csv',
-                                                      fname = paste0('pit_adult_valid_', x$Year, '_', spp_code, '.csv'),
-                                                      dname = 'inc'))
+  trap_rate_dart = NULL
+  for(yr in sort(unique(year(int_start(week_strata))))) {
+    web_req = GET(url_req, ua,
+                  query = list(type = 'csv',
+                               fname = paste0('pit_adult_valid_', yr, '_', spp_code, '.csv'),
+                               dname = 'inc'))
 
-                           # what encoding to use?
-                           # stringi::stri_enc_detect(content(web_req, "raw"))
+    # what encoding to use?
+    # stringi::stri_enc_detect(content(web_req, "raw"))
 
-                           # parse the response
-                           parsed = httr::content(web_req,
-                                                  'parsed',
-                                                  encoding = 'ISO-8859-1') %>%
-                             mutate(Date = mdy(Date),
-                                    DOY = as.integer(DOY)) %>%
-                             dplyr::rename(n_Samples = `#Samples`,
-                                    n_SbyC = `#SbyC`,
-                                    n_Close = `#Close`)
+    # parse the response
+    parsed = httr::content(web_req,
+                           'parsed',
+                           encoding = 'ISO-8859-1') %>%
+      mutate(Year = yr,
+             Date = mdy(Date),
+             DOY = as.integer(DOY)) %>%
+      dplyr::rename(n_Samples = `#Samples`,
+                    n_SbyC = `#SbyC`,
+                    n_Close = `#Close`)
 
-                           return(parsed)
-                         },
-                         .progress = 'none') %>%
-    tbl_df()
+    if(is.null(trap_rate_dart)) trap_rate_dart = parsed
+
+    else trap_rate_dart = trap_rate_dart %>%
+      bind_rows(parsed)
+
+  }
+
+  # trap_rate_dart = plyr::ddply(data.frame(Year = sort(unique(year(int_start(week_strata))))),
+  #                              .(Year),
+  #                              function(x) {
+  #                                # send query to DART
+  #                                web_req = GET(url_req, ua,
+  #                                              query = list(type = 'csv',
+  #                                                           fname = paste0('pit_adult_valid_', x$Year, '_', spp_code, '.csv'),
+  #                                                           dname = 'inc'))
+  #
+  #                                # what encoding to use?
+  #                                # stringi::stri_enc_detect(content(web_req, "raw"))
+  #
+  #                                # parse the response
+  #                                parsed = httr::content(web_req,
+  #                                                       'parsed',
+  #                                                       encoding = 'ISO-8859-1') %>%
+  #                                  mutate(Date = mdy(Date),
+  #                                         DOY = as.integer(DOY)) %>%
+  #                                  dplyr::rename(n_Samples = `#Samples`,
+  #                                                n_SbyC = `#SbyC`,
+  #                                                n_Close = `#Close`)
+  #
+  #                                return(parsed)
+  #                              },
+  #                              .progress = 'none') %>%
+  #   tbl_df()
 
   # deal with fact that some days have two rows in data (different rates during different times of day)
   trap_rate_obs = trap_rate_dart %>%
