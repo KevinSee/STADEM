@@ -17,5 +17,6 @@ Imports:
   dplyr(>= 0.4.1),
   Rcapture(>= 1.4-2),
   boot(>= 1.3-18),
-  msm(>= 1.5)
+  msm(>= 1.5),
+  FSA(>= 0.8.11)
 RoxygenNote: 5.0.1
