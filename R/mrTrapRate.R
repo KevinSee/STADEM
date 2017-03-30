@@ -18,10 +18,22 @@ mrTrapRate = function(filepath = NULL,
                       m = c('Mt.bc', 'Mt', 'Chap')) {
   m = match.arg(m)
 
-  trap_df = read_excel(filepath,
+  if (!requireNamespace("FSA", quietly = TRUE) & m == 'Chap') {
+    stop("FSA package needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+  if (!requireNamespace("Rcapture", quietly = TRUE) & m %in% c('Mt.bc', 'Mt')) {
+    stop("Rcapture package needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+
+  trap_df = readxl::read_excel(filepath,
                        1,
                        skip = 5) %>%
-    mutate(Species = revalue(Species, c('steelhead' = 'Steelhead'))) %>%
+    mutate(Species = recode(Species,
+                            'steelhead' = 'Steelhead')) %>%
     dplyr::rename(Date = `Trap date`,
            M = `TRAP adj dn time`,
            C = `LAD adj dn time`,
@@ -52,7 +64,7 @@ mrTrapRate = function(filepath = NULL,
     dplyr::summarise(freq = n()) %>%
     ungroup()
 
-  if(m == 'Mt') trap_rate_mr = ddply(ch_freq,
+  if(m == 'Mt') trap_rate_mr = plyr::ddply(ch_freq,
                        .(Year, week_num_org),
                        function(x) {
                          mod = try(closedp(x[,c('M', 'C', 'R', 'freq')], dfreq=T), silent = T)
@@ -66,7 +78,7 @@ mrTrapRate = function(filepath = NULL,
                        .progress = 'text') %>%
     tbl_df()
 
-  if(m == 'Mt.bc') trap_rate_mr = ddply(ch_freq,
+  if(m == 'Mt.bc') trap_rate_mr = plyr::ddply(ch_freq,
                        .(Year, week_num_org),
                        function(x) {
                          mod = try(closedp.bc(x[,c('M', 'C', 'R', 'freq')], dfreq=T, m = 'Mt'), silent = T)
@@ -84,17 +96,20 @@ mrTrapRate = function(filepath = NULL,
     trap_rate_mr = trap_df %>%
       group_by(Year, week_num_org) %>%
       summarise_at(vars(M, C, R), funs(sum)) %>%
-      bind_cols(with(., mrClosed(M = M,
-                                            n = C,
-                                            m = R,
-                                            method = 'Chapman')) %>%
+      bind_cols(with(., FSA::mrClosed(M = M,
+                                      n = C,
+                                      m = R,
+                                      method = 'Chapman')) %>%
                   summary(incl.SE = T) %>%
                   as.data.frame() %>%
                   tbl_df() %>%
                   slice(-n())) %>%
       mutate(p = M / N,
              p_se = SE * (M / N^2)) %>%
-      select(Year, week_num_org, trap_fish = M, N, SE, p, p_se)
+      # using Robson & Regier criteria for valid abundance estimates
+      mutate(Valid = if_else((M * C) > (N.hat * 4), T, F)) %>%
+      # mutate(Valid = if_else((M * C) > (N.hat * 4) | data$R >= 7, T, F)) %>%
+      select(Year, week_num_org, trap_fish = M, N, SE, p, p_se, Valid)
   }
 
 
