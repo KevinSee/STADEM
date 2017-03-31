@@ -45,6 +45,7 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   # send query to DART
   win_cnts = NULL
   for(i in 1:length(yr)) {
+    yr_cnts = NULL
     for(j in 1:length(spp_code)) {
       web_req = GET(url_req, ua,
                     query = list(sc = 1,
@@ -83,21 +84,23 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
       }
 
       # re-format slightly
-      if(is.null(win_cnts)) {
-        win_cnts = parsed %>%
+      if(is.null(yr_cnts)) {
+        yr_cnts = parsed %>%
           dplyr::mutate(Date = lubridate::ymd(paste(yr[i], Day))) %>%
           dplyr::filter(!is.na(Date)) %>%
           dplyr::mutate(Year = yr[i]) %>%
           dplyr::select(Year, Date, matches(spp_name[j]))
       }
-      else win_cnts = win_cnts %>%
-        dplyr::bind_rows(parsed %>%
+      else yr_cnts = yr_cnts %>%
+        dplyr::left_join(parsed %>%
                            dplyr::mutate(Date = lubridate::ymd(paste(yr[i], Day))) %>%
                            dplyr::filter(!is.na(Date)) %>%
                            dplyr::mutate(Year = yr[i]) %>%
                            dplyr::select(Year, Date, matches(spp_name[j])))
     }
-
+    if(is.null(win_cnts)) win_cnts = yr_cnts
+    else win_cnts = win_cnts %>%
+        bind_rows(yr_cnts)
   }
 
   return(win_cnts)
