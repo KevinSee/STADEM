@@ -28,10 +28,10 @@ queryTrapRate = function(week_strata = NULL,
 
   trap_rate_dart = NULL
   for(yr in sort(unique(year(int_start(week_strata))))) {
-    web_req = GET(url_req, ua,
-                  query = list(type = 'csv',
-                               fname = paste0('pit_adult_valid_', yr, '_', spp_code, '.csv'),
-                               dname = 'inc'))
+    web_req = httr::GET(url_req, ua,
+                        query = list(type = 'csv',
+                                     fname = paste0('pit_adult_valid_', yr, '_', spp_code, '.csv'),
+                                     dname = 'inc'))
 
     # what encoding to use?
     # stringi::stri_enc_detect(content(web_req, "raw"))
@@ -40,8 +40,7 @@ queryTrapRate = function(week_strata = NULL,
     parsed = httr::content(web_req,
                            'parsed',
                            encoding = 'ISO-8859-1') %>%
-      mutate(Year = yr,
-             Date = mdy(Date),
+      mutate(Date = mdy(Date),
              DOY = as.integer(DOY)) %>%
       dplyr::rename(n_Samples = `#Samples`,
                     n_SbyC = `#SbyC`,
@@ -102,6 +101,7 @@ queryTrapRate = function(week_strata = NULL,
   }
   # summarise by week
   trap_rate_obs_wk = trap_rate_obs %>%
+    filter(!is.na(week_num_org)) %>%
     group_by(Year, week_num_org) %>%
     summarise(tot_time = sum(TotalTimeInclusive),
               sec_in_week = sum(SecondsInDay),
@@ -111,8 +111,8 @@ queryTrapRate = function(week_strata = NULL,
               calc_rate = tot_time / sec_in_week,
               trap_open = ifelse(sum(trap_open) > 0, T, F)) %>%
     ungroup() %>%
-    left_join(data.frame(week_num_org = 1:length(week_strata),
-                         Start_Date = int_start(week_strata))) %>%
+    left_join(tibble(week_num_org = 1:length(week_strata),
+                     Start_Date = int_start(week_strata))) %>%
     select(Year, week_num_org, Start_Date, everything())
 
   return(trap_rate_obs_wk)
