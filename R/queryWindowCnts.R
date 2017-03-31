@@ -27,17 +27,17 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   spp_code = match.arg(spp_code, several.ok = T)
 
   # match up species code with species name
-  spp_code_df = data.frame(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
-                           code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft'))
-
-  spp_name = spp_code_df %>%
+  spp_name = tibble(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
+                    code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft')) %>%
     filter(code %in% spp_code) %>%
+    mutate(code = factor(code, levels = spp_code)) %>%
+    arrange(code) %>%
     select(Species) %>%
     as.matrix() %>%
     as.character()
 
   # assign user agent to the GitHub repo for this package
-  ua = user_agent('https://github.com/KevinSee/damEscapement')
+  ua = httr::user_agent('https://github.com/KevinSee/damEscapement')
 
   # compose url with query
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/mg.php'
@@ -47,15 +47,15 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   for(i in 1:length(yr)) {
     yr_cnts = NULL
     for(j in 1:length(spp_code)) {
-      web_req = GET(url_req, ua,
-                    query = list(sc = 1,
-                                 mgconfig = 'adult',
-                                 outputFormat = 'csv',
-                                 `year[]` = yr[i],
-                                 `loc[]` = dam,
-                                 `ftype[]` = spp_code[j],
-                                 startdate = '1/1',
-                                 enddate = '12/31'))
+      web_req = httr::GET(url_req, ua,
+                          query = list(sc = 1,
+                                       mgconfig = 'adult',
+                                       outputFormat = 'csv',
+                                       `year[]` = yr[i],
+                                       `loc[]` = dam,
+                                       `ftype[]` = spp_code[j],
+                                       startdate = '1/1',
+                                       enddate = '12/31'))
 
       # if any problems
       httr::stop_for_status(web_req,
@@ -71,11 +71,11 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
                              skip = 2,
                              col_names = c('Day', spp_name[j]))
 
-      if (status_code(web_req) != 200) {
+      if (httr::status_code(web_req) != 200) {
         stop(
           sprintf(
             "GitHub API request failed [%s]\n%s\n<%s>",
-            status_code(web_req),
+            httr::status_code(web_req),
             parsed$message,
             parsed$documentation_url
           ),
