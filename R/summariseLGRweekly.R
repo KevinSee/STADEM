@@ -46,7 +46,7 @@ summariseLGRweekly = function(wind_data = NULL,
   # For PIT tag data, summarise by spawnyear, species and day
   pit_daily = summarisePITdataDaily(pit_all)
 
-  # for window counts, split by species
+  # create vector determining if window is open
   wind_open = wind_data %>%
     select(-(Year:Date)) %>%
     mutate(open = ifelse(rowSums(is.na(.)) < ncol(.), T, F)) %>%
@@ -54,6 +54,7 @@ summariseLGRweekly = function(wind_data = NULL,
     as.matrix() %>%
     as.vector()
 
+  # for window counts, split by species
   wind_data = wind_data %>%
     dplyr::mutate(window_open = wind_open) %>%
     dplyr::mutate_each(funs(ifelse(is.na(.), 0, .)), -Year, -Date, -window_open)
@@ -67,67 +68,121 @@ summariseLGRweekly = function(wind_data = NULL,
     dplyr::rename(Steelhead = Wild_Steelhead)
 
   wind_long = wind_data %>%
-    dplyr::select(Year, Date, window_open, Chinook, Steelhead) %>%
-    gather(Species, win_cnt, -Year, -Date, -window_open)
+    gather(Species, win_cnt, -Year, -Date, -window_open) %>%
+    mutate(SpawnYear = ifelse(Species == 'Chinook', year(Date),
+                              ifelse(Species == 'Steelhead' & Date >= ymd(paste0(year(Date), '0701')), year(Date) + 1, year(Date)))) %>%
+    select(Species, SpawnYear, Date, window_open, win_cnt)
 
-  # assign week numbers to each day
-  pit_daily = pit_daily %>%
-    mutate(week_num_org = NA)
-  wind_long = wind_long %>%
-    mutate(week_num_org = NA)
-  lgr_trap_daily = lgr_trap_daily %>%
+
+  # combine daily data
+  lgr_daily = wind_long %>%
+    left_join(lgr_trap_daily) %>%
+    left_join(pit_daily) %>%
+    dplyr::filter(SpawnYear >= min(yr_range),
+                  SpawnYear <= max(yr_range),
+                  !(Species == 'Chinook' & Date < ymd(paste(year(Date), '0301'))),
+                  !(Species == 'Chinook' & Date > ymd(paste(year(Date), '0817'))),
+                  Date >= min(int_start(week_strata)),
+                  Date <= max(int_end(week_strata))) %>%
+    mutate_at(vars(win_cnt, trap_fish:reascent_tags_H), funs(as.integer)) %>%
+    # assign week numbers to each day
     mutate(week_num_org = NA)
 
   for(i in 1:length(week_strata)) {
-    pit_daily$week_num_org[with(pit_daily, which(Date %within% week_strata[i]))] = i
-    wind_long$week_num_org[with(wind_long, which(Date %within% week_strata[i]))] = i
-    lgr_trap_daily$week_num_org[with(lgr_trap_daily, which(Date %within% week_strata[i]))] = i
+    lgr_daily$week_num_org[with(lgr_daily, which(Date %within% week_strata[i]))] = i
   }
 
-  # summarise PIT tag data weekly
-  pit_weekly = pit_daily %>%
-    dplyr::filter(!is.na(week_num_org)) %>%
-    group_by(Species, SpawnYear, week_num_org) %>%
-    summarise_each(funs(sum(., na.rm = T)), tot_tags:reascent_tags_H) %>%
-    ungroup()
-
-  lgr_daily = wind_long %>%
-    full_join(lgr_trap_daily) %>%
-    left_join(pit_daily) %>%
-    dplyr::mutate(SpawnYear = ifelse(Species == 'Chinook', year(Date),
-                                     ifelse(Date >= ymd(paste0(year(Date), '0701')), year(Date) + 1, year(Date)))) %>%
+  # summarise daily data by week
+  lgr_weekly = lgr_daily %>%
     dplyr::filter(!is.na(week_num_org),
                   SpawnYear >= min(yr_range),
                   SpawnYear <= max(yr_range),
-                  !(Species == 'Chinook' & SpawnYear == min(yr_range)),
+                  # !(Species == 'Chinook' & SpawnYear == min(yr_range)),
                   !(Species == 'Chinook' & Date < ymd(paste(year(Date), '0301'))),
-                  !(Species == 'Chinook' & Date > ymd(paste(year(Date), '0817'))))
-
-  lgr_daily = lgr_daily %>%
-    group_by(Species, SpawnYear) %>%
-    summarise(min_week = min(week_num_org)) %>%
-    left_join(lgr_daily) %>%
-    group_by(Species, SpawnYear) %>%
-    dplyr::mutate(week_num = week_num_org - min_week + 1) %>%
-    dplyr::select(-min_week) %>%
-    dplyr::select(Species, SpawnYear, Year, Date, week_num_org, week_num, everything()) %>%
-    ungroup()
-
-  # transform to weekly summaries
-  lgr_weekly = lgr_daily %>%
-    group_by(Species, SpawnYear, Year, week_num_org, week_num) %>%
-    summarise_each(funs(sum(., na.rm=T)), -Date) %>%
-    dplyr::mutate(window_open = ifelse(window_open > 0, T, F)) %>%
-    left_join(lgr_daily %>%
-                group_by(Species, SpawnYear, week_num_org, week_num) %>%
-                summarise(Start_Date = min(Date))) %>%
+                  !(Species == 'Chinook' & Date > ymd(paste(year(Date), '0817')))) %>%
+    group_by(Species, SpawnYear, week_num_org) %>%
+    summarise_at(vars(win_cnt:reascent_tags_H), funs(sum), na.rm = T) %>%
     ungroup() %>%
-    dplyr::select(Species, SpawnYear, Year, week_num_org, week_num, Start_Date, everything())
+    left_join(lgr_daily %>%
+                group_by(Species, SpawnYear, week_num_org) %>%
+                summarise(window_open = ifelse(sum(window_open) > 0, T, F))) %>%
+    dplyr::mutate(Start_Date = int_start(week_strata)[week_num_org]) %>%
+    group_by(Species, SpawnYear) %>%
+    dplyr::mutate(week_num = week_num_org - min(week_num_org) + 1) %>%
+    ungroup() %>%
+    dplyr::select(Species:week_num_org, week_num, Start_Date, window_open, everything())
+
+  #
+  # # assign week numbers to each day
+  # pit_daily = pit_daily %>%
+  #   mutate(week_num_org = NA)
+  # wind_long = wind_long %>%
+  #   mutate(week_num_org = NA)
+  # lgr_trap_daily = lgr_trap_daily %>%
+  #   mutate(week_num_org = NA)
+  #
+  # for(i in 1:length(week_strata)) {
+  #   pit_daily$week_num_org[with(pit_daily, which(Date %within% week_strata[i]))] = i
+  #   wind_long$week_num_org[with(wind_long, which(Date %within% week_strata[i]))] = i
+  #   lgr_trap_daily$week_num_org[with(lgr_trap_daily, which(Date %within% week_strata[i]))] = i
+  # }
+  #
+  #
+  # # summarise PIT tag data weekly
+  # pit_weekly = pit_daily %>%
+  #   dplyr::filter(!is.na(week_num_org),
+  #                 SpawnYear >= min(yr_range),
+  #                 SpawnYear <= max(yr_range),
+  #                 # !(Species == 'Chinook' & SpawnYear == min(yr_range)),
+  #                 !(Species == 'Chinook' & Date < ymd(paste(year(Date), '0301'))),
+  #                 !(Species == 'Chinook' & Date > ymd(paste(year(Date), '0817')))) %>%
+  #   group_by(Species, SpawnYear, week_num_org) %>%
+  #   summarise_at(vars(tot_tags:reascent_tags_H), funs(sum), na.rm = T) %>%
+  #   ungroup()
+  #
+  # # summarise trap data weekly
+  # lgr_trap_weekly = lgr_trap_daily %>%
+  #   dplyr::filter(!is.na(week_num_org),
+  #                 SpawnYear >= min(yr_range),
+  #                 SpawnYear <= max(yr_range),
+  #                 # !(Species == 'Chinook' & SpawnYear == min(yr_range)),
+  #                 !(Species == 'Chinook' & Date < ymd(paste(year(Date), '0301'))),
+  #                 !(Species == 'Chinook' & Date > ymd(paste(year(Date), '0817')))) %>%
+  #   group_by(Species, SpawnYear, week_num_org) %>%
+  #   summarise_at(vars(trap_fish:n_invalid), funs(sum), na.rm = T) %>%
+  #   ungroup()
+  #
+  # # summarise window counts weekly
+  # wind_weekly = wind_long %>%
+  #   dplyr::filter(!is.na(week_num_org),
+  #                 SpawnYear >= min(yr_range),
+  #                 SpawnYear <= max(yr_range),
+  #                 # !(Species == 'Chinook' & SpawnYear == min(yr_range)),
+  #                 !(Species == 'Chinook' & Date < ymd(paste(year(Date), '0301'))),
+  #                 !(Species == 'Chinook' & Date > ymd(paste(year(Date), '0817')))) %>%
+  #   group_by(Species, SpawnYear, week_num_org) %>%
+  #   summarise(win_cnt = sum(win_cnt, na.rm = T),
+  #             window_open = ifelse(sum(window_open > 0), T, F)) %>%
+  #   ungroup()
+  #
+  # # combine weekly summaries
+  # lgr_weekly = wind_weekly %>%
+  #   full_join(lgr_trap_weekly) %>%
+  #   full_join(pit_weekly) %>%
+  #   dplyr::mutate(Start_Date = int_start(week_strata)[week_num_org]) %>%
+  #   group_by(Species, SpawnYear) %>%
+  #   dplyr::mutate(week_num = week_num_org - min(week_num_org) + 1) %>%
+  #   ungroup() %>%
+  #   dplyr::select(Species:week_num_org, week_num, Start_Date, window_open, everything()) %>%
+  #   mutate_at(vars(win_cnt, trap_fish:reascent_tags_H), funs(ifelse(is.na(.), 0, .))) %>%
+  #   mutate_at(vars(win_cnt, trap_fish:reascent_tags_H), funs(as.integer))
+
+
 
   # do daily and weekly data have same number of fish at window and trap in total?
   all_fish_counted = identical(group_by(lgr_weekly, Species, SpawnYear) %>%
                                  summarise(tot_cnts = sum(win_cnt),
-                                           tot_trap = sum(trap_fish)),
+                                           tot_trap = sum(trap_fish, na.rm = T)),
                                group_by(lgr_daily, Species, SpawnYear) %>%
                                  summarise(tot_cnts = sum(win_cnt, na.rm = T),
                                            tot_trap = sum(trap_fish, na.rm=T)))
