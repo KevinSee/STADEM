@@ -28,12 +28,15 @@ trapRateInputs = function(filepath = NULL,
   m = match.arg(m)
   trap_rate_mr = mrTrapRate(filepath,
                             week_strata,
-                            m = m)
+                            m = m) %>%
+    ungroup()
 
   trap_rate = trap_rate_dart %>%
-    full_join(trap_rate_mr) %>%
+    select(-Year) %>%
+    full_join(trap_rate_mr %>%
+                select(-Year)) %>%
     dplyr::mutate(trap_open = ifelse(trap_fish > 0, T, trap_open)) %>%
-    dplyr::select(Year, week_num_org, trap_open, mean_goal:calc_rate, p, p_se) %>%
+    dplyr::select(Start_Date, week_num_org, trap_open, mean_goal:calc_rate, p, p_se) %>%
     dplyr::mutate(trap_rate = p,
            trap_rate_se = p_se) %>%
     dplyr::mutate(trap_rate = ifelse(p_se / p > poor_cv_threshold | is.na(p), calc_rate, trap_rate),
@@ -44,7 +47,10 @@ trapRateInputs = function(filepath = NULL,
            trap_beta = trap_alpha * (1 / trap_rate - 1),
            trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
            trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
-    dplyr::select(Year, week_num_org, matches('trap'))
+    dplyr::select(Start_Date, week_num_org, matches('trap')) %>%
+    distinct()
+
+  # if(sum(duplicated(trap_rate$week_num_org)) > 0)
 
   if(is.null(m)) {
     trap_rate = trap_rate_dart %>%
