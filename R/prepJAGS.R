@@ -48,7 +48,7 @@ prepJAGS = function(lgr_weekly = NULL,
       full_join(night_means)
   }
 
-  jags_data_list = dlply(lgr_weekly, .(Species, SpawnYear), function(x) {
+  jags_data_list = plyr::dlply(lgr_weekly, .(Species, SpawnYear), function(x) {
     x = x %>%
       filter(window_open | trap_open)
 
