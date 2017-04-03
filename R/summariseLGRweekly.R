@@ -69,6 +69,7 @@ summariseLGRweekly = function(wind_data = NULL,
 
   wind_long = wind_data %>%
     gather(Species, win_cnt, -Year, -Date, -window_open) %>%
+    filter(Species %in% c('Chinook', 'Steelhead')) %>%
     mutate(SpawnYear = ifelse(Species == 'Chinook', year(Date),
                               ifelse(Species == 'Steelhead' & Date >= ymd(paste0(year(Date), '0701')), year(Date) + 1, year(Date)))) %>%
     select(Species, SpawnYear, Date, window_open, win_cnt)
