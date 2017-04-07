@@ -39,11 +39,12 @@ trapRateInputs = function(filepath = NULL,
     dplyr::select(Start_Date, week_num_org, trap_open, mean_goal:calc_rate, p, p_se) %>%
     dplyr::mutate(trap_rate = p,
            trap_rate_se = p_se) %>%
-    dplyr::mutate(trap_rate = ifelse(p_se / p > poor_cv_threshold | is.na(p), calc_rate, trap_rate),
-           trap_rate_se = ifelse(p_se / p > poor_cv_threshold | is.na(p), 0.001, trap_rate_se),
+    dplyr::mutate(trap_rate = ifelse(p_se / p > poor_cv_threshold | is.na(p) | (p == 0 & trap_open), calc_rate, trap_rate),
+           trap_rate_se = ifelse(p_se / p > poor_cv_threshold | is.na(p) | (p == 0 & trap_open), 0.1, trap_rate_se),
            trap_rate_se = ifelse(trap_rate_se == 0, 0.001, trap_rate_se)) %>%
     # set up parameters describing trap rate as a beta distribution
     dplyr::mutate(trap_alpha = ((1 - trap_rate) / trap_rate_se^2 - 1 / trap_rate) * trap_rate^2,
+                  trap_alpha = ifelse(trap_alpha < 0, 0.01, trap_alpha),
            trap_beta = trap_alpha * (1 / trap_rate - 1),
            trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
            trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
