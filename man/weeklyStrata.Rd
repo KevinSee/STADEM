@@ -4,17 +4,22 @@
 \alias{weeklyStrata}
 \title{Generate weekly strata}
 \usage{
-weeklyStrata(years, start_day = c("0701", "0301"), end_day = NULL)
+weeklyStrata(spawn_yr, spp = c("Chinook", "Steelhead"), start_day = NULL,
+  end_day = NULL, strata_beg = NULL, last_strata_min = 3)
 }
 \arguments{
-\item{years}{which years should go into the weekly strata}
+\item{spawn_yr}{spawn year to divide into weekly strata}
 
-\item{start_day}{day to start strata, in the format \code{month} \code{day}}
+\item{spp}{choices are either \code{Chinook} or \code{Steelhead}}
 
-\item{end_day}{day to end strata, if needed}
+\item{start_day}{date (\code{month / day}) when strata should start}
+
+\item{end_day}{date (\code{month / day}) when strata should end}
+
+\item{last_strata_min}{minimum length (in days) for the final strata}
 }
 \description{
-Based on year range, and start dates
+Based on spawn year and species
 }
 \examples{
 weeklyStrata(2010:2012)
@@ -22,4 +27,3 @@ weeklyStrata(2010:2012)
 \author{
 Kevin See
 }
-

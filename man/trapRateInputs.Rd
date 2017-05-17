@@ -8,7 +8,7 @@
 }
 \usage{
 trapRateInputs(filepath = NULL, week_strata = NULL, return_weekly = T,
-  poor_cv_threshold = 0.7, m = c("Mt.bc", "Mt", "Chap"))
+  poor_cv_threshold = 0.7, m = c("Mt.bc", "Mt", "Chap", NULL))
 }
 \arguments{
 \item{filepath}{file path to the excel file containing data}
@@ -27,4 +27,3 @@ Utilize mark-recapture estimates of trap rate, as well as observed rates queried
 \author{
 Kevin See
 }
-

@@ -20,4 +20,3 @@ Download copy of the Lower Granite Dam trap database. ** This currently doesn't 
 \author{
 Kevin See
 }
-

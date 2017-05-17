@@ -13,7 +13,6 @@
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #' @import lubridate httr readxl dplyr boot msm
-#' @export
 #' @return NULL
 
 trapRateInputs = function(filepath = NULL,

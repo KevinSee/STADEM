@@ -8,7 +8,6 @@
 #' @param password A password to access the SharePoint site where the trap database resides.
 #'
 #' @import lubridate readr httr dplyr
-#' @export
 #' @return NULL
 #' @examples # Don't run; # queryLGRtrapDatabase(username = 'ksee', password = 'IDFGuser')
 

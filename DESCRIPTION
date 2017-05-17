@@ -18,5 +18,6 @@ Imports:
   Rcapture(>= 1.4-2),
   boot(>= 1.3-18),
   msm(>= 1.5),
-  FSA(>= 0.8.11)
-RoxygenNote: 5.0.1
+  FSA(>= 0.8.11),
+  jagsUI(>= 1.4.4)
+RoxygenNote: 6.0.1

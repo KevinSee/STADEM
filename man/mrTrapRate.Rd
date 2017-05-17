@@ -20,4 +20,3 @@ Estimate the trap rate at Lower Granite by using a mark-recapture model. The tra
 \author{
 Kevin See
 }
-

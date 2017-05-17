@@ -4,15 +4,14 @@
 \alias{prepJAGS}
 \title{Compile JAGS data}
 \usage{
-prepJAGS(lgr_weekly = NULL, sthd_B_run = F, use_historical = F,
-  type = c("PBT", "Morph"))
+prepJAGS(lgr_weekly = NULL, sthd_B_run = F, hw_type = c("PBT", "Morph"))
 }
 \arguments{
-\item{lgr_weekly}{dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summariseLGRweekly}.}
+\item{lgr_weekly}{dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summSTADEM}.}
 
 \item{sthd_B_run}{should numbers of B run steelhead be incorporated? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.}
 
-\item{use_historical}{should older historical data about night passage rates be incorporated? Default is \code{FALSE}.}
+\item{hw_type}{what criteria is used to determine hatchery vs. wild? \code{Morph} uses the morphilogical call made at the trap. \code{PBT} uses the genetic information gleaned from parental based tagging.}
 }
 \description{
 Compile data into format for the JAGS total escapement model
@@ -20,4 +19,3 @@ Compile data into format for the JAGS total escapement model
 \author{
 Kevin See
 }
-

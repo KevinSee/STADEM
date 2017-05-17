@@ -5,7 +5,6 @@
 #' @author Kevin See
 #'
 #' @param file_name name (with file path) to save the model as
-#' @param use_historical should older historical data about night passage rates be incorporated? Default is \code{FALSE}.
 #' @param win_model what type of distribution should be used when modeling the window counts. \code{neg_bin} is a standard negative binomial distribution. \code{neg_bin2} is a more flexible version of a negative binomial, allowing the mean-variance relationship to take different forms. \code{pois} is a Poisson distribution.
 #'
 #' @export
@@ -13,7 +12,6 @@
 #' @examples writeJAGSmodel()
 #'
 writeJAGSmodel = function(file_name = NULL,
-                          use_historical = F,
                           win_model = c('neg_bin', 'neg_bin2', 'pois')) {
 
   if(is.null(file_name)) file_name = 'LGR_escapement_JAGS.txt'
@@ -476,22 +474,6 @@ if(win_model == 'pois') {
       file = file_name)
 
   model_file = readLines(file_name)
-
-  if(use_historical) {
-    model_file[grep('true.prop\\[i\\] <-', model_file)] = '    true.prop[i] <- rho[i] * hist.prop[month.vec[i]] + (1-rho[i]) * win.prop.true[i]'
-
-    model_file[grep('ReAsc.tags', model_file) + 3] =
-    '  # in historical data
-  for(i in 1:12) {
-    hist.prop[i] ~ dbeta(1,1) # historical day-time passage rate
-    for(j in 1:n.hist.yrs) {
-      day.fish[i,j] ~ dbin(hist.prop[i], tot.fish[i,j])
-    }
-  }
-
-  ####################################'
-
-  }
 
   writeLines(model_file, file_name)
 

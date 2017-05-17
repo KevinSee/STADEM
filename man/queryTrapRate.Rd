@@ -7,10 +7,13 @@
 \url{http://www.cbr.washington.edu/dart}
 }
 \usage{
-queryTrapRate(week_strata = NULL, return_weekly = T)
+queryTrapRate(week_strata = NULL, spp = c("Chinook", "Steelhead"),
+  return_weekly = T)
 }
 \arguments{
-\item{week_strata}{vector of intervals delimiting the weekly strata to summarize mark-recapture data over. Returned as one part of the \code{summariseLGRweekly} function.}
+\item{week_strata}{vector of intervals delimiting the weekly strata to summarize mark-recapture data over, as returned by \code{weeklyStrata()}.}
+
+\item{spp}{species to query window counts for. Possible choices are: \code{Chinook} or \code{Steelhead}}
 
 \item{return_weekly}{Should the results be summarised on weekly basis? Default is \code{TRUE}.}
 }
@@ -20,4 +23,3 @@ Estimate the trap rate at Lower Granite by using a mark-recapture model. The tra
 \author{
 Kevin See
 }
-

@@ -6,22 +6,21 @@
 #'
 #' @param lgr_weekly dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summariseLGRweekly}.
 #' @param trap_rate dataframe containing estimates of trap rate
+#' @param trap_rate_dist distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space.
 #'
 #' @import dplyr
-#' @export
 #' @return NULL
 #'
 addTrapRate = function(lgr_weekly = NULL,
-                       trap_rate = NULL) {
+                       trap_rate = NULL,
+                       trap_rate_dist = c('beta', 'logit')) {
 
   stopifnot(!is.null(lgr_weekly))
   stopifnot(!is.null(trap_rate))
 
   lgr_week_trapRate = lgr_weekly %>%
     left_join(trap_rate) %>%
-    mutate(trap_open = ifelse(is.na(trap_open), F, trap_open),
-           trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
-           trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
+    mutate(trap_open = ifelse(is.na(trap_open), F, trap_open)) %>%
     mutate(trap_est = ifelse(trap_open, trap_fish / trap_rate, NA)) %>%
     mutate(trap_est_se = sqrt(trap_rate_se^2 * (-trap_fish * trap_rate^(-2))^2)) %>%
     # check to see if some trap estimates seem valid
@@ -32,21 +31,23 @@ addTrapRate = function(lgr_weekly = NULL,
            lower_trap_est = lower_trap_lim / trap_rate,
            upper_trap_est = upper_trap_lim / trap_rate,
            trap_valid = ifelse(trap_open & lower_trap_est <= win_cnt & upper_trap_est >= win_cnt & trap_fish <= win_cnt, T, F),
-           # trap_valid = ifelse(trap_open & lower_trap_lim <= trap_fish & upper_trap_lim >= trap_fish & trap_fish <= win_cnt, T, F),
-           # trap_valid = ifelse(Prob_Less > 0.995 | Prob_More > 0.995, F, trap_valid),
-           # trap_valid = ifelse(trap_fish < 10, F, trap_valid),
-           # trap_valid = ifelse(abs(trap_est - win_cnt) / win_cnt > 10, F, trap_valid),
            trap_valid = ifelse(trap_open & trap_fish == 0 & win_cnt > 0, F, trap_valid),
            trap_valid = ifelse(trap_rate < 0.01, F, trap_valid),
-           trap_valid = ifelse(!trap_open, F, trap_valid)) %>%
-           # trap_valid = ifelse(trap_fish == 0 & Prob_Less > 0.9 & trap_open, T, trap_valid)) %>%
-    # filter(trap_valid, win_cnt > 0, (Prob_Less > 0.99 | Prob_More > 0.99)) %>%
-    # filter(trap_valid, (lower_trap_lim > trap_fish | upper_trap_lim < trap_fish)) %>%
-    mutate(trap_alpha = ifelse(trap_valid, trap_alpha, 1e-12),
-           trap_beta = ifelse(trap_valid, trap_beta, 1),
-           trap_alpha = ifelse(!trap_open, 1e-12, trap_alpha),
-           trap_beta = ifelse(!trap_open, 1, trap_beta)) %>%
-    select(-(Prob_Less:upper_trap_est))
+           trap_valid = ifelse(!trap_open, F, trap_valid))
+
+  if(trap_rate_dist == 'beta') {
+    lgr_week_trapRate = lgr_week_trapRate %>%
+      mutate(trap_alpha = ifelse(trap_open & trap_valid, trap_alpha, 1e-12),
+             trap_beta = ifelse(trap_open & trap_valid, trap_beta, 1)) %>%
+      select(-(Prob_Less:upper_trap_est))
+  }
+
+  if(trap_rate_dist == 'logit') {
+    lgr_week_trapRate = lgr_week_trapRate %>%
+      dplyr::mutate(trap_mu = ifelse(trap_open & trap_valid, boot::logit(trap_rate), 1e-12),
+                    trap_sd = ifelse(trap_open & trap_valid, boot::logit(trap_rate_se), 0)) %>%
+      select(-(Prob_Less:upper_trap_est))
+  }
 
   return(lgr_week_trapRate)
 }

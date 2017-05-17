@@ -15,4 +15,3 @@ Function to set appropriate initial values
 \author{
 Kevin See
 }
-

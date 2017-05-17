@@ -17,6 +17,7 @@
 #' @param DIC passed to the \code{jags} function
 #' @param win_model what type of distribution should be used when modeling the window counts. \code{neg_bin} is a standard negative binomial distribution. \code{neg_bin2} is a more flexible version of a negative binomial, allowing the mean-variance relationship to take different forms. \code{pois} is a Poisson distribution.
 #'
+#' @import jagsUI
 #' @export
 #' @return NULL
 #' @examples #runJAGSmodel()

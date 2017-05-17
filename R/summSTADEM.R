@@ -1,0 +1,161 @@
+#' @title STADEM Data Summary
+#'
+#' @description Query and summarise data for STADEM
+#'
+#' @author Kevin See
+#'
+#' @param yr spawn year.
+#' @param spp species to focus on. Currently the possible choices are: \code{Chinook} or \code{Steelhead}
+#' @param dam the dam code. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)
+#' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA).
+#' @param start_day date (\code{month / day}) when query should start
+#' @param end_day date (\code{month / day}) when query should end
+#' @param incl_jacks should jacks be included in the window count totals? \code{T / F}
+#' @param sthd_type should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.
+#' @param sthd_B_run should numbers of B run steelhead be reported? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.
+#' @param trap_db_file file path where a csv file containing the data from the fish trap is located
+#' @param trap_rate_cv constant coefficient of variation (CV) that should be applied to estimates of trap rate queried by DART. Default value is \code{0}.
+#' @param trap_rate_dist distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space.
+#'
+#' @import lubridate dplyr boot
+#' @export
+#' @return NULL
+#' @examples summSTADEM(2012)
+
+summSTADEM = function(yr,
+                      spp = c('Chinook', 'Steelhead'),
+                      dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
+                      damPIT = 'GRA',
+                      start_day = NULL,
+                      end_day = NULL,
+                      incl_jacks = F,
+                      sthd_type = c('all', 'unclipped'),
+                      sthd_B_run = FALSE,
+                      trap_db_file = NULL,
+                      trap_rate_cv = 0,
+                      trap_rate_dist = c('beta', 'logit')) {
+
+  # need a year
+  stopifnot(!is.null(yr))
+
+  # need a file with data from fish trap
+  stopifnot(!is.null(trap_db_file))
+
+  # currently pit tag query only works for Lower Granite
+  try( if(dam != 'LWG') stop('Dam code must be LWG') )
+
+  # set default species and dam
+  spp = match.arg(spp)
+  dam = match.arg(dam)
+  # include clipped steelhead in counts, or unclipped only?
+  sthd_type = match.arg(sthd_type)
+
+  #---------------------------------------------
+  # query window counts
+  win_cnts = getWindowCounts(dam = dam,
+                             spawn_yr = yr,
+                             spp = spp,
+                             start_day = start_day,
+                             end_day = end_day,
+                             incl_jacks = incl_jacks,
+                             sthd_type = sthd_type)
+
+  #--------------------------------------------------------
+  # query PIT tag data from previously tagged fish
+  pit_df = queryPITtagData(spawn_yr = yr,
+                           spp = spp,
+                           start_day = start_day,
+                           end_day = end_day)
+
+  #--------------------------------------------------------
+  # determine weekly strata
+  week_strata = weeklyStrata(spawn_yr = yr,
+                             spp = spp)
+
+  # read in data for Chinook and steelhead
+  trap_yr = readLGRtrapDB(filepath = trap_db_file,
+                          date_range = c(ymd(int_start(week_strata[1])),
+                                         ymd(int_end(week_strata[length(week_strata)]) + dseconds(1))))
+
+  # summarise by date for particular species
+  trap_df = summariseLGRtrapDaily(trap_yr,
+                                  spp = spp,
+                                  sthd_B_run = sthd_B_run)
+
+  #--------------------------------------------------------
+  # Query trap rate from DART
+  trap_rate_dart = queryTrapRate(week_strata,
+                                 spp = spp,
+                                 return_weekly = T)
+
+  # process for STADEM
+  # impose constant CV on trap rate estimates
+  trap_rate = trap_rate_dart %>%
+    dplyr::mutate(trap_rate = ActualRateInclusiveTime,
+                  # add some error
+                  trap_rate_se = trap_rate * trap_rate_cv)
+
+  if(trap_rate_dist == 'beta') {
+    trap_rate = trap_rate %>%
+      # set up parameters describing trap rate as a beta distribution
+      dplyr::mutate(trap_alpha = ((1 - trap_rate) / trap_rate_se^2 - 1 / trap_rate) * trap_rate^2,
+                    trap_alpha = ifelse(trap_alpha < 0, 0.01, trap_alpha),
+                    trap_beta = trap_alpha * (1 / trap_rate - 1),
+                    trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
+                    trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
+      dplyr::select(Start_Date, matches('^trap')) %>%
+      dplyr::distinct()
+  }
+
+  if(trap_rate_dist == 'logit') {
+    trap_rate = trap_rate %>%
+      # set up parameters describing trap rate as a logit distribution
+      dplyr::mutate(trap_mu = ifelse(trap_open, boot::logit(trap_rate), 1e-12),
+                    trap_sd = ifelse(trap_open, boot::logit(trap_rate_se), 0)) %>%
+      dplyr::select(Start_Date, matches('^trap')) %>%
+      dplyr::distinct()
+  }
+
+  #--------------------------------------------------------
+  # comnbine window counts, PIT tag data and trap summary on daily time-step
+  dam_daily = win_cnts %>%
+    dplyr::select(-Year) %>%
+    dplyr::full_join(summarisePITdataDaily(pit_df) %>%
+                       select(-SpawnYear)) %>%
+    dplyr::mutate_at(vars(tot_tags:reascent_tags_H),
+                     funs(ifelse(is.na(.), 0, .))) %>%
+    dplyr::left_join(trap_df)
+
+  #------------------------------------------
+  # get week strata for each date
+  dam_daily$week_num = NA
+  for(i in 1:length(week_strata)) {
+    dam_daily$week_num[with(dam_daily, which(Date %within% week_strata[i]))] = i
+  }
+
+  #------------------------------------------
+  # summarise by week and add trap rate
+  dam_weekly = dam_daily %>%
+    group_by(week_num) %>%
+    summarise(Species = unique(Species),
+              Start_Date = min(Date)) %>%
+    ungroup() %>%
+    left_join(dam_daily %>%
+                group_by(week_num) %>%
+                summarise_at(vars(win_cnt:n_invalid),
+                             funs(sum), na.rm = T) %>%
+                ungroup() %>%
+                mutate_at(vars(win_cnt:n_invalid),
+                          funs(ifelse(is.na(.), 0, .)))) %>%
+    mutate(window_open = if_else(win_cnt > 0, T, F)) %>%
+    select(Species, Start_Date, week_num, everything()) %>%
+    addTrapRate(trap_rate,
+                trap_rate_dist = trap_rate_dist)
+
+  return(list('weekStrata' = week_strata,
+              'trapData' = trap_yr,
+              'dailyData' = dam_daily,
+              'weeklyData' = dam_weekly))
+
+}
+

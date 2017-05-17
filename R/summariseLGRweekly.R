@@ -11,7 +11,6 @@
 #' @param incl_chnk_jacks should window counts of Chinook jacks be included with adult counts? Default is \code{TRUE}
 #'
 #' @import lubridate dplyr
-#' @export
 #' @return NULL
 
 summariseLGRweekly = function(wind_data = NULL,

@@ -1,95 +1,88 @@
 #' @title Generate weekly strata
 #'
-#' @description Based on year range, and start dates
+#' @description Based on spawn year and species
 #'
 #' @author Kevin See
 #'
-#' @param years which years should go into the weekly strata
-#' @param start_day day to start strata, in the format \code{month} \code{day}
-#' @param end_day day to end strata, if needed
+#' @param spawn_yr spawn year to divide into weekly strata
+#' @param spp choices are either \code{Chinook} or \code{Steelhead}
+#' @param start_day date (\code{month / day}) when strata should start
+#' @param end_day date (\code{month / day}) when strata should end
+#' @param last_strata_min minimum length (in days) for the final strata
+
 #'
 #' @import lubridate dplyr
 #' @export
 #' @return NULL
 #' @examples weeklyStrata(2010:2012)
 
-weeklyStrata = function(years,
-                        start_day = c('0701', '0301'),
-                        end_day = NULL) {
+weeklyStrata = function(spawn_yr,
+                        spp = c('Chinook', 'Steelhead'),
+                        start_day = NULL,
+                        end_day = NULL,
+                        strata_beg = NULL,
+                        last_strata_min = 3) {
 
-  start_day = match.arg(start_day)
+  # need a year
+  stopifnot(!is.null(spawn_yr))
 
-  # when is first Monday after start_day?
-  start_mons = tibble(date = ymd(paste0(min(years), '0101')) + days(0:(365 * length(years)))) %>%
-    mutate(day = wday(date, label = T),
-           diff = difftime(date, ymd(paste0(year(date), start_day)),
-                           units = 'days') %>%
-             as.integer()) %>%
-    filter(diff >= 0,
-           diff < 7,
-           day == 'Mon') %>%
-    select(date) %>%
-    as.matrix() %>%
-    as.character() %>%
+  # set up default start and end days
+  if(is.null(start_day)) start_day = ifelse(spp == 'Chinook', '0301',
+                                            ifelse(spp == 'Steelhead', '0701', NA))
+  if(is.null(end_day)) end_day = ifelse(spp == 'Chinook', '0817',
+                                            ifelse(spp == 'Steelhead', '0630', NA))
+
+  # first day to be include?
+  first_date = ifelse(spp == 'Steelhead',
+                      as.character(ymd(paste(spawn_yr - 1, start_day))),
+                      as.character(ymd(paste(spawn_yr, start_day)))) %>%
     ymd()
 
+  # last day to be included?
+  last_date = ymd(paste(spawn_yr, end_day))
+
   # how many weeks total?
-  n_weeks = difftime(ymd(paste0(max(years), ifelse(is.null(end_day), '1231', end_day))),
-                     start_mons[1],
+  n_weeks = difftime(last_date, first_date,
                      units = 'weeks') %>%
     as.numeric() %>%
     ceiling()
 
-  strata_dates = tibble(start_date = ymd(paste0(min(years), start_day)),
-                        end_date = start_mons[1] + days(7) - dseconds(1)) %>%
-    bind_rows(tibble(start_date = start_mons[1] + weeks(1:n_weeks)) %>%
-                mutate(end_date = start_date + days(7) - dseconds(1)))
+  # to set up strata to begin on certain day of the week
+  if(is.null(strata_beg)) strata_start = first_date
 
-  # split strata for weeks around July 1
-  strata_df = strata_dates %>%
-    filter(!(month(end_date) == 6 &
-               mday(end_date) > 23),
-           !(month(start_date) == 7 &
-               mday(start_date) < 7)) %>%
-  bind_rows(strata_dates %>%
-                filter(month(end_date) == 6,
-                       mday(end_date) > 23) %>%
-                mutate(end_date = ymd(paste0(year(start_date), '0701')) - dseconds(1))) %>%
-    bind_rows(strata_dates %>%
-                filter(month(start_date) == 7,
-                       mday(start_date) < 7) %>%
-                mutate(start_date = ymd(paste0(year(start_date), '0701')))) %>%
-    arrange(start_date) %>%
-    filter(date(end_date) > start_date,
-           year(start_date) %in% years)
+  if(!is.null(strata_beg)) {
+    strata_start = tibble(date = first_date + days(0:as.integer(difftime(last_date, first_date, units = 'days')))) %>%
+      mutate(day = wday(date, label = T)) %>%
+      filter(day == strata_beg) %>%
+      slice(1) %>%
+      select(date) %>%
+      as.matrix() %>%
+      as.character() %>%
+      ymd()
+  }
 
-  # filter(strata_df, start_date %in% ymd(paste0(years, '0701')))
-  # filter(strata_df, date(end_date) %in% ymd(paste0(years, '0630')))
-  #
-  # strata_df %>%
-  #   mutate(n_days = as.integer(difftime(end_date, start_date, units = 'days'))) %>%
-  #   xtabs(~ n_days, .)
 
-  # for(yr in years) {
-  #   if(yr == years[1]) strata_dates = data.frame(start_date = ymd(paste0(yr, start_day)) + weeks(0:51)) %>%
-  #       mutate(end_date = start_date + days(7) - dseconds(1))
-  #   if(yr > years[1]) strata_dates = strata_dates %>%
-  #       bind_rows(data.frame(start_date = ymd(paste0(yr, start_day)) + weeks(0:51)) %>%
-  #                   mutate(end_date = start_date + days(7) - dseconds(1)))
-  # }
+  # put together dataframe of start and end times for each strata
+  strata_df = tibble(start_date = first_date,
+                        end_date = strata_start - dseconds(1)) %>%
+    bind_rows(tibble(start_date = strata_start + weeks(0:n_weeks)) %>%
+                mutate(end_date = start_date + days(7) - dseconds(1))) %>%
+    filter(start_date < end_date,
+           start_date < last_date)
 
-  # strata_df = strata_dates %>%
-  #   filter(!(month(end_date) == 6 & mday(end_date) > 23)) %>%
-  #   bind_rows(strata_dates %>%
-  #               filter(month(end_date) == 6,
-  #                      mday(end_date) > 23) %>%
-  #               mutate(end_date = ymd(paste0(year(start_date), '0701')) - dseconds(1))) %>%
-  #   arrange(start_date)
+  strata_df$end_date[nrow(strata_df)] = last_date + days(1) - dseconds(1)
 
-  if(!is.null(end_day)) {
+  if(as.numeric(as.duration(interval(strata_df$start_date[nrow(strata_df)], strata_df$end_date[nrow(strata_df)])), 'days') < last_strata_min) {
     strata_df = strata_df %>%
-      filter(start_date < ymd(paste0(year(start_date), end_day))) %>%
-      mutate(end_date = ifelse(end_date > ymd(paste0(year(end_date), end_day)), ymd(paste0(year(end_date), end_day)), end_date) + origin)
+      slice(-nrow(strata_df))
+    strata_df$end_date[nrow(strata_df)] = last_date + days(1) - dseconds(1)
+  }
+
+  if(as.numeric(as.duration(interval(strata_df$start_date[1], strata_df$end_date[1])), 'days') < last_strata_min) {
+    strata_df = strata_df %>%
+      slice(-1)
+
+    strata_df$start_date[1] = first_date
   }
 
   week_strata = interval(strata_df$start_date, strata_df$end_date)

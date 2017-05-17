@@ -5,7 +5,7 @@
 #' @author Kevin See
 #'
 #' @param filepath path to the LGR trap database as csv file
-#' @param spring_summer_chnk should the PIT tag data be filtered to exclude fall and winter run Chinook? Default is \code{TRUE}
+#' @param date_range vector of length 2, with minimum and maximum dates to read.
 #'
 #' @import lubridate dplyr
 #' @export
@@ -13,21 +13,26 @@
 #' @examples # do not run; #readLGRtrapDB()
 
 readLGRtrapDB = function(filepath = 'data-raw/tblLGDMasterCombineExportJodyW.csv',
-                         spring_summer_chnk = T) {
+                         date_range = NULL) {
 
   lgr_trap = read.csv(filepath) %>%
     tbl_df() %>%
     dplyr::rename(Tag.ID = LGDNumPIT) %>%
-    mutate(Date = floor_date(ymd_hms(CollectionDate), unit = 'day'),
-           SppCode = LGDSpecies,
-        # try to correct some incorrect species codes
-           SppCode = ifelse(LGDSpecies != PtagisSpecies & GenSpecies %in% c(1, 3), as.integer(as.character(GenSpecies)), SppCode),
-           Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', NA))) %>%
+    dplyr::mutate(Date = floor_date(ymd_hms(CollectionDate), unit = 'day'),
+                  SppCode = LGDSpecies,
+                  # try to correct some incorrect species codes
+                  SppCode = ifelse(LGDSpecies != PtagisSpecies & GenSpecies %in% c(1, 3), as.integer(as.character(GenSpecies)), SppCode),
+                  Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', NA))) %>%
     # drop data from other species, and other runs of Chinook
-    filter(Species %in% c('Chinook', 'Steelhead'))
-
-  if(spring_summer_chnk) lgr_trap = lgr_trap %>%
-      filter(!(Species == 'Chinook' & Date > ymd(paste0(year(Date), '0817'))))
+    dplyr::filter(Species %in% c('Chinook', 'Steelhead'),
+                  !(Species == 'Chinook' & Date > lubridate::ymd(paste0(lubridate::year(Date), '0817'))),
+                  # filter for date range
+                  Date >= date_range[1],
+                  Date < date_range[2],
+                  # filter out juveniles, keep only adults
+                  LGDLifeStage == 'RF',
+                  # drop sort-by-code fish
+                  (PTAgisSxCGRAObs != 'Yes' | is.na(PTAgisSxCGRAObs) ) )
 
   return(lgr_trap)
 }

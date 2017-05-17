@@ -7,22 +7,26 @@
 \url{http://www.cbr.washington.edu/dart}
 }
 \usage{
-queryPITtagData(dam = "GRA", spp_code = c("1", "2", "3", "4"), yr = NULL)
+queryPITtagData(damPIT = "GRA", spp = c("Chinook", "Coho", "Steelhead",
+  "Sockeye"), spawn_yr = NULL, start_day = NULL, end_day = NULL)
 }
 \arguments{
-\item{dam}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA).}
+\item{damPIT}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA).}
 
-\item{spp_code}{species code to query window counts for. Possible codes are: 1 (Chinook), 2 (Coho), 3 (Steelhead), 4 (Sockeye)}
+\item{spp}{species to query window counts for. Possible choices are: Chinook, Coho, Steelhead, Sockeye}
 
-\item{yr}{calendar year to query for PIT tag data.}
+\item{spawn_yr}{spawn year to query for window counts.}
+
+\item{start_day}{date (\code{month / day}) when query should start}
+
+\item{end_day}{date (\code{month / day}) when query should end}
 }
 \description{
 Query and download PIT tag data about night passage and re-ascension at particular dams for specific species and year, using DART.
 }
 \examples{
-queryPITtagData(yr = 2015)
+queryPITtagData(spawn_yr = 2015)
 }
 \author{
 Kevin See
 }
-

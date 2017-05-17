@@ -10,7 +10,6 @@
 #'
 #' @import lubridate readxl dplyr Rcapture FSA boot msm
 #' @importFrom plyr ddply
-#' @export
 #' @return NULL
 
 mrTrapRate = function(filepath = NULL,

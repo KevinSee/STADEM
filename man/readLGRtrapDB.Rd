@@ -5,12 +5,12 @@
 \title{LGR Trap Database}
 \usage{
 readLGRtrapDB(filepath = "data-raw/tblLGDMasterCombineExportJodyW.csv",
-  spring_summer_chnk = T)
+  date_range = NULL)
 }
 \arguments{
 \item{filepath}{path to the LGR trap database as csv file}
 
-\item{spring_summer_chnk}{should the PIT tag data be filtered to exclude fall and winter run Chinook? Default is \code{TRUE}}
+\item{date_range}{vector of length 2, with minimum and maximum dates to read.}
 }
 \description{
 Read in data from LGR trap database
@@ -21,4 +21,3 @@ Read in data from LGR trap database
 \author{
 Kevin See
 }
-

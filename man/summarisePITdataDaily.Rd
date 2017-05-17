@@ -20,4 +20,3 @@ summarisePITdataDaily(pit_all)
 \author{
 Kevin See
 }
-

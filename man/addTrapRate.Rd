@@ -4,12 +4,15 @@
 \alias{addTrapRate}
 \title{Combine fish and trap rate data}
 \usage{
-addTrapRate(lgr_weekly = NULL, trap_rate = NULL)
+addTrapRate(lgr_weekly = NULL, trap_rate = NULL,
+  trap_rate_dist = c("beta", "logit"))
 }
 \arguments{
 \item{lgr_weekly}{dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summariseLGRweekly}.}
 
 \item{trap_rate}{dataframe containing estimates of trap rate}
+
+\item{trap_rate_dist}{distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space.}
 }
 \description{
 Combine weekly data with trap rate data, and determine which trap rate estimates are invalid
@@ -17,4 +20,3 @@ Combine weekly data with trap rate data, and determine which trap rate estimates
 \author{
 Kevin See
 }
-

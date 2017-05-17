@@ -44,4 +44,3 @@ Run the JAGS model
 \author{
 Kevin See
 }
-

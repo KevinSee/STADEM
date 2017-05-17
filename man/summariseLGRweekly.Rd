@@ -24,4 +24,3 @@ Combine window counts and PIT tag data on weekly time-steps
 \author{
 Kevin See
 }
-
