@@ -38,17 +38,15 @@ summSTADEM = function(yr,
   # need a year
   stopifnot(!is.null(yr))
 
-  # need a file with data from fish trap
-  stopifnot(!is.null(trap_db_file))
+  # if not provided, set a few defaults
+  spp = match.arg(spp)
+  dam = match.arg(dam)
+  sthd_type = match.arg(sthd_type)
+  trap_rate_dist = match.arg(trap_rate_dist)
 
   # currently pit tag query only works for Lower Granite
   try( if(dam != 'LWG') stop('Dam code must be LWG') )
 
-  # set default species and dam
-  spp = match.arg(spp)
-  dam = match.arg(dam)
-  # include clipped steelhead in counts, or unclipped only?
-  sthd_type = match.arg(sthd_type)
 
   #---------------------------------------------
   # query window counts
@@ -73,10 +71,20 @@ summSTADEM = function(yr,
                              spp = spp)
 
   # read in data for Chinook and steelhead
-  trap_yr = readLGRtrapDB(filepath = trap_db_file,
-                          date_range = c(ymd(int_start(week_strata[1])),
-                                         ymd(int_end(week_strata[length(week_strata)]) + dseconds(1))))
+  if(!is.null(trap_db_file)) {
+    trap_yr = readLGRtrapDB(filepath = trap_db_file,
+                            date_range = c(ymd(int_start(week_strata[1])),
+                                           ymd(int_end(week_strata[length(week_strata)]) + dseconds(1))))
+  }
 
+  if(is.null(trap_db_file)) {
+    load('R/sysdata.rda')
+    trap_yr = lgr_trap %>%
+      # filter for date range
+      filter(Date >= ymd(int_start(week_strata[1])),
+             Date < ymd(int_end(week_strata[length(week_strata)]) + dseconds(1))) %>%
+      arrange(Date)
+  }
   # summarise by date for particular species
   trap_df = summariseLGRtrapDaily(trap_yr,
                                   spp = spp,

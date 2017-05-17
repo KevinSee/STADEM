@@ -12,8 +12,10 @@
 #' @return NULL
 #' @examples # do not run; #readLGRtrapDB()
 
-readLGRtrapDB = function(filepath = 'data-raw/tblLGDMasterCombineExportJodyW.csv',
+readLGRtrapDB = function(filepath = NULL,
                          date_range = NULL) {
+
+  stopifnot(!is.null(filepath))
 
   lgr_trap = read.csv(filepath) %>%
     tbl_df() %>%
