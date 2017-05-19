@@ -29,26 +29,26 @@ mrTrapRate = function(filepath = NULL,
 
 
   trap_df = readxl::read_excel(filepath,
-                       1,
-                       skip = 5) %>%
+                               1,
+                               skip = 5) %>%
     mutate(Species = recode(Species,
                             'steelhead' = 'Steelhead')) %>%
     dplyr::rename(Date = `Trap date`,
-           M = `TRAP adj dn time`,
-           C = `LAD adj dn time`,
-           SpawnYear = `Spawn yr`,
-           Year = `Obs Year YYYY`,
-           Tag_Code = `Tag Code`,
-           tag_yr = `unique tag-year`,
-           rear_type = `rear type`,
-           SRR = `SRR Code`,
-           StartDate = `sample week min date`,
-           week_num_org2 = `both spec. samp Week`) %>%
+                  M = `TRAP adj dn time`,
+                  C = `LAD adj dn time`,
+                  SpawnYear = `Spawn yr`,
+                  Year = `Obs Year YYYY`,
+                  Tag_Code = `Tag Code`,
+                  tag_yr = `unique tag-year`,
+                  rear_type = `rear type`,
+                  SRR = `SRR Code`,
+                  StartDate = `sample week min date`,
+                  week_num_org2 = `both spec. samp Week`) %>%
     dplyr::mutate(R = ifelse(M == 1 & C == 1, 1, 0)) %>%
     dplyr::select(SpawnYear, Year, Tag_Code, rear_type, SRR, Date, M, C, R) %>%
     dplyr::filter(!is.na(Date),
-           !is.na(M),
-           !(M == 0 & C == 0)) %>%
+                  !is.na(M),
+                  !(M == 0 & C == 0)) %>%
     dplyr::arrange(Date) %>%
     dplyr::mutate(week_num_org = NA)
 
@@ -64,31 +64,31 @@ mrTrapRate = function(filepath = NULL,
     ungroup()
 
   if(m == 'Mt') trap_rate_mr = plyr::ddply(ch_freq,
-                       .(Year, week_num_org),
-                       function(x) {
-                         mod = try(closedp(x[,c('M', 'C', 'R', 'freq')], dfreq=T), silent = T)
-                         if(class(mod)[1] == 'try-error') return(data.frame(N = NA, N_se = NA, p = NA, p_se = NA))
-                         mod_N = mod$results['Mt', c('abundance', 'stderr')]
-                         p_mean = inv.logit(coef(mod$glm[['Mt']])[2:3])
-                         p_se = deltamethod(list(~ 1 / (1 + exp(-x1)), ~ 1 / (1 + exp(-x2))), mean = coef(mod$glm[['Mt']])[2:3], cov = vcov(mod$glm[['Mt']])[2:3,2:3])
-                         return(data.frame(trap_fish = sum(x[x$M==1,'freq']), N = mod_N[1], N_se = mod_N[2], p = p_mean[1], p_se = p_se[1]))
-                       },
-                       .id = 'week_num_org',
-                       .progress = 'text') %>%
+                                           .(Year, week_num_org),
+                                           function(x) {
+                                             mod = try(closedp(x[,c('M', 'C', 'R', 'freq')], dfreq=T), silent = T)
+                                             if(class(mod)[1] == 'try-error') return(data.frame(N = NA, N_se = NA, p = NA, p_se = NA))
+                                             mod_N = mod$results['Mt', c('abundance', 'stderr')]
+                                             p_mean = inv.logit(coef(mod$glm[['Mt']])[2:3])
+                                             p_se = deltamethod(list(~ 1 / (1 + exp(-x1)), ~ 1 / (1 + exp(-x2))), mean = coef(mod$glm[['Mt']])[2:3], cov = vcov(mod$glm[['Mt']])[2:3,2:3])
+                                             return(data.frame(trap_fish = sum(x[x$M==1,'freq']), N = mod_N[1], N_se = mod_N[2], p = p_mean[1], p_se = p_se[1]))
+                                           },
+                                           .id = 'week_num_org',
+                                           .progress = 'text') %>%
     tbl_df()
 
   if(m == 'Mt.bc') trap_rate_mr = plyr::ddply(ch_freq,
-                       .(Year, week_num_org),
-                       function(x) {
-                         mod = try(closedp.bc(x[,c('M', 'C', 'R', 'freq')], dfreq=T, m = 'Mt'), silent = T)
-                         if(class(mod)[1] == 'try-error') return(data.frame(N = NA, N_se = NA, p = NA, p_se = NA))
-                         mod_N = mod$results['Mt', c('abundance', 'stderr')]
-                         p_mean = sum(x$freq[x$M==1]) / mod_N[1]
-                         p_se = sqrt(mod_N[2]^2 * (sum(x$freq[x$M==1]) / mod_N[1]^2)^2)
-                         return(data.frame(trap_fish = sum(x[x$M==1,'freq']), N = mod_N[1], N_se = mod_N[2], p = p_mean[1], p_se = p_se[1]))
-                       },
-                       .id = 'week_num_org',
-                       .progress = 'text') %>%
+                                              .(Year, week_num_org),
+                                              function(x) {
+                                                mod = try(closedp.bc(x[,c('M', 'C', 'R', 'freq')], dfreq=T, m = 'Mt'), silent = T)
+                                                if(class(mod)[1] == 'try-error') return(data.frame(N = NA, N_se = NA, p = NA, p_se = NA))
+                                                mod_N = mod$results['Mt', c('abundance', 'stderr')]
+                                                p_mean = sum(x$freq[x$M==1]) / mod_N[1]
+                                                p_se = sqrt(mod_N[2]^2 * (sum(x$freq[x$M==1]) / mod_N[1]^2)^2)
+                                                return(data.frame(trap_fish = sum(x[x$M==1,'freq']), N = mod_N[1], N_se = mod_N[2], p = p_mean[1], p_se = p_se[1]))
+                                              },
+                                              .id = 'week_num_org',
+                                              .progress = 'text') %>%
     tbl_df()
 
   if(m == 'Chap') {
