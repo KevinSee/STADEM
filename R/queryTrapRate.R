@@ -19,12 +19,6 @@ queryTrapRate = function(week_strata = NULL,
                          spp = c('Chinook', 'Steelhead'),
                          return_weekly = T) {
 
-  # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/KevinSee/damEscapement')
-
-  # compose url with query
-  url_req = 'http://www.cbr.washington.edu/dart/cs/php/lib/file_wrapper.php'
-
   # match up species code with species name
   spp_code_df = data.frame(Species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
                            code = 1:4)
@@ -33,6 +27,12 @@ queryTrapRate = function(week_strata = NULL,
 
   # # use only steelhead, since that covers an entire year
   # spp_code = 3
+
+  # assign user agent to the GitHub repo for this package
+  ua = httr::user_agent('https://github.com/KevinSee/damEscapement')
+
+  # compose url with query
+  url_req = 'http://www.cbr.washington.edu/dart/cs/php/lib/file_wrapper.php'
 
   trap_rate_dart = NULL
   for(yr in sort(unique(year(int_start(week_strata))))) {
