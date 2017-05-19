@@ -7,8 +7,9 @@
 \url{http://www.cbr.washington.edu/dart}
 }
 \usage{
-trapRateInputs(filepath = NULL, week_strata = NULL, return_weekly = T,
-  poor_cv_threshold = 0.7, m = c("Mt.bc", "Mt", "Chap", NULL))
+trapRateInputs(filepath = NULL, trap_dataframe = NULL, week_strata = NULL,
+  return_weekly = T, poor_cv_threshold = 0.7, m = c("Mt.bc", "Mt", "Chap",
+  NULL))
 }
 \arguments{
 \item{filepath}{file path to the excel file containing data}
