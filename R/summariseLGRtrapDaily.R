@@ -11,6 +11,7 @@
 #'
 #' @import lubridate dplyr
 #' @return NULL
+#' @export
 #' @examples #summariseLGRtrapDaily(readLGRtrapDB())
 
 summariseLGRtrapDaily = function(trap_df,
