@@ -4,8 +4,7 @@
 \alias{readLGRtrapDB}
 \title{LGR Trap Database}
 \usage{
-readLGRtrapDB(filepath = "data-raw/tblLGDMasterCombineExportJodyW.csv",
-  date_range = NULL)
+readLGRtrapDB(filepath = NULL, date_range = NULL)
 }
 \arguments{
 \item{filepath}{path to the LGR trap database as csv file}

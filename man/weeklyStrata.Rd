@@ -16,6 +16,8 @@ weeklyStrata(spawn_yr, spp = c("Chinook", "Steelhead"), start_day = NULL,
 
 \item{end_day}{date (\code{month / day}) when strata should end}
 
+\item{strata_beg}{3 letter code for the day of the week each weekly strata should begin on.}
+
 \item{last_strata_min}{minimum length (in days) for the final strata}
 }
 \description{
