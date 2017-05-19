@@ -16,29 +16,38 @@
 #' @return NULL
 
 trapRateInputs = function(filepath = NULL,
+                          trap_dataframe = NULL,
                           week_strata = NULL,
                           return_weekly = T,
                           poor_cv_threshold = 0.7,
                           m = c('Mt.bc', 'Mt', 'Chap', NULL)) {
 
   trap_rate_dart = queryTrapRate(week_strata,
+                                 spp = spp,
                                  return_weekly)
 
-  m = match.arg(m)
-  trap_rate_mr = mrTrapRate(filepath,
-                            week_strata,
-                            m = m) %>%
+  # m = match.arg(m)
+  # trap_rate_mr = mrTrapRate(filepath,
+  #                           week_strata,
+  #                           m = m) %>%
+  #   ungroup()
+
+  trap_rate_mr = mrTrapRate(trap_dataframe,
+                            week_strata) %>%
     ungroup()
 
   trap_rate = trap_rate_dart %>%
-    select(-Year) %>%
     full_join(trap_rate_mr %>%
-                select(-Year)) %>%
+              select(week_num,
+                     trap_fish = n_trap,
+                     p = rate,
+                     p_se = rate_se)) %>%
+    arrange(week_num) %>%
     dplyr::mutate(trap_open = ifelse(trap_fish > 0, T, trap_open)) %>%
-    dplyr::select(Start_Date, week_num_org, trap_open, mean_goal:calc_rate, p, p_se) %>%
+    dplyr::select(Start_Date, week_num, trap_open, Rate:CalcRate, p, p_se) %>%
     dplyr::mutate(trap_rate = p,
            trap_rate_se = p_se) %>%
-    dplyr::mutate(trap_rate = ifelse(p_se / p > poor_cv_threshold | is.na(p) | (p == 0 & trap_open), calc_rate, trap_rate),
+    dplyr::mutate(trap_rate = ifelse(p_se / p > poor_cv_threshold | is.na(p) | (p == 0 & trap_open), ActualRateInclusiveTime, trap_rate),
            trap_rate_se = ifelse(p_se / p > poor_cv_threshold | is.na(p) | (p == 0 & trap_open), 0.1, trap_rate_se),
            trap_rate_se = ifelse(trap_rate_se == 0, 0.001, trap_rate_se)) %>%
     # set up parameters describing trap rate as a beta distribution
@@ -47,7 +56,7 @@ trapRateInputs = function(filepath = NULL,
            trap_beta = trap_alpha * (1 / trap_rate - 1),
            trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
            trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
-    dplyr::select(Start_Date, week_num_org, matches('trap')) %>%
+    dplyr::select(Start_Date, week_num, matches('trap')) %>%
     distinct()
 
   # if(sum(duplicated(trap_rate$week_num_org)) > 0)
