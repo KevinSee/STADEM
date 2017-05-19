@@ -8,8 +8,8 @@
 #' @param spp choices are either \code{Chinook} or \code{Steelhead}
 #' @param start_day date (\code{month / day}) when strata should start
 #' @param end_day date (\code{month / day}) when strata should end
+#' @param strata_beg 3 letter code for the day of the week each weekly strata should begin on.
 #' @param last_strata_min minimum length (in days) for the final strata
-
 #'
 #' @import lubridate dplyr
 #' @export
