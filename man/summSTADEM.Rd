@@ -6,9 +6,9 @@
 \usage{
 summSTADEM(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG", "WFF", "BON",
   "TDA", "JDA", "MCN", "IHR", "LMN", "LGS", "PRO", "ROZ", "PRD", "WAN", "RIS",
-  "TUM", "RRH", "WEL", "ZOS"), damPIT = "GRA", start_day = NULL,
-  end_day = NULL, incl_jacks = F, sthd_type = c("all", "unclipped"),
-  sthd_B_run = FALSE, trap_db_file = NULL, trap_rate_cv = 0,
+  "TUM", "RRH", "WEL", "ZOS"), damPIT = "GRA", strata_beg = NULL,
+  start_day = NULL, end_day = NULL, incl_jacks = F, sthd_type = c("all",
+  "unclipped"), sthd_B_run = FALSE, trap_db_file = NULL, trap_rate_cv = 0,
   trap_rate_dist = c("beta", "logit"))
 }
 \arguments{
@@ -19,6 +19,8 @@ summSTADEM(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG", "WFF", "BON",
 \item{dam}{the dam code. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)}
 
 \item{damPIT}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA).}
+
+\item{strata_beg}{3 letter code for the day of the week each weekly strata should begin on.}
 
 \item{start_day}{date (\code{month / day}) when query should start}
 

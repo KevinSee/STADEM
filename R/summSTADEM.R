@@ -8,6 +8,7 @@
 #' @param spp species to focus on. Currently the possible choices are: \code{Chinook} or \code{Steelhead}
 #' @param dam the dam code. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)
 #' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA).
+#' @param strata_beg 3 letter code for the day of the week each weekly strata should begin on.
 #' @param start_day date (\code{month / day}) when query should start
 #' @param end_day date (\code{month / day}) when query should end
 #' @param incl_jacks should jacks be included in the window count totals? \code{T / F}
@@ -26,6 +27,7 @@ summSTADEM = function(yr,
                       spp = c('Chinook', 'Steelhead'),
                       dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
                       damPIT = 'GRA',
+                      strata_beg = NULL,
                       start_day = NULL,
                       end_day = NULL,
                       incl_jacks = F,
@@ -50,6 +52,7 @@ summSTADEM = function(yr,
 
   #---------------------------------------------
   # query window counts
+  cat('Querying window counts\n')
   win_cnts = getWindowCounts(dam = dam,
                              spawn_yr = yr,
                              spp = spp,
@@ -60,6 +63,7 @@ summSTADEM = function(yr,
 
   #--------------------------------------------------------
   # query PIT tag data from previously tagged fish
+  cat('Querying night passage & reascension PIT tags\n')
   pit_df = queryPITtagData(spawn_yr = yr,
                            spp = spp,
                            start_day = start_day,
@@ -67,10 +71,13 @@ summSTADEM = function(yr,
 
   #--------------------------------------------------------
   # determine weekly strata
+  cat('Dividing into strata\n')
   week_strata = weeklyStrata(spawn_yr = yr,
-                             spp = spp)
+                             spp = spp,
+                             strata_beg = strata_beg)
 
   # read in data for Chinook and steelhead
+  cat('Getting LGR trap data\n')
   if(!is.null(trap_db_file)) {
     trap_yr = readLGRtrapDB(filepath = trap_db_file,
                             date_range = c(ymd(int_start(week_strata[1])),
@@ -84,24 +91,41 @@ summSTADEM = function(yr,
       filter(Date >= ymd(int_start(week_strata[1])),
              Date < ymd(int_end(week_strata[length(week_strata)]) + dseconds(1))) %>%
       arrange(Date)
+    rm(lgr_trap)
   }
+
   # summarise by date for particular species
-  trap_df = summariseLGRtrapDaily(trap_yr,
+  trap_df = summariseLGRtrapDaily(trap_df = trap_yr,
                                   spp = spp,
                                   sthd_B_run = sthd_B_run)
 
   #--------------------------------------------------------
   # Query trap rate from DART
-  trap_rate_dart = queryTrapRate(week_strata,
-                                 spp = spp,
-                                 return_weekly = T)
+  cat('Estimating trap rate\n')
+  # trap_rate_dart = queryTrapRate(week_strata,
+  #                                spp = spp,
+  #                                return_weekly = T)
+  #
+  # # process for STADEM
+  # # impose constant CV on trap rate estimates
+  # trap_rate = trap_rate_dart %>%
+  #   dplyr::mutate(trap_rate = ActualRateInclusiveTime,
+  #                 # add some error
+  #                 trap_rate_se = trap_rate * trap_rate_cv)
 
-  # process for STADEM
-  # impose constant CV on trap rate estimates
-  trap_rate = trap_rate_dart %>%
-    dplyr::mutate(trap_rate = ActualRateInclusiveTime,
-                  # add some error
-                  trap_rate_se = trap_rate * trap_rate_cv)
+  # estimate trap rate from PIT tags
+  trap_rate = tagTrapRate(trap_dataframe = trap_yr,
+                          week_strata = week_strata) %>%
+    mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
+    left_join(tibble(Start_Date = int_start(week_strata),
+                     week_num = 1:length(week_strata))) %>%
+    rename(trap_rate = rate,
+           trap_rate_se = rate_se) %>%
+    mutate(Start_Date = ymd(Start_Date)) %>%
+    select(Start_Date,
+           week_num,
+           trap_open,
+           everything())
 
   if(trap_rate_dist == 'beta') {
     trap_rate = trap_rate %>%
@@ -111,7 +135,7 @@ summSTADEM = function(yr,
                     trap_beta = trap_alpha * (1 / trap_rate - 1),
                     trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
                     trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
-      dplyr::select(Start_Date, matches('^trap')) %>%
+      dplyr::select(Start_Date, week_num, matches('^trap')) %>%
       dplyr::distinct()
   }
 
@@ -119,13 +143,15 @@ summSTADEM = function(yr,
     trap_rate = trap_rate %>%
       # set up parameters describing trap rate as a logit distribution
       dplyr::mutate(trap_mu = ifelse(trap_open, boot::logit(trap_rate), 1e-12),
-                    trap_sd = ifelse(trap_open, boot::logit(trap_rate_se), 0)) %>%
-      dplyr::select(Start_Date, matches('^trap')) %>%
+                    trap_sd = ifelse(trap_open, (1 / n_trap) + (1 / (n_tot - n_trap)), 0)) %>%
+                    # trap_sd = ifelse(trap_open, boot::logit(trap_rate_se), 0)) %>%
+      dplyr::select(Start_Date, week_num, matches('^trap')) %>%
       dplyr::distinct()
   }
 
   #--------------------------------------------------------
   # comnbine window counts, PIT tag data and trap summary on daily time-step
+  cat('Combining daily data\n')
   dam_daily = win_cnts %>%
     dplyr::select(-Year) %>%
     dplyr::full_join(summarisePITdataDaily(pit_df) %>%
@@ -136,6 +162,7 @@ summSTADEM = function(yr,
 
   #------------------------------------------
   # get week strata for each date
+  cat('Summarising by week\n')
   dam_daily$week_num = NA
   for(i in 1:length(week_strata)) {
     dam_daily$week_num[with(dam_daily, which(Date %within% week_strata[i]))] = i
@@ -158,7 +185,7 @@ summSTADEM = function(yr,
     mutate(window_open = if_else(win_cnt > 0, T, F)) %>%
     select(Species, Start_Date, week_num, everything()) %>%
     addTrapRate(trap_rate,
-                trap_rate_dist = trap_rate_dist)
+                trap_rate_dist)
 
   return(list('weekStrata' = week_strata,
               'trapData' = trap_yr,
