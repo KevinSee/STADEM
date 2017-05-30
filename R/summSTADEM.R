@@ -85,13 +85,13 @@ summSTADEM = function(yr,
   }
 
   if(is.null(trap_db_file)) {
-    load('R/sysdata.rda')
+    # load('../R/sysdata.rda')
     trap_yr = lgr_trap %>%
       # filter for date range
       filter(Date >= ymd(int_start(week_strata[1])),
              Date < ymd(int_end(week_strata[length(week_strata)]) + dseconds(1))) %>%
       arrange(Date)
-    rm(lgr_trap)
+    # rm(lgr_trap)
   }
 
   # summarise by date for particular species
