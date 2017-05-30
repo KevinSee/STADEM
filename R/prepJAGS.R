@@ -22,14 +22,14 @@ prepJAGS = function(lgr_weekly = NULL,
   hw_type = match.arg(hw_type)
 
   if(hw_type == 'PBT') lgr_weekly = lgr_weekly %>%
-    rename(wild_fish = Wild.PBT,
-           hatch_fish = Hatch.PBT,
-           hnc_fish = HNC.PBT)
+    dplyr::rename(wild_fish = Wild.PBT,
+                  hatch_fish = Hatch.PBT,
+                  hnc_fish = HNC.PBT)
 
   if(hw_type == 'Morph') lgr_weekly = lgr_weekly %>%
-    rename(wild_fish = Wild.morph,
-           hatch_fish = Hatch.morph,
-           hnc_fish = HNC.morph)
+    dplyr::rename(wild_fish = Wild.morph,
+                  hatch_fish = Hatch.morph,
+                  hnc_fish = HNC.morph)
 
   # filter out weeks when ladder not open
   lgr_weekly = lgr_weekly %>%
