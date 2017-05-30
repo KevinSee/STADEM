@@ -12,7 +12,7 @@
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
-#' @import lubridate readr httr dplyr
+#' @import lubridate httr dplyr
 #' @export
 #' @return NULL
 #' @examples queryPITtagData(spawn_yr = 2015)
