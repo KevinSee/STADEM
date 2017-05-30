@@ -32,14 +32,14 @@ summarisePITdataDaily = function(pit_data,
     dplyr::arrange(Species, SpawnYear, TagID, Date) %>%
     group_by(Species, SpawnYear, Date) %>%
     dplyr::summarise(tot_tags = n_distinct(TagID),
-              day_tags = length(unique(TagID[Period=='D'])),
-              reascent_tags = length(unique(TagID[ReAscent])),
-              tot_tags_W = length(unique(TagID[RearType == 'W'])),
-              day_tags_W = length(unique(TagID[Period=='D' & RearType == 'W'])),
-              reascent_tags_W = length(unique(TagID[ReAscent & RearType == 'W'])),
-              tot_tags_H = length(unique(TagID[RearType == 'H'])),
-              day_tags_H = length(unique(TagID[Period=='D' & RearType == 'H'])),
-              reascent_tags_H = length(unique(TagID[ReAscent & RearType == 'H']))) %>%
+                     day_tags = length(unique(TagID[Period=='D'])),
+                     reascent_tags = length(unique(TagID[ReAscent])),
+                     tot_tags_W = length(unique(TagID[RearType == 'W'])),
+                     day_tags_W = length(unique(TagID[Period=='D' & RearType == 'W'])),
+                     reascent_tags_W = length(unique(TagID[ReAscent & RearType == 'W'])),
+                     tot_tags_H = length(unique(TagID[RearType == 'H'])),
+                     day_tags_H = length(unique(TagID[Period=='D' & RearType == 'H'])),
+                     reascent_tags_H = length(unique(TagID[ReAscent & RearType == 'H']))) %>%
     ungroup()
 
   return(lgr_night_reasc_daily)

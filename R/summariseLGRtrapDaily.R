@@ -37,14 +37,14 @@ summariseLGRtrapDaily = function(trap_df,
     #               SpawnYear = ifelse(!is.na(SpawnYear), SpawnYear, ifelse(Species == 'Chinook', year(Date), ifelse(Species == 'Steelhead' & Date >= ymd(paste0(year(Date), '0701')), year(Date) + 1, year(Date))))) %>%
     dplyr::group_by(Date) %>%
     dplyr::summarize(trap_fish = length(MasterID),
-              Wild.morph = sum(LGDRear=='W'),
-              Hatch.morph = sum(LGDRear=='H'),
-              NA.morph = sum(LGDRear %in% c('U', 'NI')),
-              Wild.PBT = sum(grepl('W$', SRR)),
-              HNC.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AI'),
-              Hatch.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AD'),
-              NA.PBT = sum(!(grepl('W$', SRR) | grepl('H$', SRR))),
-              n_invalid = sum(LGDValid != 1)) %>%
+                     Wild.morph = sum(LGDRear=='W'),
+                     Hatch.morph = sum(LGDRear=='H'),
+                     NA.morph = sum(LGDRear %in% c('U', 'NI')),
+                     Wild.PBT = sum(grepl('W$', SRR)),
+                     HNC.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AI'),
+                     Hatch.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AD'),
+                     NA.PBT = sum(!(grepl('W$', SRR) | grepl('H$', SRR))),
+                     n_invalid = sum(LGDValid != 1)) %>%
     dplyr::ungroup() %>%
     dplyr::arrange(Date)
 
