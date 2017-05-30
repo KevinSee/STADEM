@@ -1,0 +1,175 @@
+---
+title: "STADEM Vignette"
+author: "Kevin E. See"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+references:
+- id: Linden2011
+  title: Using the negative binomial distribution to model overdispersion in ecological count data
+  author:
+  - family: Lindén
+    given: Andreas
+  - family: Mäntyniemi
+    given: Samu
+  container-title: Ecology
+  volume: 92
+  issue: 4
+  page: 1414-1421
+  publisher: Ecologial Society of America
+  type: article-journal
+  issued:
+    year: 2011
+---
+
+```{r setUp_options, echo = F, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
+
+# Introduction
+
+The STADEM package was developed with the goal of estimating total adult escapement of spring/summer Chinook salmon and steelhead that cross Lower Granite dam (LGD). In addition, to meet desired management and research objectives, total escapement has to include estimates of uncertainty and be parsed into weekly strata by three origin groups; wild, hatchery and hatchery no-clip. To reach this goal, we have developed the **ST**ate space **A**dult **D**am **E**scapement **M**odel (STADEM) model that incorporates fish ladder window counts, data from sampled fish at the LGD adult trap, and observations of previously PIT tagged fish at LGD adult detection sites.
+
+Some of the data needed for STADEM is available at other dams, and the package developers are currently working to develop the ability to query all of the necessary data at other locations. Currently however, the focus remains on Lower Granite dam, the furthest upstream dam returning salmonids encounter on the journey up the Snake River. The following example will show how to run STADEM for one species and one year, and what some of the output looks like.
+
+# Data Sources
+
+STADEM relies on several pieces of data, which must be compiled from multiple sources. Many of them are accessed through the Columbia Basin Research Data Access in Real Time ([DART](http://www.cbr.washington.edu/dart)) website.
+
+* **Window counts** are available through DART for many dams within the Columbia River basin.
+* **Trap data** comes from an adult fish trap. This provides biological information (e.g., origin, genetic stock, age, sex) to allow the decomposition of total escapement into specific groups, as well as a secondary estimate of total escapement, if the trap rate is known or can be reliably estimated.
+* **PIT-tag data** comes from fish that were previously PIT tagged, either as juveniles or as adults at one of the dams downstream of Lower Granite. These fish provide information about the proportion of the run that crosses the dam at night, when the counting window is closed, as well as the proportion of the run that has fallen back and re-ascended the dam.
+
+# Compiling data
+
+The STADEM package relies on many functions from two other packages, `lubridate` for dates and intervals, and `tidyverse` for many data manipulation functions.
+
+```{r load_packages}
+library(lubridate)
+library(tidyverse)
+library(STADEM)
+```
+
+The STADEM package makes it easy to compile all the necessary data in one convenient function, `summSTADEM`. The user provides the spawn year and species (either "Chinook" or "Steelhead") they are interested in. STADEM operates on a weekly time-step, and the user has the option to determine the day of the week that most strata will begin on, using the `strata_beg` arguement. There are periodic messages describing what is being done within `summSTADEM`.
+
+```{r compile_data, eval = T, cache = T}
+# what spawning year? (2010 - 2016)
+yr = 2014
+
+# what species?
+spp = c('Chinook', 'Steelhead')[1]
+
+# pull together all data
+stadem_list = summSTADEM(yr = yr,
+                         spp = spp,
+                         strata_beg = 'Sun')
+```
+
+The `summSTADEM()` function returns several pieces of information, consolidated into a named list called `stadem_list`:
+
+* `weekStrata`: weekly strata for STADEM, which are `interval` objects from the `lubridate` package.
+* `trapData`: data from adult fish trap.
+* `dailyData`: data.frame of data, summarised by day.
+* `weeklyData`: data.frame of data, summarised by weekly strata.
+
+To run STADEM, only `weeklyData` is needed. STADEM also includes a function to transform all relevant data from the weekly summary to a list ready to be passed to JAGS.
+
+```{r prep_JAGS}
+# compile everything into a list to pass to JAGS
+jags_data_list = prepJAGS(stadem_list[['weeklyData']])
+```
+
+# Run STADEM
+
+Part of the function `runJAGSmodel` writes the JAGS model. This requires a filename, and the type of model the user would like to use to model the window counts. The options are Poisson (`pois`), negative binomial (`neg_bin`), or a more flexible type of negative binomial, described in @Linden2011 (`neg_bin2`), or quasi-Poisson (`quasi_pois`). Once those have been set, 
+
+```{r run_JAGS_model, cache = T}
+# name of JAGS model to write
+model_file = 'STADEM_JAGS_model.txt'
+
+# what distribution to use for window counts?
+win_model = c('pois', 'neg_bin', 'neg_bin2', 'quasi_pois')[2]
+
+#-----------------------------------------------------------------
+# run STADEM model
+#-----------------------------------------------------------------
+mod = runJAGSmodel(model_file,
+                   mcmc_chainLength = 40000,
+                   mcmc_burn = 10000,
+                   mcmc_thin = 30,
+                   mcmc_chains = 4,
+                   jags_data = jags_data_list,
+                   seed = 5,
+                   weekly_params = T,
+                   win_model = win_model)
+
+```
+
+# STADEM output
+
+The JAGS object returned by `runJAGSmodel` contains many parameter estimates. Some of the most important are the total escapement of various fish.
+
+```{r summary_total_escapement}
+mod$summary[grep('X.tot', rownames(mod$summary)),] %>%
+  pander::pander()
+```
+
+A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates.
+
+```{r compile_time-series_data}
+library(stringr)
+week_est = mod$summary[grep('^X.all', rownames(mod$summary)),] %>%
+  as.data.frame() %>%
+  mutate(var = rownames(.),
+         week = as.integer(str_extract(var, "[0-9]+")),
+         param = str_extract_all(var, "[:alpha:]+", simplify = T)[,3],
+         param = ifelse(param == '', 'all', param)) %>%
+  tbl_df() %>%
+  select(var, param, week, everything()) %>%
+  left_join(stadem_list[['weeklyData']] %>%
+              filter(window_open | trap_open) %>%
+              mutate(week = 1:n()))
+```
+
+```{r time-series_plot, fig.height = 5, fig.width = 7}
+# plot time-series of model estimates, window counts and trap estimates
+week_est %>%
+  filter(param == 'all') %>%
+  filter(tot_tags > 0) %>%
+  ggplot(aes(x = Start_Date,
+             y = `50%`)) +
+  geom_ribbon(aes(ymin = `2.5%`,
+                  ymax = `97.5%`),
+              alpha = 0.2) +
+  geom_line(aes(y = win_cnt / (day_tags / tot_tags),
+                color = 'Window (adj)')) +
+  geom_point(aes(y = win_cnt / (day_tags / tot_tags),
+                 color = 'Window (adj)')) +
+  geom_line(aes(y = win_cnt,
+                color = 'Window')) +
+  geom_point(aes(y = win_cnt,
+                 color = 'Window')) +
+  geom_line(aes(y = trap_est,
+                color = 'Trap')) +
+  geom_point(aes(y = trap_est,
+                 color = 'Trap')) +
+  geom_line(aes(color = 'Model')) +
+  geom_point(aes(color = 'Model')) +
+  scale_color_manual(values = c('Model' = 'black',
+                                'Window' = 'lightblue',
+                                'Window (adj)' = 'blue',
+                                'Trap' = 'red')) +
+  theme(legend.position = 'bottom') +
+  theme_bw() +
+  labs(x = 'Date',
+       y = 'Estimate',
+       color = 'Source',
+       title = paste('All', spp, 'in', yr))
+
+```
+
+
+# References
