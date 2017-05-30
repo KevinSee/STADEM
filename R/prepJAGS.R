@@ -7,6 +7,7 @@
 #' @param lgr_weekly dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summSTADEM}.
 #' @param sthd_B_run should numbers of B run steelhead be incorporated? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.
 #' @param hw_type what criteria is used to determine hatchery vs. wild? \code{Morph} uses the morphilogical call made at the trap. \code{PBT} uses the genetic information gleaned from parental based tagging.
+#' @param wild_tags Should only wild PIT tags be used to estimate daytime passage and re-ascension rates? Default is \code{FALSE}.
 #'
 #' @import dplyr
 #' @importFrom plyr dlply
@@ -15,7 +16,8 @@
 #'
 prepJAGS = function(lgr_weekly = NULL,
                     sthd_B_run = F,
-                    hw_type = c('PBT', 'Morph')) {
+                    hw_type = c('PBT', 'Morph'),
+                    wild_tags = F) {
 
   stopifnot(!is.null(lgr_weekly))
 
@@ -35,9 +37,6 @@ prepJAGS = function(lgr_weekly = NULL,
   lgr_weekly = lgr_weekly %>%
     filter(window_open | trap_open)
 
-  # month_vec = month(lgr_weekly$Start_Date)
-  # spp = unique(lgr_weekly$Species)
-  #
   org_exist = lgr_weekly %>%
     select(wild_fish, hnc_fish, hatch_fish) %>%
     colSums()
@@ -53,14 +52,10 @@ prepJAGS = function(lgr_weekly = NULL,
                                  y_trap = ifelse(!trap_open | !trap_valid, NA, y_trap)) %>%
                           select(y_trap) %>%
                           as.matrix() %>% as.vector(),
-                        # 'trap.fish' = lgr_weekly %>% select(trap_fish) %>% as.matrix() %>% as.vector(),
                         'trap.fish' = lgr_weekly %>%
                           mutate(trap_fish = wild_fish + hnc_fish + hatch_fish) %>%
                           select(trap_fish) %>%
                           as.matrix() %>% as.vector(),
-                        # 'wild.fish' = lgr_weekly %>% select(wild_fish) %>% as.matrix() %>% as.vector(),
-                        # 'hatch.fish' = lgr_weekly %>% select(hatch_fish) %>% as.matrix() %>% as.vector(),
-                        # 'hnc.fish' = lgr_weekly %>% select(hnc_fish) %>% as.matrix() %>% as.vector(),
                         'trap.fish.matrix' = lgr_weekly %>%
                           select(wild_fish, hnc_fish, hatch_fish) %>%
                           as.matrix(),
@@ -74,19 +69,36 @@ prepJAGS = function(lgr_weekly = NULL,
                           select(trap_beta) %>%
                           as.matrix() %>% as.vector(),
                         'Tot.tags' = lgr_weekly %>%
-                          mutate(Tot_tags = ifelse(is.na(tot_tags_W), 0, tot_tags_W)) %>%
+                          mutate(Tot_tags = ifelse(is.na(tot_tags), 0, tot_tags)) %>%
                           select(Tot_tags) %>% as.matrix() %>% as.vector(),
                         'ReAsc.tags' = lgr_weekly %>%
-                          mutate(ReAsc_tags = ifelse(reascent_tags_W > tot_tags_W, tot_tags_W, reascent_tags_W),
+                          mutate(ReAsc_tags = ifelse(reascent_tags > tot_tags, tot_tags, reascent_tags),
                                  ReAsc_tags = ifelse(!trap_open, NA, ReAsc_tags)) %>%
                           select(ReAsc_tags) %>%
                           as.matrix() %>% as.vector(),
                         'DC.tags' = lgr_weekly %>%
-                          mutate(Day_tags = ifelse(day_tags_W > tot_tags_W, tot_tags_W, day_tags_W),
+                          mutate(Day_tags = ifelse(day_tags > tot_tags, tot_tags, day_tags),
                                  Day_tags = ifelse(!trap_open, NA, Day_tags)) %>%
                           select(Day_tags) %>%
                           as.matrix() %>% as.vector()
   )
+
+  if(wild_tags) {
+    jags_data_list[['Tot.Tags']] = lgr_weekly %>%
+      mutate(Tot_tags = ifelse(is.na(tot_tags_W), 0, tot_tags_W)) %>%
+      select(Tot_tags) %>% as.matrix() %>% as.vector()
+    jags_data_list[['ReAsc.tags']] = lgr_weekly %>%
+      mutate(ReAsc_tags = ifelse(reascent_tags_W > tot_tags_W, tot_tags_W, reascent_tags_W),
+             ReAsc_tags = ifelse(!trap_open, NA, ReAsc_tags)) %>%
+      select(ReAsc_tags) %>%
+      as.matrix() %>% as.vector()
+    jags_data_list[['DC.tags']] = lgr_weekly %>%
+      mutate(Day_tags = ifelse(day_tags_W > tot_tags_W, tot_tags_W, day_tags_W),
+             Day_tags = ifelse(!trap_open, NA, Day_tags)) %>%
+      select(Day_tags) %>%
+      as.matrix() %>% as.vector()
+  }
+
 
   if(sthd_B_run) jags_data_list[['B.trap']] = lgr_weekly %>%
     select(tot_B_run_sthd) %>%
