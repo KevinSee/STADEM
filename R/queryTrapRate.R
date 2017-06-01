@@ -50,8 +50,8 @@ queryTrapRate = function(week_strata = NULL,
                            encoding = 'ISO-8859-1') %>%
       read_delim(delim = ',',
                  col_names = T) %>%
-      mutate(Date = mdy(Date),
-             DOY = as.integer(DOY)) %>%
+      dplyr::mutate(Date = mdy(Date),
+                    DOY = as.integer(DOY)) %>%
       dplyr::rename(n_Samples = `#Samples`,
                     n_SbyC = `#SbyC`,
                     n_Close = `#Close`)
@@ -66,15 +66,15 @@ queryTrapRate = function(week_strata = NULL,
   # deal with fact that some days have two rows in data (different rates during different times of day)
   trap_rate_obs = trap_rate_dart %>%
     group_by(Date, Year, DOY) %>%
-    summarise_at(vars(SampTime:n_Close, TotFishTrap:ALLPit),
-                 funs(sum), na.rm = T) %>%
-    mutate(SecondsInDay = 2 * (60*60*24)) %>% # multiplied by 2 because there are 2 flumes in trap
+    dplyr::summarise_at(vars(SampTime:n_Close, TotFishTrap:ALLPit),
+                        funs(sum), na.rm = T) %>%
+    dplyr::mutate(SecondsInDay = 2 * (60*60*24)) %>% # multiplied by 2 because there are 2 flumes in trap
     left_join(trap_rate_dart %>%
                 group_by(Date, Year, DOY) %>%
-                summarise_at(vars(Rate:ActualRateInclusiveTime),
-                             funs(weighted.mean(., na.rm = T, w = TotalTime)))) %>%
-    mutate(trap_open = ifelse(TotalTime > 0, T, F),
-           RateCalc = TotalTimeInclusive / SecondsInDay) %>%
+                dplyr::summarise_at(vars(Rate:ActualRateInclusiveTime),
+                                    funs(weighted.mean(., na.rm = T, w = TotalTime)))) %>%
+    dplyr::mutate(trap_open = ifelse(TotalTime > 0, T, F),
+                  RateCalc = TotalTimeInclusive / SecondsInDay) %>%
     ungroup()
 
   if(!return_weekly) return(trap_rate_obs)
@@ -87,26 +87,26 @@ queryTrapRate = function(week_strata = NULL,
 
   # summarise by week
   trap_rate_obs_wk = trap_rate_obs %>%
-    filter(!is.na(week_num)) %>%
+    dplyr::filter(!is.na(week_num)) %>%
     group_by(Year, week_num) %>%
-    summarise(Start_Date = min(Date)) %>%
+    dplyr::summarise(Start_Date = min(Date)) %>%
     left_join(tibble(week_num = 1:length(week_strata),
                      SecondsInWeek = as.numeric(as.duration(week_strata), 'seconds'))) %>%
     left_join(trap_rate_obs %>%
-                filter(!is.na(week_num)) %>%
+                dplyr::filter(!is.na(week_num)) %>%
                 group_by(Year, week_num) %>%
-                summarise_at(vars(SampTime:n_Close, TotFishTrap:ALLPit, trap_open),
-                             funs(sum),
-                             na.rm = T)) %>%
+                dplyr::summarise_at(vars(SampTime:n_Close, TotFishTrap:ALLPit, trap_open),
+                                    funs(sum),
+                                    na.rm = T)) %>%
     left_join(trap_rate_obs %>%
-                filter(!is.na(week_num)) %>%
+                dplyr::filter(!is.na(week_num)) %>%
                 group_by(Year, week_num) %>%
-                summarise_at(vars(Rate:ActualRateInclusiveTime),
-                             funs(mean),
-                             na.rm = T)) %>%
-    mutate(CalcRate = TotalTimeInclusive / SecondsInWeek,
-           trap_open = ifelse(trap_open > 0, T, F)) %>%
-    select(Year, week_num, Start_Date, everything()) %>%
+                dplyr::summarise_at(vars(Rate:ActualRateInclusiveTime),
+                                    funs(mean),
+                                    na.rm = T)) %>%
+    dplyr::mutate(CalcRate = TotalTimeInclusive / SecondsInWeek,
+                  trap_open = ifelse(trap_open > 0, T, F)) %>%
+    dplyr::select(Year, week_num, Start_Date, everything()) %>%
     ungroup()
 
   return(trap_rate_obs_wk)

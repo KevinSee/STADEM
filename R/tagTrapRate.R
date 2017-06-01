@@ -13,8 +13,8 @@
 #' @return NULL
 
 tagTrapRate = function(trap_dataframe = NULL,
-                      week_strata = NULL,
-                      mark_site = 'LGRLDR') {
+                       week_strata = NULL,
+                       mark_site = 'LGRLDR') {
 
 
   # query PIT tag detections at Lower Granite
@@ -41,28 +41,28 @@ tagTrapRate = function(trap_dataframe = NULL,
 
   # filter out tags that were put in at Lower Granite
   gra_tags = pit_gra %>%
-    filter(MarkSite == mark_site) %>%
-    select(TagID) %>%
-    distinct() %>%
+    dplyr::filter(MarkSite == mark_site) %>%
+    dplyr::select(TagID) %>%
+    dplyr::distinct() %>%
     as.matrix() %>%
     as.character()
 
   trap_rate_mr = trap_dataframe %>%
-    filter(!Tag.ID %in% gra_tags,
-           !is.na(Tag.ID)) %>%
-    select(TagID = Tag.ID, TrapDate = CollectionDate, SRR) %>%
-    full_join(pit_gra %>%
-                filter(!TagID %in% gra_tags) %>%
-                select(TagID, SpRRT, MarkSite, ReleaseDate, matches('Time'))) %>%
-    mutate(Species = ifelse(grepl('^1', SpRRT) | grepl('^1', SRR),
-                            'Chinook',
-                            ifelse(grepl('^3', SpRRT) | grepl('^3', SRR),
-                                   'Steelhead', NA))) %>%
-    mutate(ObsDate = floor_date(ObsTime, unit = 'days'),
-           diff = as.numeric(difftime(ObsDate, TrapDate, units = 'days'))) %>%
-    mutate(modDate = if_else(!is.na(TrapDate), TrapDate, ObsDate)) %>%
-    # mutate(modDate = if_else(abs(diff) < 2, modDate, floor_date(MaxTime, unit = 'days'))) %>%
-    mutate(inTrap = ifelse(!is.na(TrapDate), T, F))
+    dplyr::filter(!Tag.ID %in% gra_tags,
+                  !is.na(Tag.ID)) %>%
+    dplyr::select(TagID = Tag.ID, TrapDate = CollectionDate, SRR) %>%
+    dplyr::full_join(pit_gra %>%
+                       dplyr::filter(!TagID %in% gra_tags) %>%
+                       dplyr::select(TagID, SpRRT, MarkSite, ReleaseDate, matches('Time'))) %>%
+    dplyr::mutate(Species = ifelse(grepl('^1', SpRRT) | grepl('^1', SRR),
+                                   'Chinook',
+                                   ifelse(grepl('^3', SpRRT) | grepl('^3', SRR),
+                                          'Steelhead', NA))) %>%
+    dplyr::mutate(ObsDate = floor_date(ObsTime, unit = 'days'),
+                  diff = as.numeric(difftime(ObsDate, TrapDate, units = 'days'))) %>%
+    dplyr::mutate(modDate = if_else(!is.na(TrapDate), TrapDate, ObsDate)) %>%
+    # dplyr::mutate(modDate = if_else(abs(diff) < 2, modDate, floor_date(MaxTime, unit = 'days'))) %>%
+    dplyr::mutate(inTrap = ifelse(!is.na(TrapDate), T, F))
 
   # assign week number
   trap_rate_mr$week_num = NA
@@ -71,13 +71,13 @@ tagTrapRate = function(trap_dataframe = NULL,
   }
 
   prop_rate = trap_rate_mr %>%
-    filter(!is.na(ObsTime)) %>%
+    dplyr::filter(!is.na(ObsTime)) %>%
     group_by(week_num) %>%
-    summarise(n_trap = sum(inTrap),
-              n_tot = n_distinct(TagID),
-              rate = n_trap / n_tot,
-              rate_se = sqrt((rate * (1 - rate)) / n_tot),
-              rate_cv = rate_se / rate)
+    dplyr::summarise(n_trap = sum(inTrap),
+                     n_tot = n_distinct(TagID),
+                     rate = n_trap / n_tot,
+                     rate_se = sqrt((rate * (1 - rate)) / n_tot),
+                     rate_cv = rate_se / rate)
 
   return(prop_rate)
 
