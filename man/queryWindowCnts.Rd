@@ -10,8 +10,7 @@
 queryWindowCnts(dam = c("LWG", "WFF", "BON", "TDA", "JDA", "MCN", "IHR",
   "LMN", "LGS", "PRO", "ROZ", "PRD", "WAN", "RIS", "TUM", "RRH", "WEL", "ZOS"),
   spp_code = c("fc", "fk", "fb", "fs", "fsw", "fa", "fcj", "fkj", "fbj",
-  "fsj", "fl", "ft"), spawn_yr = NULL, start_day = c("03/01", "07/01"),
-  end_day = c("08/17", "06/30"))
+  "fsj", "fl", "ft"), spawn_yr = NULL, start_day = NULL, end_day = NULL)
 }
 \arguments{
 \item{dam}{the dam code for the dam you wish to query for window counts. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)}

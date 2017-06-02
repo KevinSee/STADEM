@@ -6,42 +6,9 @@ library(lubridate)
 library(tidyverse)
 library(STADEM)
 
-## ----compile_data, eval = T, cache = T-----------------------------------
-# what spawning year? (2010 - 2016)
-yr = 2014
-
-# what species?
-spp = c('Chinook', 'Steelhead')[1]
-
-# pull together all data
-stadem_list = summSTADEM(yr = yr,
-                         spp = spp,
-                         strata_beg = 'Sun')
-
 ## ----prep_JAGS-----------------------------------------------------------
 # compile everything into a list to pass to JAGS
 jags_data_list = prepJAGS(stadem_list[['weeklyData']])
-
-## ----run_JAGS_model, cache = T-------------------------------------------
-# name of JAGS model to write
-model_file = 'STADEM_JAGS_model.txt'
-
-# what distribution to use for window counts?
-win_model = c('pois', 'neg_bin', 'neg_bin2', 'quasi_pois')[2]
-
-#-----------------------------------------------------------------
-# run STADEM model
-#-----------------------------------------------------------------
-mod = runJAGSmodel(model_file,
-                   mcmc_chainLength = 40000,
-                   mcmc_burn = 10000,
-                   mcmc_thin = 30,
-                   mcmc_chains = 4,
-                   jags_data = jags_data_list,
-                   seed = 5,
-                   weekly_params = T,
-                   win_model = win_model)
-
 
 ## ----summary_total_escapement--------------------------------------------
 mod$summary[grep('X.tot', rownames(mod$summary)),] %>%
