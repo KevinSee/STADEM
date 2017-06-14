@@ -11,3 +11,11 @@ STADEM is a collaborative project, with the primary contributors being:
 * Ryan N. Kinzer (Nez Perce Tribe)
 * Rick Orme (Nez Perce Tribe)
 * Mike Ackerman (Quantitative Consultants Inc.)
+
+## Required Software
+
+STADEM requires the JAGS software (**J**ust **A**nother **G**ibbs **S**ampler). This can be downloaded here:
+
+https://sourceforge.net/projects/mcmc-jags/files/
+
+Please download version >= 4.0.0
