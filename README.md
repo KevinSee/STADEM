@@ -28,6 +28,8 @@ https://sourceforge.net/projects/mcmc-jags/files/
 
 Please download version >= 4.0.0
 
+Further instructions on how to use STADEM can be found in the package vignette, accessed by typing `vignette(package = 'STADEM')`
+
 ## Authors
 
 STADEM is a collaborative project, with the primary contributors being:
