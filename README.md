@@ -7,7 +7,7 @@ This package contains functions to query and summarise the necessary data to fit
 
 ## Installation instructions
 
-To install `r STADEM` you can use Hadley Wickham's `r devtools` package. To install and load the devtools package use:
+To install `STADEM` you can use Hadley Wickham's `devtools` package. To install and load the devtools package use:
 
 ```{r}
 install.packages("devtools")
@@ -18,7 +18,7 @@ NOTE: To use devtools, you may also have to download and install Rtools (althoug
 
 Once devtools is successfully installed, use the following to install SCOBI:
 
-`r devtools::install_github("KevinSee/STADEM", build_vignettes = TRUE)`
+`devtools::install_github("KevinSee/STADEM", build_vignettes = TRUE)`
 
 STADEM requires the JAGS software (**J**ust **A**nother **G**ibbs **S**ampler). This can be downloaded here:
 
