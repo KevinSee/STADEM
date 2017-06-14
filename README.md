@@ -5,6 +5,29 @@ The primary goal of this project is to estimate total adult escapement of spring
 
 This package contains functions to query and summarise the necessary data to fit a STADEM model, as well as write the JAGS model and run it using the jagsUI package in R. Some of the functions can be applied to other dams, and we are actively working to be able to run STADEM at locations other than Lower Granite Dam.
 
+## Installation instructions
+
+To install `r STADEM` you can use Hadley Wickham's `r devtools` package. To install and load the devtools package use:
+
+```{r}
+install.packages("devtools")
+library(devtools)
+```
+
+NOTE: To use devtools, you may also have to download and install Rtools (although you shouldn't). The latest version on Rtools can be found at https://cran.r-project.org/bin/windows/Rtools/
+
+Once devtools is successfully installed, use the following to install SCOBI:
+
+`r devtools::install_github("KevinSee/STADEM", build_vignettes = TRUE)`
+
+STADEM requires the JAGS software (**J**ust **A**nother **G**ibbs **S**ampler). This can be downloaded here:
+
+https://sourceforge.net/projects/mcmc-jags/files/
+
+Please download version >= 4.0.0
+
+## Authors
+
 STADEM is a collaborative project, with the primary contributors being:
 
 * Kevin See (Quantitative Consultants Inc.)
@@ -12,10 +35,3 @@ STADEM is a collaborative project, with the primary contributors being:
 * Rick Orme (Nez Perce Tribe)
 * Mike Ackerman (Quantitative Consultants Inc.)
 
-## Required Software
-
-STADEM requires the JAGS software (**J**ust **A**nother **G**ibbs **S**ampler). This can be downloaded here:
-
-https://sourceforge.net/projects/mcmc-jags/files/
-
-Please download version >= 4.0.0
