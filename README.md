@@ -18,7 +18,7 @@ library(devtools)
 
 NOTE: To use devtools, you may also have to download and install Rtools (although you shouldn't). The latest version on Rtools can be found at https://cran.r-project.org/bin/windows/Rtools/
 
-Once devtools is successfully installed, use the following to install SCOBI:
+Once devtools is successfully installed, use the following to install STADEM:
 
 `devtools::install_github("KevinSee/STADEM", build_vignettes = TRUE)`
 
@@ -28,7 +28,7 @@ https://sourceforge.net/projects/mcmc-jags/files/
 
 Please download version >= 4.0.0
 
-Further instructions on how to use STADEM can be found in the package vignette, accessed by typing `vignette(package = 'STADEM')`
+Further instructions on how to use STADEM can be found in the package vignette, accessed by typing `browseVignettes(package = 'STADEM')`
 
 ## Authors
 
