@@ -15,6 +15,7 @@
 #' @param sthd_type should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.
 #' @param sthd_B_run should numbers of B run steelhead be reported? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.
 #' @param trap_db_file file path where a csv file containing the data from the fish trap is located
+#' @param useDARTrate should the DART query for the trap rate be used? Default is \code{FALSE}, which implies the trap rate is estimated by PIT tags.
 #' @param trap_rate_cv constant coefficient of variation (CV) that should be applied to estimates of trap rate queried by DART. Default value is \code{0}.
 #' @param trap_rate_dist distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space.
 #'
@@ -34,6 +35,7 @@ summSTADEM = function(yr,
                       sthd_type = c('all', 'unclipped'),
                       sthd_B_run = FALSE,
                       trap_db_file = NULL,
+                      useDARTrate = F,
                       trap_rate_cv = 0,
                       trap_rate_dist = c('beta', 'logit')) {
 
@@ -100,16 +102,6 @@ summSTADEM = function(yr,
   #--------------------------------------------------------
   # Query trap rate from DART
   cat('Estimating trap rate\n')
-  # trap_rate_dart = queryTrapRate(week_strata,
-  #                                spp = spp,
-  #                                return_weekly = T)
-  #
-  # # process for STADEM
-  # # impose constant CV on trap rate estimates
-  # trap_rate = trap_rate_dart %>%
-  #   dplyr::mutate(trap_rate = ActualRateInclusiveTime,
-  #                 # add some error
-  #                 trap_rate_se = trap_rate * trap_rate_cv)
 
   # estimate trap rate from PIT tags
   trap_rate = tagTrapRate(trap_dataframe = trap_yr,
@@ -124,6 +116,19 @@ summSTADEM = function(yr,
            week_num,
            trap_open,
            everything())
+
+  # to use DART trap rate instead
+  # impose constant CV on trap rate estimates
+  if(useDARTrate) {
+    trap_rate = trap_rate %>%
+      left_join(queryTrapRate(week_strata,
+                              spp = spp,
+                              return_weekly = T)) %>%
+      dplyr::mutate(trap_rate = ActualRateInclusiveTime,
+                    # add some error
+                    trap_rate_se = trap_rate * trap_rate_cv)
+  }
+
 
   if(trap_rate_dist == 'beta') {
     trap_rate = trap_rate %>%
