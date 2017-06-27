@@ -43,7 +43,7 @@ runJAGSmodel = function(file_name = NULL,
                  win_model)
 
   # which parameters to save
-  jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma', 'true.prop', 'win.prop.true', 'win.prop.sigma', 'reasc.true', 'reasc.sigma', 'org.prop', 'org.sigma', 'trap.rate.true', 'prop.tagged')
+  jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma', 'day.true', 'day.sigma', 'reasc.true', 'reasc.sigma', 'org.prop', 'org.sigma', 'trap.rate.true', 'prop.tagged')
 
   if(win_model == 'neg_bin')  jags_params = c(jags_params, 'r', 'k')
   if(win_model == 'neg_bin2')  jags_params = c(jags_params, 'theta', 'omega')
