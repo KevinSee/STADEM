@@ -20,20 +20,20 @@
 #' @import jagsUI
 #' @export
 #' @return NULL
-#' @examples #runJAGSmodel()
-#'
-runJAGSmodel = function(file_name = NULL,
-                        mcmc_chainLength = 100,
-                        mcmc_burn = 10,
-                        mcmc_thin = 2,
-                        mcmc_chains = 1,
-                        jags_data = NULL,
-                        weekly_params = FALSE,
-                        seed = NULL,
-                        verbose = FALSE,
-                        parallel = TRUE,
-                        DIC = FALSE,
-                        win_model = c('neg_bin', 'neg_bin2', 'pois', 'quasi_pois')) {
+#' @examples #runSTADEMmodel()
+
+runSTADEMmodel = function(file_name = NULL,
+                          mcmc_chainLength = 100,
+                          mcmc_burn = 10,
+                          mcmc_thin = 2,
+                          mcmc_chains = 1,
+                          jags_data = NULL,
+                          weekly_params = FALSE,
+                          seed = NULL,
+                          verbose = FALSE,
+                          parallel = TRUE,
+                          DIC = FALSE,
+                          win_model = c('neg_bin', 'neg_bin2', 'pois', 'quasi_pois')) {
 
   # which distribution is used to model window counts?
   win_model = match.arg(win_model)
@@ -62,7 +62,7 @@ runJAGSmodel = function(file_name = NULL,
   jags_model = try(jags(data = jags_data,
                         inits = jags_inits,
                         parameters.to.save = jags_params,
-                        model.file = model_file,
+                        model.file = file_name,
                         n.chains = mcmc_chains,
                         n.burnin = mcmc_burn,
                         n.thin = mcmc_thin,
