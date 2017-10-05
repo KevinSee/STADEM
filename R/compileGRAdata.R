@@ -6,8 +6,8 @@
 #'
 #' @param yr spawn year.
 #' @param spp species to focus on. Currently the possible choices are: \code{Chinook} or \code{Steelhead}
-#' @param dam the dam code. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)
-#' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA).
+#' @param dam the dam code. Currently only set up for Lower Granite (\code{LWG}). Other possible codes to be implemented in the future are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)
+#' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (\code{GRA}).
 #' @param strata_beg 3 letter code for the day of the week each weekly strata should begin on.
 #' @param start_day date (\code{month / day}) when query should start
 #' @param end_day date (\code{month / day}) when query should end
@@ -22,22 +22,23 @@
 #' @import lubridate dplyr boot
 #' @export
 #' @return NULL
-#' @examples summSTADEM(2012)
+#' @examples compileGRAdata(2012)
 
-summSTADEM = function(yr,
-                      spp = c('Chinook', 'Steelhead'),
-                      dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
-                      damPIT = 'GRA',
-                      strata_beg = NULL,
-                      start_day = NULL,
-                      end_day = NULL,
-                      incl_jacks = F,
-                      sthd_type = c('all', 'unclipped'),
-                      sthd_B_run = FALSE,
-                      trap_db_file = NULL,
-                      useDARTrate = F,
-                      trap_rate_cv = 0,
-                      trap_rate_dist = c('beta', 'logit')) {
+compileGRAdata = function(yr,
+                          spp = c('Chinook', 'Steelhead'),
+                          # dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
+                          dam = c('LWG'),
+                          damPIT = 'GRA',
+                          strata_beg = NULL,
+                          start_day = NULL,
+                          end_day = NULL,
+                          incl_jacks = F,
+                          sthd_type = c('all', 'unclipped'),
+                          sthd_B_run = FALSE,
+                          trap_db_file = NULL,
+                          useDARTrate = F,
+                          trap_rate_cv = 0,
+                          trap_rate_dist = c('beta', 'logit')) {
 
   # need a year
   stopifnot(!is.null(yr))
@@ -45,6 +46,10 @@ summSTADEM = function(yr,
   # if not provided, set a few defaults
   spp = match.arg(spp)
   dam = match.arg(dam)
+  if(dam != 'LWG') {
+    stop('Currently only works for Lower Granite (code LWG)')
+  }
+
   sthd_type = match.arg(sthd_type)
   trap_rate_dist = match.arg(trap_rate_dist)
 
@@ -147,7 +152,7 @@ summSTADEM = function(yr,
       # set up parameters describing trap rate as a logit distribution
       dplyr::mutate(trap_mu = ifelse(trap_open, boot::logit(trap_rate), 1e-12),
                     trap_sd = ifelse(trap_open, (1 / n_trap) + (1 / (n_tot - n_trap)), 0)) %>%
-                    # trap_sd = ifelse(trap_open, boot::logit(trap_rate_se), 0)) %>%
+      # trap_sd = ifelse(trap_open, boot::logit(trap_rate_se), 0)) %>%
       dplyr::select(Start_Date, week_num, matches('^trap')) %>%
       dplyr::distinct()
   }
