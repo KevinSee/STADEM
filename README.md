@@ -9,6 +9,12 @@ This package contains functions to query and summarise the necessary data to fit
 
 ## Installation instructions
 
+`STADEM` requires several packages that are available through the `tidyverse` package. You can install all the necessary packages by using:
+
+```{r}
+install.packages("tidyverse", "rjags", "jagsUI")
+```
+
 To install `STADEM` you can use Hadley Wickham's `devtools` package. To install and load the devtools package use:
 
 ```{r}
