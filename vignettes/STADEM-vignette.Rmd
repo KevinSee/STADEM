@@ -1,33 +1,195 @@
 ---
 title: "STADEM Vignette"
 author: "Kevin E. See"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{STADEM}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+date: '`r Sys.Date()`'
+output:
+  rmarkdown::html_vignette:
+    toc: yes
+    fig_caption: yes
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    fig_caption: yes
 references:
-- id: Linden2011
-  title: Using the negative binomial distribution to model overdispersion in ecological count data
-  author:
+- author:
   - family: Lindén
     given: Andreas
   - family: Mäntyniemi
     given: Samu
   container-title: Ecology
-  volume: 92
+  id: Linden2011
   issue: 4
-  page: 1414-1421
-  publisher: Ecologial Society of America
-  type: article-journal
   issued:
     year: 2011
+  page: 1414-1421
+  publisher: Ecologial Society of America
+  title: Using the negative binomial distribution to model overdispersion in ecological
+    count data
+  type: article-journal
+  volume: 92
+vignette: "%\\VignetteIndexEntry{STADEM} \n%\\VignetteEngine{knitr::rmarkdown} \n%\\VignetteEncoding{UTF-8}\n"
 ---
 
 ```{r setUp_options, echo = F, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 ```
+
+```{r stadem_model_fig, echo = F}
+library(ggplot2)
+library(ggpubr)
+
+# function to extract the legend from a plot
+g_legend <- function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)}
+
+
+arrow_length = grid::unit(0.15, 'inches')
+my_xlim = c(-3, 7.5)
+my_ylim = c(0.05, 0.9)
+plot_df = data.frame(x = c(-5, 8))
+
+p1 = ggplot(plot_df,
+            aes(x)) +
+  stat_function(fun = dnorm,
+                args = list(mean = 4, sd = 0.5),
+                aes(color = 'Daytime Fish'),
+                lwd = 2) +
+  scale_color_brewer(palette = 'Set1') +
+  geom_vline(xintercept = 4,
+             linetype = 2) +
+  coord_cartesian(xlim = my_xlim,
+                  ylim = my_ylim) +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = 'none') +
+  labs(x = 'Escapement',
+       y = 'Density',
+       color = 'Fish Type',
+       title = 'Daytime Fish')
+
+p2 = ggplot(plot_df,
+            aes(x)) +
+  stat_function(fun = dnorm,
+                args = list(mean = 4, sd = 0.5),
+                aes(color = 'Daytime Fish'),
+                lwd = 2) +
+  stat_function(fun = dnorm,
+                args = list(mean = 6, sd = 0.55),
+                aes(color = 'Total Fish'),
+                lwd = 2) +
+  geom_segment(x = 4,
+               y = 0.85,
+               xend = 6,
+               yend = 0.85,
+               arrow = arrow(length=arrow_length)) +
+  scale_color_brewer(palette = 'Set1') +
+  geom_vline(xintercept = 4,
+             linetype = 2) +
+  coord_cartesian(xlim = my_xlim,
+                  ylim = my_ylim) +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = 'none') +
+  labs(x = 'Escapement',
+       y = 'Density',
+       color = 'Fish Type',
+       title = 'Including Night Passage')
+
+p3 = ggplot(plot_df,
+            aes(x)) +
+  stat_function(fun = dnorm,
+                args = list(mean = 4, sd = 0.5),
+                aes(color = 'Daytime Fish'),
+                lwd = 2) +
+  stat_function(fun = dnorm,
+                args = list(mean = 6, sd = 0.55),
+                aes(color = 'Total Fish'),
+                lwd = 2) +
+  stat_function(fun = dnorm,
+                args = list(mean = 5, sd = 0.6),
+                aes(color = 'Unique Fish'),
+                lwd = 2) +
+  geom_segment(x = 6,
+               y = 0.85,
+               xend = 5,
+               yend = 0.85,
+               arrow = arrow(length=arrow_length)) +
+  scale_color_brewer(palette = 'Set1') +
+  geom_vline(xintercept = 4,
+             linetype = 2) +
+  coord_cartesian(xlim = my_xlim,
+                  ylim = my_ylim) +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = 'none') +
+  labs(x = 'Escapement',
+       y = 'Density',
+       color = 'Fish Type',
+       title = 'Account for Reascension')
+
+p4 = ggplot(plot_df,
+            aes(x)) +
+  stat_function(fun = dnorm,
+                args = list(mean = 4, sd = 0.5),
+                aes(color = 'Daytime Fish'),
+                lwd = 2) +
+  stat_function(fun = dnorm,
+                args = list(mean = 6, sd = 0.55),
+                aes(color = 'Total Fish'),
+                lwd = 2) +
+  stat_function(fun = dnorm,
+                args = list(mean = 5, sd = 0.6),
+                aes(color = 'Unique Fish'),
+                lwd = 2) +
+  stat_function(fun = dnorm,
+                args = list(mean = -1, sd = 0.75),
+                aes(color = 'Unique Wild Fish'),
+                lwd = 2) +
+  geom_segment(x = 5,
+               y = 0.85,
+               xend = -1,
+               yend = 0.85,
+               arrow = arrow(length=arrow_length)) +
+  scale_color_brewer(palette = 'Set1') +
+  geom_vline(xintercept = 4,
+             linetype = 2) +
+  coord_cartesian(xlim = my_xlim,
+                  ylim = my_ylim) +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = 'bottom') +
+  labs(x = 'Escapement',
+       y = 'Density',
+       color = 'Fish Type',
+       title = 'Proportion Wild')
+
+mylegend = g_legend(p4)
+
+examp_p = ggarrange(ggarrange(p1, p2, p3, p4 + theme(legend.position = 'none'),
+                              labels = c('A', 'B', 'C', 'D'),
+                              ncol = 2,
+                              nrow = 2),
+                    mylegend,
+                    labels = NULL,
+                    heights = c(5, 0.5),
+                    ncol = 1,
+                    nrow = 2)
+```
+
+```{r fig_tab_captions, echo = F}
+library(captioner)
+# set up figure and table number functions
+# tab_nums = captioner(prefix = 'Table')
+fig_nums = captioner()
+
+stadem_examp_fig = fig_nums('stadem_examp_fig',
+                            'Schematic of how the STADEM model works. Panel A shows the posterior of the estimate of fish crossing while the window is open (dashed line shows observed window counts). That estimate is divided by the nighttime passage rate (B). The total fish is then discounted by the reascension rate to estimate unique fish (C). Those unique fish are then multiplied by the proportion of wild fish (D), to estimate unique wild fish. ')
+
+```
+
 
 # Introduction
 
@@ -35,27 +197,57 @@ The STADEM package was developed with the goal of estimating total adult escapem
 
 Some of the data needed for STADEM is available at other dams, and the package developers are currently working to develop the ability to query all of the necessary data at other locations. Currently however, the focus remains on Lower Granite dam, the furthest upstream dam returning salmonids encounter on the journey up the Snake River. The following example will show how to run STADEM for one species and one year, and what some of the output looks like.
 
-# Data Sources
+# System requirements
+
+STADEM relies on the following R packages which can be downloaded via [CRAN](https://cran.r-project.org/web/packages/available_packages_by_name.html) or by using the function `install.packages()`:
+
+* `dplyr`, `lubridate`, `httr`: can all be installed by installing the `tidyverse` package
+* `rjags`
+* `jagsUI`
+* `boot`
+
+In addition, STADEM requires the [JAGS software](https://sourceforge.net/projects/mcmc-jags/files/) (Just Another Gibbs Sampler). Please download version >= 4.0.0 via the former link.
+
+# Data sources
 
 STADEM relies on several pieces of data, which must be compiled from multiple sources. Many of them are accessed through the Columbia Basin Research Data Access in Real Time ([DART](http://www.cbr.washington.edu/dart)) website.
 
 * **Window counts** are available through DART for many dams within the Columbia River basin.
 * **Trap data** comes from an adult fish trap. This provides biological information (e.g., origin, genetic stock, age, sex) to allow the decomposition of total escapement into specific groups, as well as a secondary estimate of total escapement, if the trap rate is known or can be reliably estimated.
-* **PIT-tag data** comes from fish that were previously PIT tagged, either as juveniles or as adults at one of the dams downstream of Lower Granite. These fish provide information about the proportion of the run that crosses the dam at night, when the counting window is closed, as well as the proportion of the run that has fallen back and re-ascended the dam.
+* **PIT-tag data** comes from fish that were previously PIT tagged, either as juveniles or as adults at one of the dams downstream of Lower Granite. These fish provide information about the proportion of the run that crosses the dam at night, when the counting window is closed, as well as the proportion of the run that has fallen back and re-ascended the dam. This data is also available through DART.
+
+# High-level overview
+
+STADEM estimates the total number of fish crossing the dam each week, based on two major data sources: the window counts and the total fish in the trap, while also accounting for two known biological processes: night-time passage and fallback-and-reacension. Using a state-space approach, STADEM assumes that the window counts and the estimates from the trap (fish in the trap divided by trap rate that week) are generated by processes with observation error. In the case of the window counts, there is some inherent error in the counting process, and it fails to account for fish that cross the dam while the window is closed. In the case of the trap, there is sampling variation and uncertainty in what the realized trap rate is. In addition, STADEM accounts for potential double-counting of fish that have fallen back and re-ascended the dam. It then partitions the estimate of total fish over the dam by origin, to provide the needed data for management goals (`r fig_nums('stadem_examp_fig', display = 'c')`).
+
+```{r stadem_model_figure, echo = F, fig.height = 6, fig.width = 6, fig.cap = fig_nums('stadem_examp_fig')}
+plot(examp_p)
+```
+
+\newpage
 
 # Compiling data
 
-The STADEM package relies on many functions from two other packages, `lubridate` for dates and intervals, and `tidyverse` for many data manipulation functions.
+The STADEM package relies on many functions from two other packages, `tidyverse` for many data manipulation functions and `lubridate` for dates and intervals.
 
 ```{r load_packages}
-library(lubridate)
 library(tidyverse)
+library(lubridate)
 library(STADEM)
+library(jagsUI)
 ```
 
-The STADEM package makes it easy to compile all the necessary data in one convenient function, `summSTADEM`. The user provides the spawn year and species (either "Chinook" or "Steelhead") they are interested in. STADEM operates on a weekly time-step, and the user has the option to determine the day of the week that most strata will begin on, using the `strata_beg` arguement. There are periodic messages describing what is being done within `summSTADEM`.
+The STADEM package makes it easy to compile all the necessary data in one convenient function, `compileGRAdata`. The user provides the spawn year and species (either "Chinook" or "Steelhead") they are interested in. STADEM operates on a weekly time-step, and the user has the option to determine the day of the week that most strata will begin on, using the `strata_beg` arguement. There are periodic messages describing what is being done within `compileGRAdata`. Within `compileGRAdata`, several internal functions are being called, which may be utilized with the STADEM package for other purposes. They include:
 
-```{r compile_data, eval = T, cache = T}
+* `getWindowCounts`: query DART for window counts at various dams
+* `queryPITtagData`: query DART for data about PIT tags exhibiting night-time passage and fallback/reascension behavior
+* `weeklyStrata`: divide season into weekly strata, with the user defining the day of the week each strata should begin with
+* `summariseLGRtrapDaily`: summarise on a daily time-step the .csv file contained within the Lower Granite Dam trap database
+* `tagTrapRate`: estimate the fish trap rate based on proportion of PIT tags known to have crossed the dam were caught in the adult trap
+* `queryTrapRate`: query DART for intended and realized trap rates, based on time the trap is open
+
+
+```{r compile_data, eval = T, cache = T, results = 'hide'}
 # what spawning year? (2010 - 2016)
 yr = 2014
 
@@ -63,12 +255,19 @@ yr = 2014
 spp = c('Chinook', 'Steelhead')[1]
 
 # pull together all data
-stadem_list = summSTADEM(yr = yr,
-                         spp = spp,
-                         strata_beg = 'Sun')
+stadem_list = compileGRAdata(yr = yr,
+                             spp = spp,
+                             strata_beg = 'Sun')
 ```
 
-The `summSTADEM()` function returns several pieces of information, consolidated into a named list called `stadem_list`:
+```{r fig_cap2, echo = F}
+jags_fit_fig = fig_nums('jags_fit_fig',
+                        paste('Time-series plot showing estimates of total escapement for',
+                              spp, 'in', yr, ', including raw window counts, window counts adjusted for nighttime passage, trap estimates and STADEM estimates.'))
+
+```
+
+The `compileGRAdata()` function returns several pieces of information, consolidated into a named list we have called `stadem_list`:
 
 * `weekStrata`: weekly strata for STADEM, which are `interval` objects from the `lubridate` package.
 * `trapData`: data from adult fish trap.
@@ -84,11 +283,22 @@ jags_data_list = prepJAGS(stadem_list[['weeklyData']])
 
 # Run STADEM
 
-Part of the function `runJAGSmodel` writes the JAGS model. This requires a filename, and the type of model the user would like to use to model the window counts. The options are Poisson (`pois`), negative binomial (`neg_bin`), or a more flexible type of negative binomial, described in @Linden2011 (`neg_bin2`), or quasi-Poisson (`quasi_pois`). Once those have been set, 
+Part of the function `runJAGSmodel` writes the JAGS model. This requires a filename, and the type of statistical distribution the user would like to use to model the window counts. The options are Poisson (`pois`), negative binomial (`neg_bin`), or a more flexible type of negative binomial, described in @Linden2011 (`neg_bin2`), or quasi-Poisson (`quasi_pois`). Once those have been set, use the `runSTADEMmodel` function to run the model in JAGS. Some of the inputs to this function are:
+
+* `file_name` name of text file to write the JAGS model to (should end in .txt)
+* `mcmc_chainlength` length of MCMC chain
+* `mcmc_burn` length of burn-in period for MCMC chain
+* `mcmc_thin` thinning rate for with samples of MCMC chain to keep
+* `mcmc_chains` how many independent chains to run
+* `jags_data` list of data compiled for JAGS, returned by `prepJAGS` function
+* `seed` input to `set.seed` function to make the results exactly reproducible
+* `weekly_params` Should weekly estimates of escapement be saved, or only season-wide totals?
+* `win_model` statistical distribution used to model the window counts
+
 
 ```{r run_JAGS_model, cache = T}
 # name of JAGS model to write
-model_file = 'STADEM_JAGS_model.txt'
+model_file_nm = 'STADEM_JAGS_model.txt'
 
 # what distribution to use for window counts?
 win_model = c('pois', 'neg_bin', 'neg_bin2', 'quasi_pois')[2]
@@ -96,28 +306,28 @@ win_model = c('pois', 'neg_bin', 'neg_bin2', 'quasi_pois')[2]
 #-----------------------------------------------------------------
 # run STADEM model
 #-----------------------------------------------------------------
-mod = runJAGSmodel(model_file,
-                   mcmc_chainLength = 40000,
-                   mcmc_burn = 10000,
-                   mcmc_thin = 30,
-                   mcmc_chains = 4,
-                   jags_data = jags_data_list,
-                   seed = 5,
-                   weekly_params = T,
-                   win_model = win_model)
+mod = runSTADEMmodel(file_name = model_file_nm,
+                     mcmc_chainLength = 40000,
+                     mcmc_burn = 10000,
+                     mcmc_thin = 30,
+                     mcmc_chains = 4,
+                     jags_data = jags_data_list,
+                     seed = 5,
+                     weekly_params = T,
+                     win_model = win_model)
 
 ```
 
 # STADEM output
 
-The JAGS object returned by `runJAGSmodel` contains many parameter estimates. Some of the most important are the total escapement of various fish.
+The JAGS object returned by `runSTADEMmodel` contains many parameter estimates. Some of the most important are the total escapement of various fish.
 
 ```{r summary_total_escapement}
 mod$summary[grep('X.tot', rownames(mod$summary)),] %>%
   pander::pander()
 ```
 
-A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates.
+A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates (`r fig_nums('jags_fit_fig', display = 'c')`).
 
 ```{r compile_time-series_data}
 library(stringr)
@@ -134,7 +344,7 @@ week_est = mod$summary[grep('^X.all', rownames(mod$summary)),] %>%
               mutate(week = 1:n()))
 ```
 
-```{r time-series_plot, fig.height = 5, fig.width = 7}
+```{r time-series_plot, fig.height = 5, fig.width = 7, fig.cap = fig_nums('jags_fit_fig')}
 # plot time-series of model estimates, window counts and trap estimates
 week_est %>%
   filter(param == 'all') %>%
@@ -149,9 +359,9 @@ week_est %>%
   geom_point(aes(y = win_cnt / (day_tags / tot_tags),
                  color = 'Window (adj)')) +
   geom_line(aes(y = win_cnt,
-                color = 'Window')) +
+                color = 'Window (raw)')) +
   geom_point(aes(y = win_cnt,
-                 color = 'Window')) +
+                 color = 'Window (raw)')) +
   geom_line(aes(y = trap_est,
                 color = 'Trap')) +
   geom_point(aes(y = trap_est,
@@ -159,11 +369,11 @@ week_est %>%
   geom_line(aes(color = 'Model')) +
   geom_point(aes(color = 'Model')) +
   scale_color_manual(values = c('Model' = 'black',
-                                'Window' = 'lightblue',
+                                'Window (raw)' = 'lightblue',
                                 'Window (adj)' = 'blue',
                                 'Trap' = 'red')) +
-  theme(legend.position = 'bottom') +
   theme_bw() +
+  theme(legend.position = 'bottom') +
   labs(x = 'Date',
        y = 'Estimate',
        color = 'Source',
