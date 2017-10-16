@@ -3,13 +3,16 @@ title: "STADEM Vignette"
 author: "Kevin E. See"
 date: '`r Sys.Date()`'
 output:
-  rmarkdown::html_vignette:
+  html_document:
     toc: yes
-    fig_caption: yes
+    toc_depth: '3'
   pdf_document:
+    fig_caption: yes
     toc: yes
     toc_depth: 3
+  rmarkdown::html_vignette:
     fig_caption: yes
+    toc: yes
 references:
 - author:
   - family: Lindén
