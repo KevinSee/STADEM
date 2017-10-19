@@ -13,6 +13,7 @@
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
 #' @import lubridate readr httr dplyr
+#' @export
 #' @return NULL
 #' @examples queryWindowCnts(spawn_yr = 2015)
 
