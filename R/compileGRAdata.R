@@ -111,16 +111,16 @@ compileGRAdata = function(yr,
   # estimate trap rate from PIT tags
   trap_rate = tagTrapRate(trap_dataframe = trap_yr,
                           week_strata = week_strata) %>%
-    mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
-    left_join(tibble(Start_Date = int_start(week_strata),
-                     week_num = 1:length(week_strata))) %>%
-    rename(trap_rate = rate,
-           trap_rate_se = rate_se) %>%
-    mutate(Start_Date = ymd(Start_Date)) %>%
-    select(Start_Date,
-           week_num,
-           trap_open,
-           everything())
+    dplyr::mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
+    dplyr::left_join(tibble(Start_Date = int_start(week_strata),
+                            week_num = 1:length(week_strata))) %>%
+    dplyr::rename(trap_rate = rate,
+                  trap_rate_se = rate_se) %>%
+    dplyr::mutate(Start_Date = ymd(Start_Date)) %>%
+    dplyr::select(Start_Date,
+                  week_num,
+                  trap_open,
+                  everything())
 
   # to use DART trap rate instead
   # impose constant CV on trap rate estimates
