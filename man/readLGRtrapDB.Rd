@@ -4,10 +4,10 @@
 \alias{readLGRtrapDB}
 \title{LGR Trap Database}
 \usage{
-readLGRtrapDB(filepath = NULL, date_range = NULL)
+readLGRtrapDB(trap_path = NULL, date_range = NULL)
 }
 \arguments{
-\item{filepath}{path to the LGR trap database as csv file}
+\item{trap_path}{file path where a csv file containing the data from the fish trap is located}
 
 \item{date_range}{vector of length 2, with minimum and maximum dates to read.}
 }

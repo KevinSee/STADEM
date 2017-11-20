@@ -4,7 +4,7 @@
 #'
 #' @author Kevin See
 #'
-#' @param filepath path to the LGR trap database as csv file
+#' @param trap_path file path where a csv file containing the data from the fish trap is located
 #' @param date_range vector of length 2, with minimum and maximum dates to read.
 #'
 #' @import lubridate dplyr
@@ -12,16 +12,18 @@
 #' @return NULL
 #' @examples # do not run; #readLGRtrapDB()
 
-readLGRtrapDB = function(filepath = NULL,
+readLGRtrapDB = function(trap_path = NULL,
                          date_range = NULL) {
 
-  stopifnot(!is.null(filepath))
+  stopifnot(!is.null(trap_path))
 
-  lgr_trap = read.csv(filepath) %>%
+  lgr_trap = read.csv(trap_path) %>%
     tbl_df() %>%
     dplyr::rename(Tag.ID = LGDNumPIT) %>%
     dplyr::mutate(Date = floor_date(ymd_hms(CollectionDate), unit = 'day'),
                   SppCode = LGDSpecies,
+                  Tag.ID = as.character(Tag.ID),
+                  Tag.ID = ifelse(nchar(Tag.ID) < 3, NA, Tag.ID),
                   # try to correct some incorrect species codes
                   SppCode = ifelse(LGDSpecies != PtagisSpecies & GenSpecies %in% c(1, 3), as.integer(as.character(GenSpecies)), SppCode),
                   Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', NA))) %>%
