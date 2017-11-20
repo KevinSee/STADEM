@@ -7,7 +7,7 @@
 compileGRAdata(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG"),
   damPIT = "GRA", strata_beg = NULL, start_day = NULL, end_day = NULL,
   incl_jacks = F, sthd_type = c("all", "unclipped"), sthd_B_run = FALSE,
-  trap_db_file = NULL, useDARTrate = F, trap_rate_cv = 0,
+  trap_path = NULL, useDARTrate = F, trap_rate_cv = 0,
   trap_rate_dist = c("beta", "logit"))
 }
 \arguments{
@@ -31,7 +31,7 @@ compileGRAdata(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG"),
 
 \item{sthd_B_run}{should numbers of B run steelhead be reported? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.}
 
-\item{trap_db_file}{file path where a csv file containing the data from the fish trap is located}
+\item{trap_path}{file path where a csv file containing the data from the fish trap is located}
 
 \item{useDARTrate}{should the DART query for the trap rate be used? Default is \code{FALSE}, which implies the trap rate is estimated by PIT tags.}
 

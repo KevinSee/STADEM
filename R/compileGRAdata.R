@@ -14,7 +14,7 @@
 #' @param incl_jacks should jacks be included in the window count totals? \code{T / F}
 #' @param sthd_type should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.
 #' @param sthd_B_run should numbers of B run steelhead be reported? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.
-#' @param trap_db_file file path where a csv file containing the data from the fish trap is located
+#' @param trap_path file path where a csv file containing the data from the fish trap is located
 #' @param useDARTrate should the DART query for the trap rate be used? Default is \code{FALSE}, which implies the trap rate is estimated by PIT tags.
 #' @param trap_rate_cv constant coefficient of variation (CV) that should be applied to estimates of trap rate queried by DART. Default value is \code{0}.
 #' @param trap_rate_dist distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space.
@@ -35,7 +35,7 @@ compileGRAdata = function(yr,
                           incl_jacks = F,
                           sthd_type = c('all', 'unclipped'),
                           sthd_B_run = FALSE,
-                          trap_db_file = NULL,
+                          trap_path = NULL,
                           useDARTrate = F,
                           trap_rate_cv = 0,
                           trap_rate_dist = c('beta', 'logit')) {
@@ -85,13 +85,13 @@ compileGRAdata = function(yr,
 
   # read in data for Chinook and steelhead
   cat('Getting LGR trap data\n')
-  if(!is.null(trap_db_file)) {
-    trap_yr = readLGRtrapDB(filepath = trap_db_file,
+  if(!is.null(trap_path)) {
+    trap_yr = readLGRtrapDB(trap_path = trap_path,
                             date_range = c(ymd(int_start(week_strata[1])),
                                            ymd(int_end(week_strata[length(week_strata)]) + dseconds(1))))
   }
 
-  if(is.null(trap_db_file)) {
+  if(is.null(trap_path)) {
     trap_yr = lgr_trap %>%
       # filter for date range
       filter(Date >= ymd(int_start(week_strata[1])),
