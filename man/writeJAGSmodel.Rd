@@ -5,12 +5,14 @@
 \title{Write JAGS model}
 \usage{
 writeJAGSmodel(file_name = NULL, win_model = c("neg_bin", "neg_bin2",
-  "pois", "quasi_pois"))
+  "pois", "quasi_pois"), trap_est = T)
 }
 \arguments{
 \item{file_name}{name (with file path) to save the model as}
 
 \item{win_model}{what type of distribution should be used when modeling the window counts. \code{neg_bin} is a standard negative binomial distribution. \code{neg_bin2} is a more flexible version of a negative binomial, allowing the mean-variance relationship to take different forms. \code{pois} is a Poisson distribution. \code{quasi_pois} is the quasi-Poisson distribution.}
+
+\item{trap_est}{should an estimate of escapement based on the adult fish trap rate be used as a second observation of true total escapement, together with the window counts? Default is \code{TRUE}. If \code{FALSE}, \code{win_model} is automatically set to \code{pois}.}
 }
 \description{
 Writes a text file version of the model to be used by JAGS

@@ -6,17 +6,23 @@
 #'
 #' @param file_name name (with file path) to save the model as
 #' @param win_model what type of distribution should be used when modeling the window counts. \code{neg_bin} is a standard negative binomial distribution. \code{neg_bin2} is a more flexible version of a negative binomial, allowing the mean-variance relationship to take different forms. \code{pois} is a Poisson distribution. \code{quasi_pois} is the quasi-Poisson distribution.
+#' @param trap_est should an estimate of escapement based on the adult fish trap rate be used as a second observation of true total escapement, together with the window counts? Default is \code{TRUE}. If \code{FALSE}, \code{win_model} is automatically set to \code{pois}.
 #'
 #' @export
 #' @return NULL
 #' @examples writeJAGSmodel()
 #'
 writeJAGSmodel = function(file_name = NULL,
-                          win_model = c('neg_bin', 'neg_bin2', 'pois', 'quasi_pois')) {
+                          win_model = c('neg_bin', 'neg_bin2', 'pois', 'quasi_pois'),
+                          trap_est = T) {
 
   if(is.null(file_name)) file_name = 'LGR_escapement_JAGS.txt'
 
   win_model = match.arg(win_model)
+
+  if(!trap_est) {
+    win_model = 'pois'
+  }
 
   if(win_model == 'neg_bin') {
     model_code = '
@@ -618,6 +624,10 @@ if(win_model == 'quasi_pois') {
       file = file_name)
 
   model_file = readLines(file_name)
+
+  if(!trap_est) {
+    model_file[seq(grep('# in trap', model_file), length.out = 4)] = paste('#', model_file[seq(grep('# in trap', model_file), length.out = 4)])
+  }
 
   writeLines(model_file, file_name)
 
