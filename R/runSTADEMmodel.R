@@ -4,7 +4,7 @@
 #'
 #' @author Kevin See
 #'
-#' @param file_name name (with file path) of file containing JAGS model
+#' @inheritParams writeJAGSmodel
 #' @param mcmc_chainlength number of total samples in each MCMC chain
 #' @param mcmc_burn number of burn-in samples in each MCMC chain
 #' @param mcmc_thin thinning interval for MCMC samples to save
@@ -15,7 +15,6 @@
 #' @param verbose passed to the \code{jags} function
 #' @param parallel passed to the \code{jags} function
 #' @param DIC passed to the \code{jags} function
-#' @param win_model what type of distribution should be used when modeling the window counts. \code{neg_bin} is a standard negative binomial distribution. \code{neg_bin2} is a more flexible version of a negative binomial, allowing the mean-variance relationship to take different forms. \code{pois} is a Poisson distribution. \code{quasi_pois} is the quasi-Poisson distribution.
 #'
 #' @import jagsUI
 #' @export
@@ -33,14 +32,16 @@ runSTADEMmodel = function(file_name = NULL,
                           verbose = FALSE,
                           parallel = TRUE,
                           DIC = FALSE,
-                          win_model = c('neg_bin', 'neg_bin2', 'pois', 'quasi_pois')) {
+                          win_model = c('neg_bin', 'neg_bin2', 'pois', 'quasi_pois'),
+                          trap_est = TRUE) {
 
   # which distribution is used to model window counts?
   win_model = match.arg(win_model)
 
   # write the JAGS model
   writeJAGSmodel(file_name,
-                 win_model)
+                 win_model,
+                 trap_est)
 
   # which parameters to save
   jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma', 'day.true', 'day.sigma', 'reasc.true', 'reasc.sigma', 'org.prop', 'org.sigma', 'trap.rate.true', 'prop.tagged')
