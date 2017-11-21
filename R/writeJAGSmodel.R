@@ -574,10 +574,13 @@ if(win_model == 'quasi_pois') {
       ## What we observe
       ####################################
 
-      gamma ~ dgamma(0.01, 0.01)
+      qp.tau ~ dgamma(0.001, 0.001)
+      qp.sigma <- pow(qp.tau, -2)
+
       for(i in 1:TotLadderWeeks) {
-        # at window: quasi-Poisson
-        Y.window[i] ~ dgamma(X.day[i] / gamma, 1 / gamma)
+        # at window: quasi-Poisson (modeled with random effects for each week)
+        wkRE[i] ~ dnorm(0, qp.tau)
+        Y.window[i] ~ dpois(X.day[i] * exp(wkRE[i]) )
 
         # in trap
         # uncertainty in trap rate

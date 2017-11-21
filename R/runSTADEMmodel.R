@@ -44,14 +44,14 @@ runSTADEMmodel = function(file_name = NULL,
                  trap_est)
 
   # which parameters to save
-  jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma', 'day.true', 'day.sigma', 'reasc.true', 'reasc.sigma', 'org.prop', 'org.sigma', 'trap.rate.true', 'prop.tagged')
+  jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma','day.sigma', 'reasc.sigma', 'org.sigma', 'prop.tagged')
 
   if(win_model == 'neg_bin')  jags_params = c(jags_params, 'r', 'k')
   if(win_model == 'neg_bin2')  jags_params = c(jags_params, 'theta', 'omega')
-  if(win_model == 'quasi_pois')  jags_params = c(jags_params, 'gamma')
+  if(win_model == 'quasi_pois')  jags_params = c(jags_params, 'qp.sigma')
 
   # add some weekly parameters if desired
-  if(weekly_params) jags_params = c(jags_params, 'X.all', 'X.day', 'X.night', 'X.reasc', 'X.all.wild', 'X.all.hatch', 'X.all.hnc', 'X.new.wild', 'X.new.hatch', 'X.new.hnc', 'X.night.wild', 'X.reasc.wild')
+  if(weekly_params) jags_params = c(jags_params, 'X.all', 'X.day', 'X.night', 'X.reasc', 'X.all.wild', 'X.all.hatch', 'X.all.hnc', 'X.new.wild', 'X.new.hatch', 'X.new.hnc', 'X.night.wild', 'X.reasc.wild', 'day.true', 'reasc.true', 'org.prop', 'trap.rate.true')
 
   # set initial values
   jags_inits = vector('list', mcmc_chains)
