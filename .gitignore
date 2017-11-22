@@ -3,7 +3,6 @@
 .RData
 .Ruserdata
 .DS_Store
-Example
 data-raw
 vignettes/STADEM-vignette_cache
 vignettes/STADEM_JAGS_model.txt
