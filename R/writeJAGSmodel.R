@@ -116,9 +116,10 @@ writeJAGSmodel = function(file_name = NULL,
           X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
           X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
 
-          X.new.wild[i] <- round(X.all[i] * org.prop[i,1] * (1 - reasc.true[i]))
-          X.new.hnc[i] <- round(X.all[i] * org.prop[i,2] * (1 - reasc.true[i]))
-          X.new.hatch[i] <- round(X.all[i] * org.prop[i,3] * (1 - reasc.true[i]))
+          X.new.tot[i] <- round(X.all[i] * (1 - reasc.true[i]))
+          X.new.wild[i] <- round(X.new.tot[i] * org.prop[i,1])
+          X.new.hnc[i] <- round(X.new.tot[i] * org.prop[i,2])
+          X.new.hatch[i] <- round(X.new.tot[i] * org.prop[i,3])
 
           X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
           X.night.wild[i] <- X.new.wild[i] * (1 - day.true[i])
@@ -163,6 +164,7 @@ writeJAGSmodel = function(file_name = NULL,
         X.tot.all.hatch <- sum(X.all.hatch)
         X.tot.all.hnc <- sum(X.all.hnc)
 
+        X.tot.new.all <- sum(X.new.tot)
         X.tot.new.wild <- sum(X.new.wild)
         X.tot.new.hatch <- sum(X.new.hatch)
         X.tot.new.hnc <- sum(X.new.hnc)
@@ -267,9 +269,10 @@ if(win_model == 'neg_bin2') {
         X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
         X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
 
-        X.new.wild[i] <- round(X.all[i] * org.prop[i,1] * (1 - reasc.true[i]))
-        X.new.hnc[i] <- round(X.all[i] * org.prop[i,2] * (1 - reasc.true[i]))
-        X.new.hatch[i] <- round(X.all[i] * org.prop[i,3] * (1 - reasc.true[i]))
+        X.new.tot[i] <- round(X.all[i] * (1 - reasc.true[i]))
+        X.new.wild[i] <- round(X.new.tot[i] * org.prop[i,1])
+        X.new.hnc[i] <- round(X.new.tot[i] * org.prop[i,2])
+        X.new.hatch[i] <- round(X.new.tot[i] * org.prop[i,3])
 
         X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
         X.night.wild[i] <- X.new.wild[i] * (1 - day.true[i])
@@ -316,6 +319,7 @@ if(win_model == 'neg_bin2') {
       X.tot.all.hatch <- sum(X.all.hatch)
       X.tot.all.hnc <- sum(X.all.hnc)
 
+      X.tot.new.all <- sum(X.new.tot)
       X.tot.new.wild <- sum(X.new.wild)
       X.tot.new.hatch <- sum(X.new.hatch)
       X.tot.new.hnc <- sum(X.new.hnc)
@@ -416,9 +420,10 @@ if(win_model == 'pois') {
         X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
         X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
 
-        X.new.wild[i] <- round(X.all[i] * org.prop[i,1] * (1 - reasc.true[i]))
-        X.new.hnc[i] <- round(X.all[i] * org.prop[i,2] * (1 - reasc.true[i]))
-        X.new.hatch[i] <- round(X.all[i] * org.prop[i,3] * (1 - reasc.true[i]))
+        X.new.tot[i] <- round(X.all[i] * (1 - reasc.true[i]))
+        X.new.wild[i] <- round(X.new.tot[i] * org.prop[i,1])
+        X.new.hnc[i] <- round(X.new.tot[i] * org.prop[i,2])
+        X.new.hatch[i] <- round(X.new.tot[i] * org.prop[i,3])
 
         X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
         X.night.wild[i] <- X.new.wild[i] * (1 - day.true[i])
@@ -461,6 +466,7 @@ if(win_model == 'pois') {
       X.tot.all.hatch <- sum(X.all.hatch)
       X.tot.all.hnc <- sum(X.all.hnc)
 
+      X.tot.new.all <- sum(X.new.tot)
       X.tot.new.wild <- sum(X.new.wild)
       X.tot.new.hatch <- sum(X.new.hatch)
       X.tot.new.hnc <- sum(X.new.hnc)
@@ -561,9 +567,10 @@ if(win_model == 'quasi_pois') {
         X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
         X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
 
-        X.new.wild[i] <- round(X.all[i] * org.prop[i,1] * (1 - reasc.true[i]))
-        X.new.hnc[i] <- round(X.all[i] * org.prop[i,2] * (1 - reasc.true[i]))
-        X.new.hatch[i] <- round(X.all[i] * org.prop[i,3] * (1 - reasc.true[i]))
+        X.new.tot[i] <- round(X.all[i] * (1 - reasc.true[i]))
+        X.new.wild[i] <- round(X.new.tot[i] * org.prop[i,1])
+        X.new.hnc[i] <- round(X.new.tot[i] * org.prop[i,2])
+        X.new.hatch[i] <- round(X.new.tot[i] * org.prop[i,3])
 
         X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
         X.night.wild[i] <- X.new.wild[i] * (1 - day.true[i])
@@ -610,6 +617,7 @@ if(win_model == 'quasi_pois') {
       X.tot.all.hatch <- sum(X.all.hatch)
       X.tot.all.hnc <- sum(X.all.hnc)
 
+      X.tot.new.all <- sum(X.new.tot)
       X.tot.new.wild <- sum(X.new.wild)
       X.tot.new.hatch <- sum(X.new.hatch)
       X.tot.new.hnc <- sum(X.new.hnc)
@@ -711,9 +719,10 @@ if(win_model == 'quasi_pois') {
     X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
     X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
 
-    X.new.wild[i] <- round(X.all[i] * org.prop[i,1] * (1 - reasc.true[i]))
-    X.new.hnc[i] <- round(X.all[i] * org.prop[i,2] * (1 - reasc.true[i]))
-    X.new.hatch[i] <- round(X.all[i] * org.prop[i,3] * (1 - reasc.true[i]))
+    X.new.tot[i] <- round(X.all[i] * (1 - reasc.true[i]))
+    X.new.wild[i] <- round(X.new.tot[i] * org.prop[i,1])
+    X.new.hnc[i] <- round(X.new.tot[i] * org.prop[i,2])
+    X.new.hatch[i] <- round(X.new.tot[i] * org.prop[i,3])
 
     X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
     X.night.wild[i] <- X.new.wild[i] * (1 - day.true[i])
@@ -759,6 +768,7 @@ if(win_model == 'quasi_pois') {
     X.tot.all.hatch <- sum(X.all.hatch)
     X.tot.all.hnc <- sum(X.all.hnc)
 
+    X.tot.new.all <- sum(X.new.tot)
     X.tot.new.wild <- sum(X.new.wild)
     X.tot.new.hatch <- sum(X.new.hatch)
     X.tot.new.hnc <- sum(X.new.hnc)
