@@ -1,0 +1,49 @@
+#' @title Summarise STADEM output for SCOBI
+#'
+#' @description Format STADEM output into a form that can be fed into the SCOBI package for further run decomposition.
+#'
+#' @author Kevin See
+#'
+#' @param stadem_mod results of STADEM model, of class \code{jagsUI}.
+#' @param lgr_weekly weekly data from Lower Granite dam, compiled by \code{compileGRAdata}.
+#' @param saveCSV should results be saved as a .csv file? Default is \code{FALSE}.
+#' @param fileName if \code{saveCSV} is \code{TRUE}, what file name, including the path and extension, should the results be written to?
+#'
+#' @import stringr dplyr readr
+#' @export
+#' @return NULL
+
+STADEMtoSCBOI = function(stadem_mod = NULL,
+                         lgr_weekly,
+                         saveCSV = F,
+                         fileName = NULL) {
+
+  stopifnot(!is.null(stadem_mod))
+
+  week_est = stadem_mod$summary[grep('^X.new.tot', rownames(stadem_mod$summary)),] %>%
+    as.data.frame() %>%
+    dplyr::mutate(var = rownames(.),
+           week = as.integer(stringr::str_extract(var, "[0-9]+")),
+           param = stringr::str_extract_all(var, "[:alpha:]+", simplify = T)[,3]) %>%
+    dplyr::tbl_df() %>%
+    dplyr::select(var, param, week, dplyr::everything()) %>%
+    dplyr::left_join(lgr_weekly %>%
+                       dplyr::filter(window_open | trap_open) %>%
+                       dplyr::mutate(week = 1:n()))
+
+  scobi_input = week_est %>%
+    dplyr::mutate(Strata = lubridate::week(Start_Date)) %>%
+    dplyr::select(model_week = week,
+                  StartDate = Start_Date,
+                  Strata,
+                  Estimate = mean,
+                  SE = sd) %>%
+    dplyr::mutate(Collapse = NA)
+
+  if(saveCSV) {
+    readr::write_csv(scobi_input,
+                     fileName)
+  }
+
+  return(scobi_input)
+}
