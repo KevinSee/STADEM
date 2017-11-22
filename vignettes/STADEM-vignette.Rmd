@@ -6,7 +6,7 @@ output:
   rmarkdown::html_vignette:
     fig_caption: yes
     toc: yes
-    toc_depth: '3'
+    toc_depth: 3
   pdf_document:
     fig_caption: yes
     toc: yes
@@ -28,7 +28,8 @@ references:
     count data
   type: article-journal
   volume: 92
-vignette: "%\\VignetteIndexEntry{STADEM} \n%\\VignetteEngine{knitr::rmarkdown} \n%\\VignetteEncoding{UTF-8}\n"
+vignette: |
+  %\VignetteIndexEntry{STADEM} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setUp_options, echo = F, message=FALSE, warning=FALSE}
@@ -196,7 +197,7 @@ stadem_examp_fig = fig_nums('stadem_examp_fig',
 
 The STADEM package was developed with the goal of estimating total adult escapement of spring/summer Chinook salmon and steelhead that cross Lower Granite dam (LGD). In addition, to meet desired management and research objectives, total escapement has to include estimates of uncertainty and be parsed into weekly strata by three origin groups; wild, hatchery and hatchery no-clip. To reach this goal, we have developed the **ST**ate space **A**dult **D**am **E**scapement **M**odel (STADEM) model that incorporates fish ladder window counts, data from sampled fish at the LGD adult trap, and observations of previously PIT tagged fish at LGD adult detection sites.
 
-Some of the data needed for STADEM is available at other dams, and the package developers are currently working to develop the ability to query all of the necessary data at other locations. Currently however, the focus remains on Lower Granite dam, the furthest upstream dam returning salmonids encounter on the journey up the Snake River. The following example will show how to run STADEM for one species and one year, and what some of the output looks like.
+Some of the data needed for STADEM is available at other dams, and the package developers are currently working to develop the ability to query all of the necessary data at other locations. Currently however, the focus remains on Lower Granite dam, the furthest upstream dam returning salmonids encounter on the journey up the Snake River. The following example will show how to run STADEM at Lower Granite for one species and one year, and what some of the output looks like.
 
 # System requirements
 
@@ -229,7 +230,7 @@ plot(examp_p)
 
 # Compiling data
 
-The STADEM package relies on many functions from two other packages, `tidyverse` for many data manipulation functions and `lubridate` for dates and intervals.
+The STADEM package relies on many functions from two other packages, `tidyverse` for many data manipulation functions and `lubridate` for dates and intervals. It also depends upon the `jagsUI` package to run the JAGS program from within R.
 
 ```{r load_packages}
 library(tidyverse)
@@ -258,7 +259,7 @@ spp = c('Chinook', 'Steelhead')[1]
 # pull together all data
 stadem_list = compileGRAdata(yr = yr,
                              spp = spp,
-                             strata_beg = 'Sun')
+                             strata_beg = 'Mon')
 ```
 
 ```{r fig_cap2, echo = F}
@@ -284,10 +285,10 @@ jags_data_list = prepJAGS(stadem_list[['weeklyData']])
 
 # Run STADEM
 
-Part of the function `runJAGSmodel` writes the JAGS model. This requires a filename, and the type of statistical distribution the user would like to use to model the window counts. The options are Poisson (`pois`), negative binomial (`neg_bin`), or a more flexible type of negative binomial, described in @Linden2011 (`neg_bin2`), or quasi-Poisson (`quasi_pois`). Once those have been set, use the `runSTADEMmodel` function to run the model in JAGS. Some of the inputs to this function are:
+Part of the function `runJAGSmodel` writes the JAGS model as a text file. This requires a filename, and the type of statistical distribution the user would like to use to model the window counts. The options are Poisson (`pois`), negative binomial (`neg_bin`), a more flexible type of negative binomial, described in @Linden2011 (`neg_bin2`), quasi-Poisson (`quasi_pois`), or as a normal distribution in log-space (`log_space`). Once those have been set, use the `runSTADEMmodel` function to run the model in JAGS. Some of the inputs to this function are:
 
 * `file_name` name of text file to write the JAGS model to (should end in .txt)
-* `mcmc_chainlength` length of MCMC chain
+* `mcmc_chainlength` total length of MCMC chain
 * `mcmc_burn` length of burn-in period for MCMC chain
 * `mcmc_thin` thinning rate for with samples of MCMC chain to keep
 * `mcmc_chains` how many independent chains to run
@@ -296,13 +297,26 @@ Part of the function `runJAGSmodel` writes the JAGS model. This requires a filen
 * `weekly_params` Should weekly estimates of escapement be saved, or only season-wide totals?
 * `win_model` statistical distribution used to model the window counts
 
+## Suggestions
+
+Recommended MCMC parameters are:
+
+* `mcmc_chains`: 4
+* `mcmc_chainLength`: 40,000
+* `mcmc_burn`: 10,000
+* `mcmc_thin`: 30
+
+This provides a sample of 4,000 draws from the posterior distribution. Through trial and error, we have also determined the appropriate burn-in length and thinning interval to meet MCMC posterior checks. 
+
+We also recommend using the negative binomial distribution (`win_model = neg_bin`) to model the window counts. In our experience, all options other than the Poisson distribution provide similar estimates, with similar estimates of uncertainty. The Poisson distribution does not allow for the possibility of overdispersion in the window count data, leading to smaller uncertainty estimates which may not be appropriate. However, we encourage investigation of how different distribution choices may affect estimates for particular datasets, and for users to critically consider the appropriate modeling choice.
+
 
 ```{r run_JAGS_model, cache = T}
 # name of JAGS model to write
 model_file_nm = 'STADEM_JAGS_model.txt'
 
 # what distribution to use for window counts?
-win_model = c('pois', 'neg_bin', 'neg_bin2', 'quasi_pois')[2]
+win_model = c('pois', 'neg_bin', 'neg_bin2', 'quasi_pois', 'log_space')[2]
 
 #-----------------------------------------------------------------
 # run STADEM model
@@ -349,7 +363,6 @@ week_est = mod$summary[grep('^X.all', rownames(mod$summary)),] %>%
 # plot time-series of model estimates, window counts and trap estimates
 week_est %>%
   filter(param == 'all') %>%
-  filter(tot_tags > 0) %>%
   ggplot(aes(x = Start_Date,
              y = `50%`)) +
   geom_ribbon(aes(ymin = `2.5%`,
@@ -382,5 +395,51 @@ week_est %>%
 
 ```
 
+It's also possible to examine estimates of night-time passage or re-ascension rates. The plot below shows the observed values as points, the estimated rates as lines, with 95% credible intervals around them.
+
+```{r}
+rate_est = mod$summary[grepl('^day.true', rownames(mod$summary)) | 
+                         grepl('^reasc.true', rownames(mod$summary)),] %>%
+  as.data.frame() %>%
+  mutate(var = rownames(.),
+         week = as.integer(str_extract(var, "[0-9]+")),
+         param = str_extract_all(var, "[:alpha:]+", simplify = T)[,1]) %>%
+  tbl_df() %>%
+  select(var, param, week, everything()) %>%
+  left_join(stadem_list[['weeklyData']] %>%
+              filter(window_open | trap_open) %>%
+              mutate(week = 1:n()))
+
+rate_est %>%
+  filter(tot_tags > 0) %>%
+  ggplot(aes(x = Start_Date,
+             y = `50%`)) +
+  geom_ribbon(aes(ymin = `2.5%`,
+                  ymax = `97.5%`,
+                  fill = param),
+              alpha = 0.2) +
+  geom_line(aes(color = param)) +
+  geom_point(aes(y = day_tags / tot_tags,
+                 color = 'day')) +
+  geom_point(aes(y = reascent_tags / tot_tags,
+                 color = 'reasc')) +
+  theme_bw() +
+  scale_color_brewer(palette = 'Set1',
+                     name = 'Rate',
+                     labels = c('day' = 'Daytime Passage',
+                                'reasc' = 'Reacension')) +
+  scale_fill_brewer(palette = 'Set1',
+                    name = 'Rate',
+                    labels = c('day' = 'Daytime Passage',
+                               'reasc' = 'Reacension')) +
+  labs(y = 'Estimate',
+       x = 'Date',
+       title = 'Estimated Rates')
+
+```
+
+# Additional options
+
+The user does have the option to not use fish caught in the trap as a secondary estimate of escapement. To turn this feature off, set the argument `trap_est` equal to `FALSE` in the `runSTADEMmodel` function. This will constrain the statistical distribution used to model the window counts as Poisson, because there is no other way to estimate the variance in those counts. 
 
 # References
