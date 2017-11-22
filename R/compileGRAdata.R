@@ -87,16 +87,16 @@ compileGRAdata = function(yr,
   cat('Getting LGR trap data\n')
   if(!is.null(trap_path)) {
     trap_yr = readLGRtrapDB(trap_path = trap_path,
-                            date_range = c(ymd(int_start(week_strata[1])),
-                                           ymd(int_end(week_strata[length(week_strata)]) + dseconds(1))))
+                            date_range = c(lubridate::ymd(lubridate::int_start(week_strata[1])),
+                                           lubridate::ymd(lubridate::int_end(week_strata[length(week_strata)]) + lubridate::dseconds(1))))
   }
 
   if(is.null(trap_path)) {
     trap_yr = lgr_trap %>%
       # filter for date range
-      filter(Date >= ymd(int_start(week_strata[1])),
-             Date < ymd(int_end(week_strata[length(week_strata)]) + dseconds(1))) %>%
-      arrange(Date)
+      dplyr::filter(Date >= lubridate::ymd(lubridate::int_start(week_strata[1])),
+                    Date < lubridate::ymd(lubridate::int_end(week_strata[length(week_strata)]) + lubridate::dseconds(1))) %>%
+      dplyr::arrange(Date)
   }
 
   # summarise by date for particular species
@@ -126,9 +126,9 @@ compileGRAdata = function(yr,
   # impose constant CV on trap rate estimates
   if(useDARTrate) {
     trap_rate = trap_rate %>%
-      left_join(queryTrapRate(week_strata,
-                              spp = spp,
-                              return_weekly = T)) %>%
+      dplyr::left_join(queryTrapRate(week_strata,
+                                     spp = spp,
+                                     return_weekly = T)) %>%
       dplyr::mutate(trap_rate = ActualRateInclusiveTime,
                     # add some error
                     trap_rate_se = trap_rate * trap_rate_cv)
@@ -179,19 +179,19 @@ compileGRAdata = function(yr,
   #------------------------------------------
   # summarise by week and add trap rate
   dam_weekly = dam_daily %>%
-    group_by(week_num) %>%
-    summarise(Species = unique(Species),
-              Start_Date = min(Date)) %>%
-    ungroup() %>%
-    left_join(dam_daily %>%
-                group_by(week_num) %>%
-                summarise_at(vars(win_cnt:n_invalid),
-                             funs(sum), na.rm = T) %>%
-                ungroup() %>%
-                mutate_at(vars(win_cnt:n_invalid),
-                          funs(ifelse(is.na(.), 0, .)))) %>%
-    mutate(window_open = if_else(win_cnt > 0, T, F)) %>%
-    select(Species, Start_Date, week_num, everything()) %>%
+    dplyr::group_by(week_num) %>%
+    dplyr::summarise(Species = unique(Species),
+                     Start_Date = min(Date)) %>%
+    dplyr::ungroup() %>%
+    dplyr::left_join(dam_daily %>%
+                       dplyr::group_by(week_num) %>%
+                       dplyr::summarise_at(vars(win_cnt:n_invalid),
+                                           funs(sum), na.rm = T) %>%
+                       dplyr::ungroup() %>%
+                       dplyr::mutate_at(vars(win_cnt:n_invalid),
+                                        funs(ifelse(is.na(.), 0, .)))) %>%
+    dplyr::mutate(window_open = ifelse(win_cnt > 0, T, F)) %>%
+    dplyr::select(Species, Start_Date, week_num, everything()) %>%
     addTrapRate(trap_rate,
                 trap_rate_dist)
 

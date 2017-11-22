@@ -65,17 +65,17 @@ runSTADEMmodel = function(file_name = NULL,
   if(!is.null(seed)) set.seed(seed)
 
   # ptm = proc.time()
-  jags_model = try(jags(data = jags_data,
-                        inits = jags_inits,
-                        parameters.to.save = jags_params,
-                        model.file = file_name,
-                        n.chains = mcmc_chains,
-                        n.burnin = mcmc_burn,
-                        n.thin = mcmc_thin,
-                        n.iter = mcmc_chainLength,
-                        parallel = parallel,
-                        DIC = DIC,
-                        verbose = verbose))
+  jags_model = try(jagsUI::jags(data = jags_data,
+                                inits = jags_inits,
+                                parameters.to.save = jags_params,
+                                model.file = file_name,
+                                n.chains = mcmc_chains,
+                                n.burnin = mcmc_burn,
+                                n.thin = mcmc_thin,
+                                n.iter = mcmc_chainLength,
+                                parallel = parallel,
+                                DIC = DIC,
+                                verbose = verbose))
   # proc.time() - ptm # returns the CPU time used
 
   return(jags_model)

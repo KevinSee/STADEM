@@ -12,7 +12,7 @@
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
-#' @import lubridate httr dplyr
+#' @import lubridate httr dplyr readr
 #' @export
 #' @return NULL
 #' @examples queryPITtagData(spawn_yr = 2015)
@@ -80,9 +80,9 @@ queryPITtagData = function(damPIT = 'GRA',
 
   # parse the response
   parsed = httr::content(web_req,
-                'text') %>%
-    read_delim(delim = ',',
-               col_names = T)
+                         'text') %>%
+    readr::read_delim(delim = ',',
+                      col_names = T)
 
   if(is.null(parsed)) {
     message(paste('DART returned no data for', spp, 'in', spawn_yr, '\n'))

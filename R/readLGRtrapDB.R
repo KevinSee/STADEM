@@ -18,7 +18,7 @@ readLGRtrapDB = function(trap_path = NULL,
   stopifnot(!is.null(trap_path))
 
   lgr_trap = read.csv(trap_path) %>%
-    tbl_df() %>%
+    dplyr::tbl_df() %>%
     dplyr::rename(Tag.ID = LGDNumPIT) %>%
     dplyr::mutate(Date = floor_date(ymd_hms(CollectionDate), unit = 'day'),
                   SppCode = LGDSpecies,

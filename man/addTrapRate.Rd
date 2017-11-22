@@ -12,7 +12,7 @@ addTrapRate(lgr_weekly = NULL, trap_rate = NULL,
 
 \item{trap_rate}{dataframe containing estimates of trap rate}
 
-\item{trap_rate_dist}{distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space.}
+\item{trap_rate_dist}{distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space. Default is \code{beta}. Support for logit distribution is coming in future versions of STADEM.}
 }
 \description{
 Combine weekly data with trap rate data, and determine which trap rate estimates are invalid

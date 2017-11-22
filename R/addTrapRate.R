@@ -6,7 +6,7 @@
 #'
 #' @param lgr_weekly dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summariseLGRweekly}.
 #' @param trap_rate dataframe containing estimates of trap rate
-#' @param trap_rate_dist distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space.
+#' @param trap_rate_dist distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space. Default is \code{beta}. Support for logit distribution is coming in future versions of STADEM.
 #'
 #' @import dplyr
 #' @return NULL
@@ -19,12 +19,12 @@ addTrapRate = function(lgr_weekly = NULL,
   stopifnot(!is.null(trap_rate))
 
   lgr_week_trapRate = lgr_weekly %>%
-    left_join(trap_rate) %>%
-    mutate(trap_open = ifelse(is.na(trap_open), F, trap_open)) %>%
-    mutate(trap_est = ifelse(trap_open, trap_fish / trap_rate, NA)) %>%
-    mutate(trap_est_se = sqrt(trap_rate_se^2 * (-trap_fish * trap_rate^(-2))^2)) %>%
+    dplyr::left_join(trap_rate) %>%
+    dplyr::mutate(trap_open = ifelse(is.na(trap_open), F, trap_open)) %>%
+    dplyr::mutate(trap_est = ifelse(trap_open, trap_fish / trap_rate, NA)) %>%
+    dplyr::mutate(trap_est_se = sqrt(trap_rate_se^2 * (-trap_fish * trap_rate^(-2))^2)) %>%
     # check to see if some trap estimates seem valid
-    mutate(Prob_Less = pbinom(trap_fish, win_cnt, trap_rate, lower.tail=T),
+    dplyr::mutate(Prob_Less = pbinom(trap_fish, win_cnt, trap_rate, lower.tail=T),
            Prob_More = pbinom(trap_fish, win_cnt, trap_rate, lower.tail=F),
            lower_trap_lim = qbinom(0.05, win_cnt, trap_rate, lower.tail=T),
            upper_trap_lim = qbinom(0.95, win_cnt, trap_rate, lower.tail=T),
@@ -37,51 +37,17 @@ addTrapRate = function(lgr_weekly = NULL,
 
   if(trap_rate_dist == 'beta') {
     lgr_week_trapRate = lgr_week_trapRate %>%
-      mutate(trap_alpha = ifelse(trap_open & trap_valid, trap_alpha, 1e-12),
+      dplyr::mutate(trap_alpha = ifelse(trap_open & trap_valid, trap_alpha, 1e-12),
              trap_beta = ifelse(trap_open & trap_valid, trap_beta, 1)) %>%
-      select(-(Prob_Less:upper_trap_est))
+      dplyr::select(-(Prob_Less:upper_trap_est))
   }
 
   if(trap_rate_dist == 'logit') {
     lgr_week_trapRate = lgr_week_trapRate %>%
       dplyr::mutate(trap_mu = ifelse(trap_open & trap_valid, boot::logit(trap_rate), 1e-12),
                     trap_sd = ifelse(trap_open & trap_valid, boot::logit(trap_rate_se), 0)) %>%
-      select(-(Prob_Less:upper_trap_est))
+      dplyr::select(-(Prob_Less:upper_trap_est))
   }
 
   return(lgr_week_trapRate)
 }
-
-# lgr_week_trapRate %>%
-#   ggplot(aes(x = win_cnt/1000,
-#              y = trap_est/1000,
-#              color = as.factor(SpawnYear),
-#              fill = as.factor(SpawnYear))) +
-#   geom_point(aes(shape = trap_valid)) +
-#   scale_shape_manual(values = c('TRUE' = 19,
-#                                 'FALSE' = 1)) +
-#   geom_smooth(data = filter(lgr_week_trapRate,
-#                             trap_valid),
-#               method = lm,
-#               formula = y ~ -1 + x,
-#               fullrange = T) +
-#   geom_abline(intercept = 0,
-#               slope = 1,
-#               lty = 2) +
-#   facet_wrap(~ Species + SpawnYear, scales = 'free') +
-#   labs(title = 'Window vs. Trap',
-#        x = 'Window (x1000)',
-#        y = 'Trap (x1000)',
-#        color = 'Spawn Year',
-#        fill = 'Spawn Year',
-#        shape = 'Trap Valid') +
-#   theme_bw() +
-#   theme(title = element_text(size = 20))
-#
-# lgr_week_trapRate %>%
-#   filter(!trap_valid,
-#          trap_open,
-#          win_cnt > 0,
-#          trap_fish > 0) %>%
-#   select(Species:trap_fish, trap_open, trap_rate, trap_est:trap_valid)
-#   as.data.frame()

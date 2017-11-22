@@ -12,7 +12,7 @@
 #' @param incl_jacks should jacks be included in the window count totals? \code{T / F}
 #' @param sthd_type should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.
 #'
-#' @import lubridate dplyr
+#' @import dplyr tidyr
 #' @export
 #' @return NULL
 #' @examples getWindowCounts(spawn_yr = 2015)
@@ -47,22 +47,22 @@ getWindowCounts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   if(spp == 'Steelhead' & sthd_type == 'unclipped') spp = 'Wild_Steelhead'
 
   # match up species code with species name
-  spp_code_df = tibble(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
-                       code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft'),
-                       num_code = c(1,2,4,3, rep(NA, 8)))
+  spp_code_df = dplyr::tibble(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
+                              code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft'),
+                              num_code = c(1,2,4,3, rep(NA, 8)))
 
 
   spp_code = spp_code_df$code[spp_code_df$Species == spp]
 
   win_cnts = queryWindowCnts(dam,
-                  spp_code,
-                  spawn_yr,
-                  start_day,
-                  end_day)
+                             spp_code,
+                             spawn_yr,
+                             start_day,
+                             end_day)
 
   if(!incl_jacks) win_cnts = win_cnts %>%
-    gather(Species, win_cnt, -(Year:Date)) %>%
-    select(Species, everything())
+    tidyr::gather(Species, win_cnt, -(Year:Date)) %>%
+    dplyr::select(Species, everything())
 
   if(incl_jacks) {
     jack_code = spp_code_df$code[spp_code_df$Species == paste('Jack', spp, sep = '_')]
@@ -78,11 +78,11 @@ getWindowCounts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
     names(jack_cnts)[grepl(spp, names(jack_cnts))] = 'jacks'
 
     win_cnts = adult_cnts %>%
-      full_join(jack_cnts) %>%
-      mutate_at(vars(adults, jacks), funs(ifelse(is.na(.), 0, .))) %>%
-      mutate(win_cnt = adults + jacks) %>%
-      mutate(Species = spp) %>%
-      select(Species, Year, Date, win_cnt)
+      dplyr::full_join(jack_cnts) %>%
+      dplyr::mutate_at(vars(adults, jacks), funs(ifelse(is.na(.), 0, .))) %>%
+      dplyr::mutate(win_cnt = adults + jacks) %>%
+      dplyr::mutate(Species = spp) %>%
+      dplyr::select(Species, Year, Date, win_cnt)
   }
 
   return(win_cnts)

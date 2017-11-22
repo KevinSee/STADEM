@@ -59,7 +59,7 @@ tagTrapRate = function(trap_dataframe = NULL,
                                    'Chinook',
                                    ifelse(grepl('^3', SpRRT) | grepl('^3', SRR),
                                           'Steelhead', NA))) %>%
-    dplyr::mutate(ObsDate = floor_date(ObsTime, unit = 'days'),
+    dplyr::mutate(ObsDate = lubridate::floor_date(ObsTime, unit = 'days'),
                   diff = as.numeric(difftime(ObsDate, TrapDate, units = 'days'))) %>%
     dplyr::mutate_at(vars(TrapDate, ObsDate),
                      funs(lubridate::ymd)) %>%
@@ -75,7 +75,7 @@ tagTrapRate = function(trap_dataframe = NULL,
 
   prop_rate = trap_rate_mr %>%
     dplyr::filter(!is.na(ObsTime)) %>%
-    group_by(week_num) %>%
+    dplyr::group_by(week_num) %>%
     dplyr::summarise(n_trap = sum(inTrap),
                      n_tot = n_distinct(TagID),
                      rate = n_trap / n_tot,

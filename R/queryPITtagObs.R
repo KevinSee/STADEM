@@ -95,8 +95,8 @@ queryPITtagObs = function(site = 'GRA',
   parsed = httr::content(web_req,
                          'text',
                          encoding = 'ISO-8859-1') %>%
-    read_delim(delim = ',',
-               col_names = T) %>%
+    readr::read_delim(delim = ',',
+                      col_names = T) %>%
     dplyr::filter(!is.na(`Tag ID`)) %>%
     dplyr::mutate(Year = as.integer(Year))
 

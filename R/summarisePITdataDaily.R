@@ -28,9 +28,9 @@ summarisePITdataDaily = function(pit_data,
   # summarise rates by day
   lgr_night_reasc_daily = pit_data %>%
     dplyr::select(Species, SpawnYear, Date, TagID, RearType, Period, ReAscent) %>%
-    distinct() %>%
+    dplyr::distinct() %>%
     dplyr::arrange(Species, SpawnYear, TagID, Date) %>%
-    group_by(Species, SpawnYear, Date) %>%
+    dplyr::group_by(Species, SpawnYear, Date) %>%
     dplyr::summarise(tot_tags = n_distinct(TagID),
                      day_tags = length(unique(TagID[Period=='D'])),
                      reascent_tags = length(unique(TagID[ReAscent])),

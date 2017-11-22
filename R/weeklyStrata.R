@@ -30,16 +30,16 @@ weeklyStrata = function(spawn_yr,
   if(is.null(start_day)) start_day = ifelse(spp == 'Chinook', '0301',
                                             ifelse(spp == 'Steelhead', '0701', NA))
   if(is.null(end_day)) end_day = ifelse(spp == 'Chinook', '0817',
-                                            ifelse(spp == 'Steelhead', '0630', NA))
+                                        ifelse(spp == 'Steelhead', '0630', NA))
 
   # first day to be include?
   first_date = ifelse(spp == 'Steelhead',
-                      as.character(ymd(paste(spawn_yr - 1, start_day))),
-                      as.character(ymd(paste(spawn_yr, start_day)))) %>%
+                      as.character(lubridate::ymd(paste(spawn_yr - 1, start_day))),
+                      as.character(lubridate::ymd(paste(spawn_yr, start_day)))) %>%
     ymd()
 
   # last day to be included?
-  last_date = ymd(paste(spawn_yr, end_day))
+  last_date = lubridate::ymd(paste(spawn_yr, end_day))
 
   # how many weeks total?
   n_weeks = difftime(last_date, first_date,
@@ -51,41 +51,41 @@ weeklyStrata = function(spawn_yr,
   if(is.null(strata_beg)) strata_start = first_date
 
   if(!is.null(strata_beg)) {
-    strata_start = tibble(date = first_date + days(0:as.integer(difftime(last_date, first_date, units = 'days')))) %>%
-      mutate(day = wday(date, label = T)) %>%
-      filter(day == strata_beg) %>%
-      slice(1) %>%
-      select(date) %>%
+    strata_start = dplyr::tibble(date = first_date + lubridate::days(0:as.integer(difftime(last_date, first_date, units = 'days')))) %>%
+      dplyr::mutate(day = lubridate::wday(date, label = T)) %>%
+      dplyr::filter(day == strata_beg) %>%
+      dplyr::slice(1) %>%
+      dplyr::select(date) %>%
       as.matrix() %>%
       as.character() %>%
-      ymd()
+      lubridate::ymd()
   }
 
 
   # put together dataframe of start and end times for each strata
-  strata_df = tibble(start_date = first_date,
-                        end_date = strata_start - dseconds(1)) %>%
-    bind_rows(tibble(start_date = strata_start + weeks(0:n_weeks)) %>%
-                mutate(end_date = start_date + days(7) - dseconds(1))) %>%
-    filter(start_date < end_date,
-           start_date < last_date)
+  strata_df = dplyr::tibble(start_date = first_date,
+                            end_date = strata_start - lubridate::dseconds(1)) %>%
+    dplyr::bind_rows(dplyr::tibble(start_date = strata_start + lubridate::weeks(0:n_weeks)) %>%
+                       dplyr::mutate(end_date = start_date + lubridate::days(7) - lubridate::dseconds(1))) %>%
+    dplyr::filter(start_date < end_date,
+                  start_date < last_date)
 
-  strata_df$end_date[nrow(strata_df)] = last_date + days(1) - dseconds(1)
+  strata_df$end_date[nrow(strata_df)] = last_date + lubridate::days(1) - lubridate::dseconds(1)
 
-  if(as.numeric(as.duration(interval(strata_df$start_date[nrow(strata_df)], strata_df$end_date[nrow(strata_df)])), 'days') < last_strata_min) {
+  if(as.numeric(as.duration(lubridate::interval(strata_df$start_date[nrow(strata_df)], strata_df$end_date[nrow(strata_df)])), 'days') < last_strata_min) {
     strata_df = strata_df %>%
-      slice(-nrow(strata_df))
-    strata_df$end_date[nrow(strata_df)] = last_date + days(1) - dseconds(1)
+      dplyr::slice(-nrow(strata_df))
+    strata_df$end_date[nrow(strata_df)] = last_date + lubridate::days(1) - lubridate::dseconds(1)
   }
 
   if(as.numeric(as.duration(interval(strata_df$start_date[1], strata_df$end_date[1])), 'days') < last_strata_min) {
     strata_df = strata_df %>%
-      slice(-1)
+      dplyr::slice(-1)
 
     strata_df$start_date[1] = first_date
   }
 
-  week_strata = interval(strata_df$start_date, strata_df$end_date)
+  week_strata = lubridate::interval(strata_df$start_date, strata_df$end_date)
 
   return(week_strata)
 }

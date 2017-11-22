@@ -24,7 +24,7 @@ queryLGRtrapDatabase = function(username = NULL,
 
   url_req = 'https://collaboration.idfg.idaho.gov/qci/Shared%20Documents'
 
-  web_req = GET(url_req, ua,
+  web_req = httr::GET(url_req, ua,
                 authenticate(username, password),
                 progress(),
                 write_disk('data/LGTrappingExportJodyW.zip',
