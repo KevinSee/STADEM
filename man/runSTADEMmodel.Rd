@@ -7,8 +7,8 @@
 runSTADEMmodel(file_name = NULL, mcmc_chainLength = 100, mcmc_burn = 10,
   mcmc_thin = 2, mcmc_chains = 1, jags_data = NULL,
   weekly_params = FALSE, seed = NULL, verbose = FALSE, parallel = TRUE,
-  DIC = FALSE, win_model = c("neg_bin", "neg_bin2", "pois", "quasi_pois"),
-  trap_est = TRUE)
+  DIC = FALSE, win_model = c("neg_bin", "neg_bin2", "pois", "quasi_pois",
+  "log_space"), trap_est = TRUE)
 }
 \arguments{
 \item{file_name}{name (with file path) to save the model as}
