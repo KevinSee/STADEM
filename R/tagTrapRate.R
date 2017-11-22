@@ -61,6 +61,8 @@ tagTrapRate = function(trap_dataframe = NULL,
                                           'Steelhead', NA))) %>%
     dplyr::mutate(ObsDate = floor_date(ObsTime, unit = 'days'),
                   diff = as.numeric(difftime(ObsDate, TrapDate, units = 'days'))) %>%
+    dplyr::mutate_at(vars(TrapDate, ObsDate),
+                     funs(lubridate::ymd)) %>%
     dplyr::mutate(modDate = if_else(is.na(TrapDate), ObsDate, TrapDate)) %>%
     # dplyr::mutate(modDate = if_else(abs(diff) < 2, modDate, floor_date(MaxTime, unit = 'days'))) %>%
     dplyr::mutate(inTrap = if_else(!is.na(TrapDate), T, F))
