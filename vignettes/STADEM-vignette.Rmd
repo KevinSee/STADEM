@@ -237,6 +237,9 @@ library(tidyverse)
 library(lubridate)
 library(STADEM)
 library(jagsUI)
+
+# to make processing of results easier
+library(stringr)
 ```
 
 The STADEM package makes it easy to compile all the necessary data in one convenient function, `compileGRAdata`. The user provides the spawn year and species (either "Chinook" or "Steelhead") they are interested in. STADEM operates on a weekly time-step, and the user has the option to determine the day of the week that most strata will begin on, using the `strata_beg` arguement. There are periodic messages describing what is being done within `compileGRAdata`. Within `compileGRAdata`, several internal functions are being called, which may be utilized with the STADEM package for other purposes. They include:
@@ -342,10 +345,67 @@ mod$summary[grep('X.tot', rownames(mod$summary)),] %>%
   pander::pander()
 ```
 
+Another table that summarises some of the output by week can be found by using the code below.
+
+```{r}
+week_df = mod$summary[grepl('^X.all\\[', rownames(mod$summary)) |
+                         grepl('^X.day\\[', rownames(mod$summary)) |
+                         grepl('^X.night\\[', rownames(mod$summary)) |
+                         grepl('^X.reasc\\[', rownames(mod$summary)) |
+                         grepl('X.new.tot\\[', rownames(mod$summary)),] %>%
+  as.data.frame() %>%
+  mutate(var = rownames(.),
+         week = as.integer(str_extract(var, "[0-9]+")),
+         param = str_extract_all(var, "[:alpha:]+", simplify = T)[,2]) %>%
+  tbl_df() %>%
+  mutate(param = recode(param,
+                        'all' = 'Total',
+                        'day' = 'Day',
+                        'night' = 'Night',
+                        'reasc' = 'Reascension',
+                        'new' = 'Unique')) %>%
+  select(param, week, mean, sd)
+
+# table with point estimates only
+pt_est_tab = week_df %>%
+  select(-sd) %>%
+  mutate(mean = round(mean)) %>%
+  spread(param, mean) %>%
+  left_join(stadem_list[['weeklyData']] %>%
+              filter(window_open | trap_open) %>%
+              mutate(week = 1:n())) %>%
+  select(Week = week,
+         Win.Cnt = win_cnt,
+         Total,
+         Day,
+         Night,
+         Reascension,
+         Unique)
+
+# table with point estimates and standard errors
+est_tab = week_df %>%
+  mutate(prnt_val = paste0(round(mean), ' (', round(sd, 1), ')')) %>%
+  select(-sd, -mean) %>%
+  spread(param, prnt_val) %>%
+  left_join(stadem_list[['weeklyData']] %>%
+              filter(window_open | trap_open) %>%
+              mutate(week = 1:n())) %>%
+  select(Week = week,
+         Win.Cnt = win_cnt,
+         Total,
+         Day,
+         Night,
+         Reascension,
+         Unique)
+  
+est_tab %>%
+  pander::pander(big.mark = ',')
+
+```
+
 A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates (`r fig_nums('jags_fit_fig', display = 'c')`).
 
 ```{r compile_time-series_data}
-library(stringr)
 week_est = mod$summary[grep('^X.all', rownames(mod$summary)),] %>%
   as.data.frame() %>%
   mutate(var = rownames(.),
@@ -441,5 +501,15 @@ rate_est %>%
 # Additional options
 
 The user does have the option to not use fish caught in the trap as a secondary estimate of escapement. To turn this feature off, set the argument `trap_est` equal to `FALSE` in the `runSTADEMmodel` function. This will constrain the statistical distribution used to model the window counts as Poisson, because there is no other way to estimate the variance in those counts. 
+
+If the user would like to summarise STADEM estimates of total unique escapement, by week, (e.g. as an input to the `SCOBI` pacakge), there is a function to do that, `STADEMtoSCOBI`.
+
+```{r}
+scobi_input = STADEMtoSCBOI(stadem_mod = mod,
+                            lgr_weekly = stadem_list[['weeklyData']])
+
+head(scobi_input)
+```
+
 
 # References
