@@ -14,11 +14,11 @@
 #' @return NULL
 
 STADEMtoSCBOI = function(stadem_mod = NULL,
-                         lgr_weekly,
+                         lgr_weekly = NULL,
                          saveCSV = F,
-                         fileName = NULL) {
+                         fileName = 'SCOBI_input.csv') {
 
-  stopifnot(!is.null(stadem_mod))
+  stopifnot(!is.null(stadem_mod) | !is.null(lgr_weekly))
 
   week_est = stadem_mod$summary[grep('^X.new.tot', rownames(stadem_mod$summary)),] %>%
     as.data.frame() %>%
@@ -38,6 +38,8 @@ STADEMtoSCBOI = function(stadem_mod = NULL,
                   Strata,
                   Estimate = mean,
                   SE = sd) %>%
+    dplyr::mutate_at(vars(Estimate),
+                     funs(round)) %>%
     dplyr::mutate(Collapse = NA)
 
   if(saveCSV) {
