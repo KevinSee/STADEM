@@ -14,7 +14,7 @@
 
 tagTrapRate = function(trap_dataframe = NULL,
                        week_strata = NULL,
-                       mark_site = 'LGRLDR') {
+                       mark_site = c('LGRLDR', 'LGR')) {  # added 'LGR' to the list because <2009-09-25 fish tagged in the trapped were labeled 'LGR'
 
 
   # query PIT tag detections at Lower Granite
@@ -42,7 +42,7 @@ tagTrapRate = function(trap_dataframe = NULL,
 
   # filter out tags that were put in at Lower Granite
   gra_tags = pit_gra %>%
-    dplyr::filter(MarkSite == mark_site) %>%
+    dplyr::filter(MarkSite %in% mark_site) %>%  # look for more than one mark_site
     dplyr::select(TagID) %>%
     dplyr::distinct() %>%
     as.matrix() %>%
