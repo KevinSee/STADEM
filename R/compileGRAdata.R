@@ -114,7 +114,9 @@ compileGRAdata = function(yr,
     dplyr::mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
     dplyr::left_join(tibble(Start_Date = int_start(week_strata),
                             week_num = 1:length(week_strata))) %>%
-    dplyr::rename(trap_rate = rate,
+    dplyr::rename(n_trap_tags = n_trap,
+                  n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
+                  trap_rate = rate,
                   trap_rate_se = rate_se) %>%
     dplyr::mutate(Start_Date = ymd(Start_Date)) %>%
     dplyr::select(Start_Date,
@@ -143,7 +145,7 @@ compileGRAdata = function(yr,
                     trap_beta = trap_alpha * (1 / trap_rate - 1),
                     trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
                     trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
-      dplyr::select(Start_Date, week_num, matches('^trap')) %>%
+      dplyr::select(Start_Date, week_num, n_trap_tags, n_poss_tags, matches('^trap')) %>%  # include the tag observations
       dplyr::distinct()
   }
 
