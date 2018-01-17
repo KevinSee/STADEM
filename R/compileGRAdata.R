@@ -112,7 +112,7 @@ compileGRAdata = function(yr,
   trap_rate = tagTrapRate(trap_dataframe = trap_yr,
                           week_strata = week_strata) %>%
     dplyr::mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
-    dplyr::left_join(tibble(Start_Date = int_start(week_strata),
+    dplyr::left_join(tibble(Start_Date = lubridate::int_start(week_strata),
                             week_num = 1:length(week_strata))) %>%
     dplyr::rename(n_trap_tags = n_trap,
                   n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
