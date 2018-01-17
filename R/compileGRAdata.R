@@ -32,7 +32,7 @@ compileGRAdata = function(yr,
                           strata_beg = NULL,
                           start_day = NULL,
                           end_day = NULL,
-                          incl_jacks = F,
+                          incl_jacks = NULL,
                           sthd_type = c('all', 'unclipped'),
                           sthd_B_run = FALSE,
                           trap_path = NULL,
@@ -52,6 +52,10 @@ compileGRAdata = function(yr,
 
   sthd_type = match.arg(sthd_type)
   trap_rate_dist = match.arg(trap_rate_dist)
+
+  if(is.null(incl_jacks)) {
+    incl_jacks = ifelse(spp == 'Chinook', T, F)
+  }
 
   # currently pit tag query only works for Lower Granite
   try( if(dam != 'LWG') stop('Dam code must be LWG') )
