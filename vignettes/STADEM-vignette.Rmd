@@ -254,7 +254,7 @@ The STADEM package makes it easy to compile all the necessary data in one conven
 
 ```{r compile_data, eval = T, cache = T, results = 'hide'}
 # what spawning year? (2010 - 2016)
-yr = 2014
+yr = 2016
 
 # what species?
 spp = c('Chinook', 'Steelhead')[1]
@@ -332,7 +332,8 @@ mod = runSTADEMmodel(file_name = model_file_nm,
                      jags_data = jags_data_list,
                      seed = 5,
                      weekly_params = T,
-                     win_model = win_model)
+                     win_model = win_model,
+                     trap_est = F)
 
 ```
 
@@ -399,7 +400,8 @@ est_tab = week_df %>%
          Unique)
   
 est_tab %>%
-  pander::pander(big.mark = ',')
+  pander::pander(big.mark = ',',
+                 split.table = Inf)
 
 ```
 
