@@ -252,23 +252,27 @@ The STADEM package makes it easy to compile all the necessary data in one conven
 * `queryTrapRate`: query DART for intended and realized trap rates, based on time the trap is open
 
 
-```{r compile_data, eval = T, cache = T, results = 'hide'}
+```{r compile_data, eval = T, cache = F, results = 'hide'}
 # what spawning year? (2010 - 2016)
 yr = 2014
 
 # what species?
-spp = c('Chinook', 'Steelhead')[1]
+spp = 'Chinook'
 
 # pull together all data
 stadem_list = compileGRAdata(yr = yr,
                              spp = spp,
-                             strata_beg = 'Mon')
+                             strata_beg = 'Mon',
+                             trap_path = '../inst/extdata/Chnk2014_TrapDatabase.csv')
 ```
 
 ```{r fig_cap2, echo = F}
 jags_fit_fig = fig_nums('jags_fit_fig',
                         paste('Time-series plot showing estimates of total escapement for',
                               spp, 'in', yr, ', including raw window counts, window counts adjusted for nighttime passage, trap estimates and STADEM estimates.'))
+
+rate_fig = fig_nums('rate_fig',
+                    'Time-series of estimated day-time passage (red) and re-ascension (blue) rates, with points representing the observed data and shaded polygons represeneting the 95% credible intervals.')
 
 ```
 
@@ -314,7 +318,7 @@ This provides a sample of 4,000 draws from the posterior distribution. Through t
 We also recommend using the negative binomial distribution (`win_model = neg_bin`) to model the window counts. In our experience, all options other than the Poisson distribution provide similar estimates, with similar estimates of uncertainty. The Poisson distribution does not allow for the possibility of overdispersion in the window count data, leading to smaller uncertainty estimates which may not be appropriate. However, we encourage investigation of how different distribution choices may affect estimates for particular datasets, and for users to critically consider the appropriate modeling choice.
 
 
-```{r run_JAGS_model, cache = T}
+```{r run_JAGS_model, cache = F}
 # name of JAGS model to write
 model_file_nm = 'STADEM_JAGS_model.txt'
 
@@ -459,7 +463,7 @@ week_est %>%
 
 It's also possible to examine estimates of night-time passage or re-ascension rates. The plot below shows the observed values as points, the estimated rates as lines, with 95% credible intervals around them.
 
-```{r}
+```{r, fig.height = 5, fig.width = 7, fig.cap = fig_nums('rate_fig')}
 rate_est = mod$summary[grepl('^day.true', rownames(mod$summary)) | 
                          grepl('^reasc.true', rownames(mod$summary)),] %>%
   as.data.frame() %>%
