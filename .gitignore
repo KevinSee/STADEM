@@ -5,4 +5,5 @@
 .DS_Store
 data-raw
 vignettes/STADEM-vignette_cache
+vignettes/STADEM-vignette_files
 vignettes/STADEM_JAGS_model.txt
