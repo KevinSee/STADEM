@@ -6,9 +6,9 @@
 \usage{
 compileGRAdata(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG"),
   damPIT = "GRA", strata_beg = NULL, start_day = NULL, end_day = NULL,
-  incl_jacks = F, sthd_type = c("all", "unclipped"), sthd_B_run = FALSE,
-  trap_path = NULL, useDARTrate = F, trap_rate_cv = 0,
-  trap_rate_dist = c("beta", "logit"))
+  incl_jacks = NULL, sthd_type = c("all", "unclipped"),
+  sthd_B_run = FALSE, trap_path = NULL, useDARTrate = F,
+  trap_rate_cv = 0, trap_rate_dist = c("beta", "logit"))
 }
 \arguments{
 \item{yr}{spawn year.}
