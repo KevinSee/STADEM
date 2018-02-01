@@ -47,9 +47,9 @@ getWindowCounts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   if(spp == 'Steelhead' & sthd_type == 'unclipped') spp = 'Wild_Steelhead'
 
   # match up species code with species name
-  spp_code_df = dplyr::tibble(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
-                              code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft'),
-                              num_code = c(1,2,4,3, rep(NA, 8)))
+  spp_code_df = data.frame(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
+                           code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft'),
+                           num_code = c(1,2,4,3, rep(NA, 8)))
 
 
   spp_code = spp_code_df$code[spp_code_df$Species == spp]
@@ -62,7 +62,7 @@ getWindowCounts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
 
   if(!incl_jacks) win_cnts = win_cnts %>%
     tidyr::gather(Species, win_cnt, -(Year:Date)) %>%
-    dplyr::select(Species, everything())
+    select(Species, everything())
 
   if(incl_jacks) {
     jack_code = spp_code_df$code[spp_code_df$Species == paste('Jack', spp, sep = '_')]
@@ -78,11 +78,11 @@ getWindowCounts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
     names(jack_cnts)[grepl(spp, names(jack_cnts))] = 'jacks'
 
     win_cnts = adult_cnts %>%
-      dplyr::full_join(jack_cnts) %>%
-      dplyr::mutate_at(vars(adults, jacks), funs(ifelse(is.na(.), 0, .))) %>%
-      dplyr::mutate(win_cnt = adults + jacks) %>%
-      dplyr::mutate(Species = spp) %>%
-      dplyr::select(Species, Year, Date, win_cnt)
+      full_join(jack_cnts) %>%
+      mutate_at(vars(adults, jacks), funs(ifelse(is.na(.), 0, .))) %>%
+      mutate(win_cnt = adults + jacks) %>%
+      mutate(Species = spp) %>%
+      select(Species, Year, Date, win_cnt)
   }
 
   return(win_cnts)

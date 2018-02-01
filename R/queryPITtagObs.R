@@ -97,8 +97,8 @@ queryPITtagObs = function(site = 'GRA',
                          encoding = 'ISO-8859-1') %>%
     readr::read_delim(delim = ',',
                       col_names = T) %>%
-    dplyr::filter(!is.na(`Tag ID`)) %>%
-    dplyr::mutate(Year = as.integer(Year))
+    filter(!is.na(`Tag ID`)) %>%
+    mutate(Year = as.integer(Year))
 
   names(parsed) = gsub(' ', '', names(parsed))
 

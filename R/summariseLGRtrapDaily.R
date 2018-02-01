@@ -23,40 +23,40 @@ summariseLGRtrapDaily = function(trap_df,
 
   # filter for selected species
   trap_df = trap_df %>%
-    dplyr::filter(Species == spp)
+    filter(Species == spp)
 
   # drop unclipped steelhead if only focusing on unclipped fish
   if(!incl_clip_sthd & spp == 'Steelhead') trap_df = trap_df %>%
-      # use only unclipped steelhead (to match with windown counts)
-      dplyr::filter(LGDMarkAD == 'AI')
+    # use only unclipped steelhead (to match with windown counts)
+    filter(LGDMarkAD == 'AI')
 
   # summarise by spawnyear, species and day
   lgr_trap_daily = trap_df %>%
-    # dplyr::mutate(SpawnYear = gsub('^SY', '', SpawnYear),
+    # mutate(SpawnYear = gsub('^SY', '', SpawnYear),
     #               SpawnYear = as.integer(SpawnYear),
     #               SpawnYear = ifelse(!is.na(SpawnYear), SpawnYear, ifelse(Species == 'Chinook', year(Date), ifelse(Species == 'Steelhead' & Date >= ymd(paste0(year(Date), '0701')), year(Date) + 1, year(Date))))) %>%
-    dplyr::group_by(Date) %>%
-    dplyr::summarize(trap_fish = length(MasterID),
-                     Wild.morph = sum(LGDRear=='W'),
-                     Hatch.morph = sum(LGDRear=='H'),
-                     NA.morph = sum(LGDRear %in% c('U', 'NI')),
-                     Wild.PBT = sum(grepl('W$', SRR)),
-                     HNC.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AI'),
-                     Hatch.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AD'),
-                     NA.PBT = sum(!(grepl('W$', SRR) | grepl('H$', SRR))),
-                     n_invalid = sum(LGDValid != 1)) %>%
-    dplyr::ungroup() %>%
-    dplyr::arrange(Date)
+    group_by(Date) %>%
+    summarize(trap_fish = length(MasterID),
+              Wild.morph = sum(LGDRear=='W'),
+              Hatch.morph = sum(LGDRear=='H'),
+              NA.morph = sum(LGDRear %in% c('U', 'NI')),
+              Wild.PBT = sum(grepl('W$', SRR)),
+              HNC.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AI'),
+              Hatch.PBT = sum(grepl('H$', SRR) & LGDMarkAD=='AD'),
+              NA.PBT = sum(!(grepl('W$', SRR) | grepl('H$', SRR))),
+              n_invalid = sum(LGDValid != 1)) %>%
+    ungroup() %>%
+    arrange(Date)
 
   if(sthd_B_run) lgr_trap_daily = lgr_trap_daily %>%
-    dplyr::left_join(trap_df %>%
-                dplyr::group_by(Date) %>%
-                dplyr::summarize(tot_B_run_sthd = sum(Species == 'Steelhead' & LGDFLmm >= 780 & grepl('W$', SRR))) %>%
-                dplyr::ungroup()) %>%
-    dplyr::select(Date:NA.PBT, tot_B_run_sthd, n_invalid)
+    left_join(trap_df %>%
+                group_by(Date) %>%
+                summarize(tot_B_run_sthd = sum(Species == 'Steelhead' & LGDFLmm >= 780 & grepl('W$', SRR))) %>%
+                ungroup()) %>%
+    select(Date:NA.PBT, tot_B_run_sthd, n_invalid)
 
   lgr_trap_daily = lgr_trap_daily %>%
-    dplyr::mutate(Date = ymd(Date))
+    mutate(Date = ymd(Date))
 
   return(lgr_trap_daily)
 

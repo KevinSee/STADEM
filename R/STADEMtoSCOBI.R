@@ -22,25 +22,25 @@ STADEMtoSCBOI = function(stadem_mod = NULL,
 
   week_est = stadem_mod$summary[grep('^X.new.tot', rownames(stadem_mod$summary)),] %>%
     as.data.frame() %>%
-    dplyr::mutate(var = rownames(.),
+    mutate(var = rownames(.),
            week = as.integer(stringr::str_extract(var, "[0-9]+")),
            param = stringr::str_extract_all(var, "[:alpha:]+", simplify = T)[,3]) %>%
-    dplyr::tbl_df() %>%
-    dplyr::select(var, param, week, dplyr::everything()) %>%
-    dplyr::left_join(lgr_weekly %>%
-                       dplyr::filter(window_open | trap_open) %>%
-                       dplyr::mutate(week = 1:n()))
+    tbl_df() %>%
+    select(var, param, week, everything()) %>%
+    left_join(lgr_weekly %>%
+                filter(window_open | trap_open) %>%
+                mutate(week = 1:n()))
 
   scobi_input = week_est %>%
-    dplyr::mutate(Strata = lubridate::week(Start_Date)) %>%
-    dplyr::select(model_week = week,
-                  StartDate = Start_Date,
-                  Strata,
-                  Estimate = mean,
-                  SE = sd) %>%
-    dplyr::mutate_at(vars(Estimate),
-                     funs(round)) %>%
-    dplyr::mutate(Collapse = NA)
+    mutate(Strata = lubridate::week(Start_Date)) %>%
+    select(model_week = week,
+           StartDate = Start_Date,
+           Strata,
+           Estimate = mean,
+           SE = sd) %>%
+    mutate_at(vars(Estimate),
+              funs(round)) %>%
+    mutate(Collapse = NA)
 
   if(saveCSV) {
     readr::write_csv(scobi_input,

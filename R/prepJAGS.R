@@ -24,86 +24,86 @@ prepJAGS = function(lgr_weekly = NULL,
   hw_type = match.arg(hw_type)
 
   if(hw_type == 'PBT') lgr_weekly = lgr_weekly %>%
-    dplyr::rename(wild_fish = Wild.PBT,
-                  hatch_fish = Hatch.PBT,
-                  hnc_fish = HNC.PBT)
+    rename(wild_fish = Wild.PBT,
+           hatch_fish = Hatch.PBT,
+           hnc_fish = HNC.PBT)
 
   if(hw_type == 'Morph') lgr_weekly = lgr_weekly %>%
-    dplyr::rename(wild_fish = Wild.morph,
-                  hatch_fish = Hatch.morph,
-                  hnc_fish = HNC.morph)
+    rename(wild_fish = Wild.morph,
+           hatch_fish = Hatch.morph,
+           hnc_fish = HNC.morph)
 
   # filter out weeks when ladder not open
   lgr_weekly = lgr_weekly %>%
-    dplyr::filter(window_open | trap_open)
+    filter(window_open | trap_open)
 
   org_exist = lgr_weekly %>%
-    dplyr::select(wild_fish, hnc_fish, hatch_fish) %>%
+    select(wild_fish, hnc_fish, hatch_fish) %>%
     colSums()
   org_exist = ifelse(org_exist > 0, 1, org_exist)
 
   jags_data_list = list('TotLadderWeeks' = nrow(lgr_weekly),
                         'Y.window' = lgr_weekly %>%
-                          dplyr::mutate(win_cnt = ifelse(!window_open, NA, win_cnt)) %>%
-                          dplyr::select(win_cnt) %>%
+                          mutate(win_cnt = ifelse(!window_open, NA, win_cnt)) %>%
+                          select(win_cnt) %>%
                           as.matrix() %>% as.vector(),
                         'Y.trap' = lgr_weekly %>%
-                          dplyr::mutate(y_trap = trap_fish,
-                                        y_trap = ifelse(!trap_open | !trap_valid, NA, y_trap)) %>%
-                          dplyr::select(y_trap) %>%
+                          mutate(y_trap = trap_fish,
+                                 y_trap = ifelse(!trap_open | !trap_valid, NA, y_trap)) %>%
+                          select(y_trap) %>%
                           as.matrix() %>% as.vector(),
                         'trap.fish' = lgr_weekly %>%
-                          dplyr::mutate(trap_fish = wild_fish + hnc_fish + hatch_fish) %>%
-                          dplyr::select(trap_fish) %>%
+                          mutate(trap_fish = wild_fish + hnc_fish + hatch_fish) %>%
+                          select(trap_fish) %>%
                           as.matrix() %>% as.vector(),
                         'trap.fish.matrix' = lgr_weekly %>%
-                          dplyr::select(wild_fish, hnc_fish, hatch_fish) %>%
+                          select(wild_fish, hnc_fish, hatch_fish) %>%
                           as.matrix(),
                         'org.exist' = org_exist,
                         # 'trap.rate' = lgr_weekly %>% mutate(trap_rate = ifelse(!trap_open | !trap_valid | is.na(trap_fish), 0, trap_rate)) %>%
                         #   select(trap_rate) %>% as.matrix() %>% as.vector(),
                         'trap.alpha' = lgr_weekly %>%
-                          dplyr::select(trap_alpha) %>%
+                          select(trap_alpha) %>%
                           as.matrix() %>% as.vector(),
                         'trap.beta' = lgr_weekly %>%
-                          dplyr::select(trap_beta) %>%
+                          select(trap_beta) %>%
                           as.matrix() %>% as.vector(),
                         'Tot.tags' = lgr_weekly %>%
-                          dplyr::mutate(Tot_tags = ifelse(is.na(tot_tags), 0, tot_tags)) %>%
-                          dplyr::select(Tot_tags) %>%
+                          mutate(Tot_tags = ifelse(is.na(tot_tags), 0, tot_tags)) %>%
+                          select(Tot_tags) %>%
                           as.matrix() %>% as.vector(),
                         'ReAsc.tags' = lgr_weekly %>%
-                          dplyr::mutate(ReAsc_tags = ifelse(reascent_tags > tot_tags, tot_tags, reascent_tags),
-                                        ReAsc_tags = ifelse(!trap_open, NA, ReAsc_tags)) %>%
-                          dplyr::select(ReAsc_tags) %>%
+                          mutate(ReAsc_tags = ifelse(reascent_tags > tot_tags, tot_tags, reascent_tags),
+                                 ReAsc_tags = ifelse(!trap_open, NA, ReAsc_tags)) %>%
+                          select(ReAsc_tags) %>%
                           as.matrix() %>% as.vector(),
                         'DC.tags' = lgr_weekly %>%
-                          dplyr::mutate(Day_tags = ifelse(day_tags > tot_tags, tot_tags, day_tags),
-                                        Day_tags = ifelse(!trap_open, NA, Day_tags)) %>%
-                          dplyr::select(Day_tags) %>%
+                          mutate(Day_tags = ifelse(day_tags > tot_tags, tot_tags, day_tags),
+                                 Day_tags = ifelse(!trap_open, NA, Day_tags)) %>%
+                          select(Day_tags) %>%
                           as.matrix() %>% as.vector()
   )
 
   if(wild_tags) {
     jags_data_list[['Tot.Tags']] = lgr_weekly %>%
-      dplyr::mutate(Tot_tags = ifelse(is.na(tot_tags_W), 0, tot_tags_W)) %>%
-      dplyr::select(Tot_tags) %>%
+      mutate(Tot_tags = ifelse(is.na(tot_tags_W), 0, tot_tags_W)) %>%
+      select(Tot_tags) %>%
       as.matrix() %>% as.vector()
     jags_data_list[['ReAsc.tags']] = lgr_weekly %>%
-      dplyr::mutate(ReAsc_tags = ifelse(reascent_tags_W > tot_tags_W, tot_tags_W, reascent_tags_W),
-                    ReAsc_tags = ifelse(!trap_open, NA, ReAsc_tags)) %>%
-      dplyr::select(ReAsc_tags) %>%
+      mutate(ReAsc_tags = ifelse(reascent_tags_W > tot_tags_W, tot_tags_W, reascent_tags_W),
+             ReAsc_tags = ifelse(!trap_open, NA, ReAsc_tags)) %>%
+      select(ReAsc_tags) %>%
       as.matrix() %>% as.vector()
     jags_data_list[['DC.tags']] = lgr_weekly %>%
-      dplyr::mutate(Day_tags = ifelse(day_tags_W > tot_tags_W, tot_tags_W, day_tags_W),
-                    Day_tags = ifelse(!trap_open, NA, Day_tags)) %>%
-      dplyr::select(Day_tags) %>%
+      mutate(Day_tags = ifelse(day_tags_W > tot_tags_W, tot_tags_W, day_tags_W),
+             Day_tags = ifelse(!trap_open, NA, Day_tags)) %>%
+      select(Day_tags) %>%
       as.matrix() %>% as.vector()
   }
 
 
   if(sthd_B_run) jags_data_list[['B.trap']] = lgr_weekly %>%
-    dplyr::select(tot_B_run_sthd) %>%
+    select(tot_B_run_sthd) %>%
     as.matrix() %>% as.vector()
 
   return(jags_data_list)

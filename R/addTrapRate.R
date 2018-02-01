@@ -19,12 +19,12 @@ addTrapRate = function(lgr_weekly = NULL,
   stopifnot(!is.null(trap_rate))
 
   lgr_week_trapRate = lgr_weekly %>%
-    dplyr::left_join(trap_rate) %>%
-    dplyr::mutate(trap_open = ifelse(is.na(trap_open), F, trap_open)) %>%
-    dplyr::mutate(trap_est = ifelse(trap_open, trap_fish / trap_rate, NA)) %>%
-    dplyr::mutate(trap_est_se = sqrt(trap_rate_se^2 * (-trap_fish * trap_rate^(-2))^2)) %>%
+    left_join(trap_rate) %>%
+    mutate(trap_open = ifelse(is.na(trap_open), F, trap_open)) %>%
+    mutate(trap_est = ifelse(trap_open, trap_fish / trap_rate, NA)) %>%
+    mutate(trap_est_se = sqrt(trap_rate_se^2 * (-trap_fish * trap_rate^(-2))^2)) %>%
     # check to see if some trap estimates seem valid
-    dplyr::mutate(Prob_Less = pbinom(trap_fish, win_cnt, trap_rate, lower.tail=T),
+    mutate(Prob_Less = pbinom(trap_fish, win_cnt, trap_rate, lower.tail=T),
            Prob_More = pbinom(trap_fish, win_cnt, trap_rate, lower.tail=F),
            lower_trap_lim = qbinom(0.05, win_cnt, trap_rate, lower.tail=T),
            upper_trap_lim = qbinom(0.95, win_cnt, trap_rate, lower.tail=T),
@@ -37,16 +37,16 @@ addTrapRate = function(lgr_weekly = NULL,
 
   if(trap_rate_dist == 'beta') {
     lgr_week_trapRate = lgr_week_trapRate %>%
-      dplyr::mutate(trap_alpha = ifelse(trap_open & trap_valid, trap_alpha, 1e-12),
+      mutate(trap_alpha = ifelse(trap_open & trap_valid, trap_alpha, 1e-12),
              trap_beta = ifelse(trap_open & trap_valid, trap_beta, 1)) %>%
-      dplyr::select(-(Prob_Less:upper_trap_est))
+      select(-(Prob_Less:upper_trap_est))
   }
 
   if(trap_rate_dist == 'logit') {
     lgr_week_trapRate = lgr_week_trapRate %>%
-      dplyr::mutate(trap_mu = ifelse(trap_open & trap_valid, boot::logit(trap_rate), 1e-12),
-                    trap_sd = ifelse(trap_open & trap_valid, boot::logit(trap_rate_se), 0)) %>%
-      dplyr::select(-(Prob_Less:upper_trap_est))
+      mutate(trap_mu = ifelse(trap_open & trap_valid, boot::logit(trap_rate), 1e-12),
+             trap_sd = ifelse(trap_open & trap_valid, boot::logit(trap_rate_se), 0)) %>%
+      select(-(Prob_Less:upper_trap_est))
   }
 
   return(lgr_week_trapRate)

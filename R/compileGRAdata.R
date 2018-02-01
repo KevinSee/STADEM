@@ -105,64 +105,64 @@ compileGRAdata = function(yr,
   # estimate trap rate from PIT tags
   trap_rate = tagTrapRate(trap_dataframe = trap_yr,
                           week_strata = week_strata) %>%
-    dplyr::mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
-    dplyr::left_join(tibble(Start_Date = lubridate::int_start(week_strata),
-                            week_num = 1:length(week_strata))) %>%
-    dplyr::rename(n_trap_tags = n_trap,
-                  n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
-                  trap_rate = rate,
-                  trap_rate_se = rate_se) %>%
-    dplyr::mutate(Start_Date = ymd(Start_Date)) %>%
-    dplyr::select(Start_Date,
-                  week_num,
-                  trap_open,
-                  everything())
+    mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
+    left_join(tibble(Start_Date = lubridate::int_start(week_strata),
+                     week_num = 1:length(week_strata))) %>%
+    rename(n_trap_tags = n_trap,
+           n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
+           trap_rate = rate,
+           trap_rate_se = rate_se) %>%
+    mutate(Start_Date = ymd(Start_Date)) %>%
+    select(Start_Date,
+           week_num,
+           trap_open,
+           everything())
 
   # to use DART trap rate instead
   # impose constant CV on trap rate estimates
   if(useDARTrate) {
     trap_rate = trap_rate %>%
-      dplyr::left_join(queryTrapRate(week_strata,
-                                     spp = spp,
-                                     return_weekly = T)) %>%
-      dplyr::mutate(trap_rate = ActualRateInclusiveTime,
-                    # add some error
-                    trap_rate_se = trap_rate * trap_rate_cv)
+      left_join(queryTrapRate(week_strata,
+                              spp = spp,
+                              return_weekly = T)) %>%
+      mutate(trap_rate = ActualRateInclusiveTime,
+             # add some error
+             trap_rate_se = trap_rate * trap_rate_cv)
   }
 
 
   if(trap_rate_dist == 'beta') {
     trap_rate = trap_rate %>%
       # set up parameters describing trap rate as a beta distribution
-      dplyr::mutate(trap_alpha = ((1 - trap_rate) / trap_rate_se^2 - 1 / trap_rate) * trap_rate^2,
-                    trap_alpha = ifelse(trap_alpha < 0, 0.01, trap_alpha),
-                    trap_beta = trap_alpha * (1 / trap_rate - 1),
-                    trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
-                    trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
-      dplyr::select(Start_Date, week_num, n_trap_tags, n_poss_tags, matches('^trap')) %>%  # include the tag observations
-      dplyr::distinct()
+      mutate(trap_alpha = ((1 - trap_rate) / trap_rate_se^2 - 1 / trap_rate) * trap_rate^2,
+             trap_alpha = ifelse(trap_alpha < 0, 0.01, trap_alpha),
+             trap_beta = trap_alpha * (1 / trap_rate - 1),
+             trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
+             trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
+      select(Start_Date, week_num, n_trap_tags, n_poss_tags, matches('^trap')) %>%  # include the tag observations
+      distinct()
   }
 
   if(trap_rate_dist == 'logit') {
     trap_rate = trap_rate %>%
       # set up parameters describing trap rate as a logit distribution
-      dplyr::mutate(trap_mu = ifelse(trap_open, boot::logit(trap_rate), 1e-12),
-                    trap_sd = ifelse(trap_open, (1 / n_trap) + (1 / (n_tot - n_trap)), 0)) %>%
+      mutate(trap_mu = ifelse(trap_open, boot::logit(trap_rate), 1e-12),
+             trap_sd = ifelse(trap_open, (1 / n_trap) + (1 / (n_tot - n_trap)), 0)) %>%
       # trap_sd = ifelse(trap_open, boot::logit(trap_rate_se), 0)) %>%
-      dplyr::select(Start_Date, week_num, matches('^trap')) %>%
-      dplyr::distinct()
+      select(Start_Date, week_num, matches('^trap')) %>%
+      distinct()
   }
 
   #--------------------------------------------------------
   # comnbine window counts, PIT tag data and trap summary on daily time-step
   cat('Combining daily data\n')
   dam_daily = win_cnts %>%
-    dplyr::select(-Year) %>%
-    dplyr::full_join(summarisePITdataDaily(pit_df) %>%
-                       select(-SpawnYear)) %>%
-    dplyr::mutate_at(vars(tot_tags:reascent_tags_H),
-                     funs(ifelse(is.na(.), 0, .))) %>%
-    dplyr::left_join(trap_df)
+    select(-Year) %>%
+    full_join(summarisePITdataDaily(pit_df) %>%
+                select(-SpawnYear)) %>%
+    mutate_at(vars(tot_tags:reascent_tags_H),
+              funs(ifelse(is.na(.), 0, .))) %>%
+    left_join(trap_df)
 
   #------------------------------------------
   # get week strata for each date
@@ -175,19 +175,19 @@ compileGRAdata = function(yr,
   #------------------------------------------
   # summarise by week and add trap rate
   dam_weekly = dam_daily %>%
-    dplyr::group_by(week_num) %>%
-    dplyr::summarise(Species = unique(Species),
-                     Start_Date = min(Date)) %>%
-    dplyr::ungroup() %>%
-    dplyr::left_join(dam_daily %>%
-                       dplyr::group_by(week_num) %>%
-                       dplyr::summarise_at(vars(win_cnt:n_invalid),
-                                           funs(sum), na.rm = T) %>%
-                       dplyr::ungroup() %>%
-                       dplyr::mutate_at(vars(win_cnt:n_invalid),
-                                        funs(ifelse(is.na(.), 0, .)))) %>%
-    dplyr::mutate(window_open = ifelse(win_cnt > 0, T, F)) %>%
-    dplyr::select(Species, Start_Date, week_num, everything()) %>%
+    group_by(week_num) %>%
+    summarise(Species = unique(Species),
+              Start_Date = min(Date)) %>%
+    ungroup() %>%
+    left_join(dam_daily %>%
+                group_by(week_num) %>%
+                summarise_at(vars(win_cnt:n_invalid),
+                             funs(sum), na.rm = T) %>%
+                ungroup() %>%
+                mutate_at(vars(win_cnt:n_invalid),
+                          funs(ifelse(is.na(.), 0, .)))) %>%
+    mutate(window_open = ifelse(win_cnt > 0, T, F)) %>%
+    select(Species, Start_Date, week_num, everything()) %>%
     addTrapRate(trap_rate,
                 trap_rate_dist)
 

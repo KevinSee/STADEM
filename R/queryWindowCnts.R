@@ -36,12 +36,12 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   spp_code = match.arg(spp_code, several.ok = T)
 
   # match up species code with species name
-  spp_name = dplyr::tibble(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
-                           code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft')) %>%
-    dplyr::filter(code %in% spp_code) %>%
-    dplyr::mutate(code = factor(code, levels = spp_code)) %>%
-    dplyr::arrange(code) %>%
-    dplyr::select(Species) %>%
+  spp_name = data.frame(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
+                        code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft')) %>%
+    filter(code %in% spp_code) %>%
+    mutate(code = factor(code, levels = spp_code)) %>%
+    arrange(code) %>%
+    select(Species) %>%
     as.matrix() %>%
     as.character()
 
@@ -109,29 +109,29 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
 
   # re-format
   win_cnts = parsed %>%
-    dplyr::mutate(year = as.integer(year)) %>%
-    dplyr::filter(!is.na(year)) %>%
-    dplyr::mutate(Date = lubridate::ymd(paste(year, `mm-dd`, sep = '-'))) %>%
-    dplyr::mutate(Species = dplyr::recode(parameter,
-                                          'Chin' = 'Chinook',
-                                          'JChin' = 'Jack_Chinook',
-                                          'JCoho' = 'Jack_Coho',
-                                          'JStlhd' = 'Jack_Steelhead',
-                                          'Lmpry' = 'Lamprey',
-                                          'Sock' = 'Sockeye',
-                                          'Stlhd' = 'Steelhead',
-                                          'WStlhd' = 'Wild_Steelhead')) %>%
-    dplyr::select(Species,
-                  Year = year,
-                  Date,
-                  win_cnt = value) %>%
+    mutate(year = as.integer(year)) %>%
+    filter(!is.na(year)) %>%
+    mutate(Date = lubridate::ymd(paste(year, `mm-dd`, sep = '-'))) %>%
+    mutate(Species = recode(parameter,
+                            'Chin' = 'Chinook',
+                            'JChin' = 'Jack_Chinook',
+                            'JCoho' = 'Jack_Coho',
+                            'JStlhd' = 'Jack_Steelhead',
+                            'Lmpry' = 'Lamprey',
+                            'Sock' = 'Sockeye',
+                            'Stlhd' = 'Steelhead',
+                            'WStlhd' = 'Wild_Steelhead')) %>%
+    select(Species,
+           Year = year,
+           Date,
+           win_cnt = value) %>%
     tidyr::spread(Species, win_cnt, fill = 0)
 
 
   if(grepl('Steelhead', spp_name)) {
     win_cnts = win_cnts %>%
-      dplyr::filter(Date >= lubridate::ymd(paste(spawn_yr - 1, start_day)),
-                    Date <= lubridate::ymd(paste(spawn_yr, end_day)))
+      filter(Date >= lubridate::ymd(paste(spawn_yr - 1, start_day)),
+             Date <= lubridate::ymd(paste(spawn_yr, end_day)))
   }
 
   return(win_cnts)

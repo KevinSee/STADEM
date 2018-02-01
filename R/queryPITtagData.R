@@ -108,14 +108,14 @@ queryPITtagData = function(damPIT = 'GRA',
   }
 
   pit_df = parsed %>%
-    dplyr::mutate(Date = lubridate::ymd(Date),
-                  `Detection DateTime` = lubridate::ymd_hms(`Detection DateTime`)) %>%
-    dplyr::filter(Ladder == damPIT) %>%
-    dplyr::rename(SpCode = Species) %>%
-    dplyr::mutate(Species = spp,
-                  Year = spawn_yr) %>%
-    dplyr::arrange(Date, TagID, `Detection DateTime`) %>%
-    dplyr::select(Ladder, Year, Species, SpCode, TagID, everything())
+    mutate(Date = lubridate::ymd(Date),
+           `Detection DateTime` = lubridate::ymd_hms(`Detection DateTime`)) %>%
+    filter(Ladder == damPIT) %>%
+    rename(SpCode = Species) %>%
+    mutate(Species = spp,
+           Year = spawn_yr) %>%
+    arrange(Date, TagID, `Detection DateTime`) %>%
+    select(Ladder, Year, Species, SpCode, TagID, everything())
 
   names(pit_df) = gsub(' ', '', names(pit_df))
 
