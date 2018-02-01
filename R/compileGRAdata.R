@@ -89,19 +89,9 @@ compileGRAdata = function(yr,
 
   # read in data for Chinook and steelhead
   cat('Getting LGR trap data\n')
-  if(!is.null(trap_path)) {
-    trap_yr = readLGRtrapDB(trap_path = trap_path,
-                            date_range = c(lubridate::ymd(lubridate::int_start(week_strata[1])),
-                                           lubridate::ymd(lubridate::int_end(week_strata[length(week_strata)]) + lubridate::dseconds(1))))
-  }
-
-  if(is.null(trap_path)) {
-    trap_yr = lgr_trap %>%
-      # filter for date range
-      dplyr::filter(Date >= lubridate::ymd(lubridate::int_start(week_strata[1])),
-                    Date < lubridate::ymd(lubridate::int_end(week_strata[length(week_strata)]) + lubridate::dseconds(1))) %>%
-      dplyr::arrange(Date)
-  }
+  trap_yr = readLGRtrapDB(trap_path = trap_path,
+                          date_range = c(lubridate::ymd(lubridate::int_start(week_strata[1])),
+                                         lubridate::ymd(lubridate::int_end(week_strata[length(week_strata)]) + lubridate::dseconds(1))))
 
   # summarise by date for particular species
   trap_df = summariseLGRtrapDaily(trap_df = trap_yr,

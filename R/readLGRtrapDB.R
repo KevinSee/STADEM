@@ -15,7 +15,9 @@
 readLGRtrapDB = function(trap_path = NULL,
                          date_range = NULL) {
 
-  stopifnot(!is.null(trap_path))
+  if(is.null(trap_path)) {
+    stop('File path to trap database needed.')
+  }
 
   lgr_trap = read.csv(trap_path) %>%
     dplyr::tbl_df() %>%
