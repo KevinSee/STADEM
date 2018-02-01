@@ -38,8 +38,8 @@ queryPITtagData = function(damPIT = 'GRA',
   if(damPIT == 'GRA' & grepl('Steelhead', spp) & is.null(end_day)) end_day = '06/30'
 
   # match up species code with species name
-  spp_code_df = data.frame(Species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
-                           code = 1:4)
+  spp_code_df = tibble(Species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
+                       code = 1:4)
 
   spp_code = spp_code_df$code[match(spp, spp_code_df$Species)]
 
