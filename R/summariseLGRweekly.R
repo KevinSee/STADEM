@@ -20,74 +20,67 @@ summariseLGRweekly = function(wind_data = NULL,
                               sthd_B_run = FALSE,
                               incl_chnk_jacks = TRUE) {
 
-  stopifnot(!is.null(wind_data))
-  stopifnot(!is.null(pit_all))
+  stopifnot(!is.null(wind_data),
+            !is.null(pit_all),
+            !is.null(trap_df))
 
   yr_range = min(unique(year(wind_data$Date))):max(unique(year(wind_data$Date)))
 
   # determine weekly strata
   week_strata = weeklyStrata(yr_range)
 
-  if(is.null(trap_df)) {
-    load('R/sysdata.rda')
-    trap_df = lgr_trap %>%
-      dplyr::rename(Date = CollectionDate)
-    rm(lgr_trap)
-    # trap_df$Date = ymd(trap_df$Date)
-  }
-
   # For trap database, summarise by spawnyear, species and day
   lgr_trap_daily = summariseLGRtrapDaily(trap_df,
                                          incl_clip_sthd,
                                          sthd_B_run) %>%
-    dplyr::mutate(Date = as.Date(Date))
+    mutate(Date = as.Date(Date))
 
   # For PIT tag data, summarise by spawnyear, species and day
   pit_daily = summarisePITdataDaily(pit_all)
 
   # create vector determining if window is open
   wind_open = wind_data %>%
-    dplyr::select(-(Year:Date)) %>%
-    dplyr::mutate(open = ifelse(rowSums(is.na(.)) < ncol(.), T, F)) %>%
-    dplyr::select(open) %>%
+    select(-(Year:Date)) %>%
+    mutate(open = ifelse(rowSums(is.na(.)) < ncol(.), T, F)) %>%
+    select(open) %>%
     as.matrix() %>%
     as.vector()
 
   # for window counts, split by species
   wind_data = wind_data %>%
-    dplyr::mutate(window_open = wind_open) %>%
-    dplyr::mutate_each(funs(ifelse(is.na(.), 0, .)), -Year, -Date, -window_open)
+    mutate(window_open = wind_open) %>%
+    mutate_each(funs(ifelse(is.na(.), 0, .)), -Year, -Date, -window_open)
 
   if(incl_chnk_jacks) wind_data = wind_data %>%
-    dplyr::mutate(Chinook = Chinook + Jack_Chinook) %>%
-    dplyr::select(-Jack_Chinook)
+    mutate(Chinook = Chinook + Jack_Chinook) %>%
+    select(-Jack_Chinook)
 
   if(!incl_clip_sthd) wind_data = wind_data %>%
-    dplyr::select(-Steelhead) %>%
-    dplyr::rename(Steelhead = Wild_Steelhead)
+    select(-Steelhead) %>%
+    rename(Steelhead = Wild_Steelhead)
 
   wind_long = wind_data %>%
     tidyr::gather(Species, win_cnt, -Year, -Date, -window_open) %>%
-    dplyr::filter(Species %in% c('Chinook', 'Steelhead')) %>%
-    dplyr::mutate(SpawnYear = ifelse(Species == 'Chinook', lubridate::year(Date),
-                                     ifelse(Species == 'Steelhead' & Date >= lubridate::ymd(paste0(lubridate::year(Date), '0701')), lubridate::year(Date) + 1, lubridate::year(Date)))) %>%
-    dplyr::select(Species, SpawnYear, Date, window_open, win_cnt)
+    filter(Species %in% c('Chinook', 'Steelhead')) %>%
+    mutate(SpawnYear = ifelse(Species == 'Chinook', lubridate::year(Date),
+                              ifelse(Species == 'Steelhead' & Date >= lubridate::ymd(paste0(lubridate::year(Date), '0701')), lubridate::year(Date) + 1, lubridate::year(Date)))) %>%
+    select(Species, SpawnYear, Date, window_open, win_cnt)
 
 
   # combine daily data
   lgr_daily = wind_long %>%
-    dplyr::left_join(lgr_trap_daily) %>%
-    dplyr::left_join(pit_daily) %>%
-    dplyr::filter(SpawnYear >= min(yr_range),
-                  SpawnYear <= max(yr_range),
-                  !(Species == 'Chinook' & Date < lubridate::ymd(paste(lubridate::year(Date), '0301'))),
-                  !(Species == 'Chinook' & Date > lubridate::ymd(paste(lubridate::year(Date), '0817'))),
-                  Date >= min(lubridate::int_start(week_strata)),
-                  Date <= max(lubridate::int_end(week_strata))) %>%
-    dplyr::mutate_at(vars(win_cnt, trap_fish:reascent_tags_H),
-                     funs(as.integer)) %>%
+    left_join(lgr_trap_daily) %>%
+    left_join(pit_daily) %>%
+    filter(SpawnYear >= min(yr_range),
+           SpawnYear <= max(yr_range),
+           !(Species == 'Chinook' & Date < lubridate::ymd(paste(lubridate::year(Date), '0301'))),
+           !(Species == 'Chinook' & Date > lubridate::ymd(paste(lubridate::year(Date), '0817'))),
+           Date >= min(lubridate::int_start(week_strata)),
+           Date <= max(lubridate::int_end(week_strata))) %>%
+    mutate_at(vars(win_cnt, trap_fish:reascent_tags_H),
+              funs(as.integer)) %>%
     # assign week numbers to each day
-    dplyr::mutate(week_num_org = NA)
+    mutate(week_num_org = NA)
 
   for(i in 1:length(week_strata)) {
     lgr_daily$week_num_org[with(lgr_daily, which(Date %within% week_strata[i]))] = i
@@ -95,25 +88,25 @@ summariseLGRweekly = function(wind_data = NULL,
 
   # summarise daily data by week
   lgr_weekly = lgr_daily %>%
-    dplyr::filter(!is.na(week_num_org),
-                  SpawnYear >= min(yr_range),
-                  SpawnYear <= max(yr_range),
-                  # !(Species == 'Chinook' & SpawnYear == min(yr_range)),
-                  !(Species == 'Chinook' & Date < lubridate::ymd(paste(lubridate::year(Date), '0301'))),
-                  !(Species == 'Chinook' & Date > lubridate::ymd(paste(lubridate::year(Date), '0817')))) %>%
-    dplyr::group_by(Species, SpawnYear, week_num_org) %>%
-    dplyr::summarise_at(vars(win_cnt:reascent_tags_H),
-                        funs(sum),
-                        na.rm = T) %>%
-    dplyr::ungroup() %>%
-    dplyr::left_join(lgr_daily %>%
-                       dplyr::group_by(Species, SpawnYear, week_num_org) %>%
-                       dplyr::summarise(window_open = ifelse(sum(window_open) > 0, T, F))) %>%
-    dplyr::mutate(Start_Date = int_start(week_strata)[week_num_org]) %>%
-    dplyr::group_by(Species, SpawnYear) %>%
-    dplyr::mutate(week_num = week_num_org - min(week_num_org) + 1) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(Species:week_num_org, week_num, Start_Date, window_open, everything())
+    filter(!is.na(week_num_org),
+           SpawnYear >= min(yr_range),
+           SpawnYear <= max(yr_range),
+           # !(Species == 'Chinook' & SpawnYear == min(yr_range)),
+           !(Species == 'Chinook' & Date < lubridate::ymd(paste(lubridate::year(Date), '0301'))),
+           !(Species == 'Chinook' & Date > lubridate::ymd(paste(lubridate::year(Date), '0817')))) %>%
+    group_by(Species, SpawnYear, week_num_org) %>%
+    summarise_at(vars(win_cnt:reascent_tags_H),
+                 funs(sum),
+                 na.rm = T) %>%
+    ungroup() %>%
+    left_join(lgr_daily %>%
+                group_by(Species, SpawnYear, week_num_org) %>%
+                summarise(window_open = ifelse(sum(window_open) > 0, T, F))) %>%
+    mutate(Start_Date = int_start(week_strata)[week_num_org]) %>%
+    group_by(Species, SpawnYear) %>%
+    mutate(week_num = week_num_org - min(week_num_org) + 1) %>%
+    ungroup() %>%
+    select(Species:week_num_org, week_num, Start_Date, window_open, everything())
 
   #
   # # assign week numbers to each day
@@ -133,7 +126,7 @@ summariseLGRweekly = function(wind_data = NULL,
   #
   # # summarise PIT tag data weekly
   # pit_weekly = pit_daily %>%
-  #   dplyr::filter(!is.na(week_num_org),
+  #   filter(!is.na(week_num_org),
   #                 SpawnYear >= min(yr_range),
   #                 SpawnYear <= max(yr_range),
   #                 # !(Species == 'Chinook' & SpawnYear == min(yr_range)),
@@ -145,7 +138,7 @@ summariseLGRweekly = function(wind_data = NULL,
   #
   # # summarise trap data weekly
   # lgr_trap_weekly = lgr_trap_daily %>%
-  #   dplyr::filter(!is.na(week_num_org),
+  #   filter(!is.na(week_num_org),
   #                 SpawnYear >= min(yr_range),
   #                 SpawnYear <= max(yr_range),
   #                 # !(Species == 'Chinook' & SpawnYear == min(yr_range)),
@@ -157,7 +150,7 @@ summariseLGRweekly = function(wind_data = NULL,
   #
   # # summarise window counts weekly
   # wind_weekly = wind_long %>%
-  #   dplyr::filter(!is.na(week_num_org),
+  #   filter(!is.na(week_num_org),
   #                 SpawnYear >= min(yr_range),
   #                 SpawnYear <= max(yr_range),
   #                 # !(Species == 'Chinook' & SpawnYear == min(yr_range)),
@@ -172,11 +165,11 @@ summariseLGRweekly = function(wind_data = NULL,
   # lgr_weekly = wind_weekly %>%
   #   full_join(lgr_trap_weekly) %>%
   #   full_join(pit_weekly) %>%
-  #   dplyr::mutate(Start_Date = int_start(week_strata)[week_num_org]) %>%
+  #   mutate(Start_Date = int_start(week_strata)[week_num_org]) %>%
   #   group_by(Species, SpawnYear) %>%
-  #   dplyr::mutate(week_num = week_num_org - min(week_num_org) + 1) %>%
+  #   mutate(week_num = week_num_org - min(week_num_org) + 1) %>%
   #   ungroup() %>%
-  #   dplyr::select(Species:week_num_org, week_num, Start_Date, window_open, everything()) %>%
+  #   select(Species:week_num_org, week_num, Start_Date, window_open, everything()) %>%
   #   mutate_at(vars(win_cnt, trap_fish:reascent_tags_H), funs(ifelse(is.na(.), 0, .))) %>%
   #   mutate_at(vars(win_cnt, trap_fish:reascent_tags_H), funs(as.integer))
 
@@ -184,13 +177,13 @@ summariseLGRweekly = function(wind_data = NULL,
 
   # do daily and weekly data have same number of fish at window and trap in total?
   all_fish_counted = identical(lgr_weekly %>%
-                                 dplyr::group_by(Species, SpawnYear) %>%
-                                 dplyr::summarise(tot_cnts = sum(win_cnt),
-                                                  tot_trap = sum(trap_fish, na.rm = T)),
+                                 group_by(Species, SpawnYear) %>%
+                                 summarise(tot_cnts = sum(win_cnt),
+                                           tot_trap = sum(trap_fish, na.rm = T)),
                                lgr_daily %>%
-                                 dplyr::group_by(Species, SpawnYear) %>%
-                                 dplyr::summarise(tot_cnts = sum(win_cnt, na.rm = T),
-                                                  tot_trap = sum(trap_fish, na.rm=T)))
+                                 group_by(Species, SpawnYear) %>%
+                                 summarise(tot_cnts = sum(win_cnt, na.rm = T),
+                                           tot_trap = sum(trap_fish, na.rm=T)))
 
   stopifnot(all_fish_counted)
 
