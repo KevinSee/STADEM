@@ -17,14 +17,15 @@
 #' @return NULL
 #' @examples queryPITtagData(spawn_yr = 2015)
 
-queryPITtagData = function(damPIT = 'GRA',
+queryPITtagData = function(damPIT = c('GRA', 'PRA'),
                            spp = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
                            spawn_yr = NULL,
                            start_day = NULL,
                            end_day = NULL) {
 
   # need a year, and only dam allowed in Lower Granite (GRA)
-  stopifnot(damPIT == 'GRA', !is.null(spawn_yr))
+  stopifnot(!is.null(spawn_yr))
+  # stopifnot(damPIT == 'GRA')
 
   # pull out default dam and species code
   damPIT = match.arg(damPIT)
@@ -44,10 +45,12 @@ queryPITtagData = function(damPIT = 'GRA',
   spp_code = spp_code_df$code[match(spp, spp_code_df$Species)]
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/KevinSee/damEscapement')
+  ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
-  url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_window_new.php'
+  if(damPIT == 'GRA') url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_window_new.php'
+
+  if(damPIT == 'PRA') url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_ladder_pra.php'
 
   # build query for DART
   queryList = list(type = 'tagid',
@@ -110,7 +113,7 @@ queryPITtagData = function(damPIT = 'GRA',
   pit_df = parsed %>%
     mutate(Date = lubridate::ymd(Date),
            `Detection DateTime` = lubridate::ymd_hms(`Detection DateTime`)) %>%
-    filter(Ladder == damPIT) %>%
+    # filter(Ladder == damPIT) %>%
     rename(SpCode = Species) %>%
     mutate(Species = spp,
            Year = spawn_yr) %>%
@@ -118,6 +121,14 @@ queryPITtagData = function(damPIT = 'GRA',
     select(Ladder, Year, Species, SpCode, TagID, everything())
 
   names(pit_df) = gsub(' ', '', names(pit_df))
+
+  if(damPIT == 'PRA') {
+    pit_df = pit_df %>%
+      rename(PreviousDate = PreviousDetectDate,
+             PreviousHours = DiffPreviousHours,
+             PreviousDays = DiffPreviousDays)
+  }
+
 
   return(pit_df)
 }
