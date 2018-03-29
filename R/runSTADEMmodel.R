@@ -35,6 +35,13 @@ runSTADEMmodel = function(file_name = NULL,
                           win_model = c('neg_bin', 'neg_bin2', 'pois', 'quasi_pois', 'log_space'),
                           trap_est = TRUE) {
 
+  # check if jagsUI is installed
+  if( !requireNamespace('jagsUI', quietly = T)) {
+    stop("Package \"jagsUI\" needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
+
   # which distribution is used to model window counts?
   win_model = match.arg(win_model)
 
