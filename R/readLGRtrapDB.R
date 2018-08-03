@@ -31,7 +31,7 @@ readLGRtrapDB = function(trap_path = NULL,
            Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', NA))) %>%
     # drop data from other species, and other runs of Chinook
     filter(Species %in% c('Chinook', 'Steelhead'),
-           !(Species == 'Chinook' & Date > lubridate::ymd(paste0(lubridate::year(Date), '0817'))),
+           # !(Species == 'Chinook' & Date > lubridate::ymd(paste0(lubridate::year(Date), '0817'))),
            # filter for date range
            Date >= date_range[1],
            Date < date_range[2],
