@@ -9,8 +9,9 @@
 #' @param dam the dam code. Currently only set up for Lower Granite (\code{LWG}). Other possible codes to be implemented in the future are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)
 #' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (\code{GRA}).
 #' @param strata_beg 3 letter code for the day of the week each weekly strata should begin on.
-#' @param start_day date (\code{month / day}) when query should start
-#' @param end_day date (\code{month / day}) when query should end
+#' @param start_day date (\code{month / day}) when query should start.
+#' @param end_day date (\code{month / day}) when query should end.
+#' #' @param last_strata_min minimum length (in days) for the final strata. Default value is 3.
 #' @param incl_jacks should jacks be included in the window count totals? \code{T / F}
 #' @param sthd_type should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.
 #' @param sthd_B_run should numbers of B run steelhead be reported? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.
@@ -32,6 +33,7 @@ compileGRAdata = function(yr,
                           strata_beg = NULL,
                           start_day = NULL,
                           end_day = NULL,
+                          last_strata_min = 3,
                           incl_jacks = NULL,
                           sthd_type = c('all', 'unclipped'),
                           sthd_B_run = FALSE,
@@ -85,7 +87,10 @@ compileGRAdata = function(yr,
   cat('Dividing into strata\n')
   week_strata = weeklyStrata(spawn_yr = yr,
                              spp = spp,
-                             strata_beg = strata_beg)
+                             start_day = start_day,
+                             end_day = end_day,
+                             strata_beg = strata_beg,
+                             last_strata_min = last_strata_min)
 
   # read in data for Chinook and steelhead
   cat('Getting LGR trap data\n')
