@@ -5,7 +5,7 @@
 #' @author Kevin See
 #'
 #' @param pit_data data.frame containing PIT tag data to summarise, queried using \code{queryPITtagData}
-#' @param spring_summer_chnk should the PIT tag data be filtered to exclude fall and winter run Chinook? Default is \code{TRUE}
+#' @param spring_summer_chnk should the PIT tag data be filtered to exclude fall and winter run Chinook? Default is \code{FALSE}
 #'
 #' @import lubridate dplyr
 #' @export
@@ -13,7 +13,7 @@
 #' @examples summarisePITdataDaily(pit_all)
 
 summarisePITdataDaily = function(pit_data,
-                                 spring_summer_chnk = T) {
+                                 spring_summer_chnk = F) {
   # clean up a few columns
   pit_data = pit_data %>%
     mutate(Period = factor(Period, levels = c('D', 'N')),
