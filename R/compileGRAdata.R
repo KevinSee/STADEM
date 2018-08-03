@@ -77,7 +77,8 @@ compileGRAdata = function(yr,
   #--------------------------------------------------------
   # query PIT tag data from previously tagged fish
   cat('Querying night passage & reascension PIT tags\n')
-  pit_df = queryPITtagData(spawn_yr = yr,
+  pit_df = queryPITtagData(damPIT = 'GRA',
+                           spawn_yr = yr,
                            spp = spp,
                            start_day = start_day,
                            end_day = end_day)
