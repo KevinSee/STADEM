@@ -62,7 +62,8 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
                    startdate = start_day,
                    enddate = end_day)
 
-  if(grepl('Steelhead', spp)) {
+  # if(grepl('Steelhead', spp)) {
+  if(lubridate::ymd(paste(spawn_yr, end_day)) < lubridate::ymd(paste(spawn_yr, start_day))) {
     queryList[['span']] = 'yes'
     queryList = c(queryList,
                   list(syear = spawn_yr - 1,
