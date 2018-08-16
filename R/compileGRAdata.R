@@ -153,7 +153,7 @@ compileGRAdata = function(yr,
     trap_rate = trap_rate %>%
       # set up parameters describing trap rate as a logit distribution
       mutate(trap_mu = ifelse(trap_open, boot::logit(trap_rate), 1e-12),
-             trap_sd = ifelse(trap_open, (1 / n_trap) + (1 / (n_tot - n_trap)), 0)) %>%
+             trap_sd = ifelse(trap_open, (1 / n_trap_tags) + (1 / (n_poss_tags - n_trap_tags)), 0)) %>%
       # trap_sd = ifelse(trap_open, boot::logit(trap_rate_se), 0)) %>%
       select(Start_Date, week_num, matches('^trap')) %>%
       distinct()

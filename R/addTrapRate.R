@@ -44,8 +44,9 @@ addTrapRate = function(lgr_weekly = NULL,
 
   if(trap_rate_dist == 'logit') {
     lgr_week_trapRate = lgr_week_trapRate %>%
-      mutate(trap_mu = ifelse(trap_open & trap_valid, boot::logit(trap_rate), 1e-12),
-             trap_sd = ifelse(trap_open & trap_valid, boot::logit(trap_rate_se), 0)) %>%
+      mutate(trap_mu = ifelse(trap_open & trap_valid, trap_mu, -25),
+             trap_sd = ifelse(trap_open & trap_valid, trap_sd, 0)) %>%
+             # trap_sd = ifelse(trap_open & trap_valid, boot::logit(trap_rate_se), 0)) %>%
       select(-(Prob_Less:upper_trap_est))
   }
 
