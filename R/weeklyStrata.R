@@ -4,10 +4,9 @@
 #'
 #' @author Kevin See
 #'
-#' @param spawn_yr spawn year to divide into weekly strata
 #' @param spp choices are either \code{Chinook} or \code{Steelhead}
-#' @param start_day date (\code{month / day}) when strata should start
-#' @param end_day date (\code{month / day}) when strata should end
+#' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
+#' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #' @param strata_beg 3 letter code for the day of the week each weekly strata should begin on. Default value is \code{'Mon'}.
 #' @param last_strata_min minimum length (in days) for the final strata. Default value is 3.
 #'
@@ -16,42 +15,35 @@
 #' @return NULL
 #' @examples weeklyStrata(2010:2012)
 
-weeklyStrata = function(spawn_yr,
-                        spp = c('Chinook', 'Steelhead'),
-                        start_day = NULL,
-                        end_day = NULL,
-                        strata_beg = NULL,
+weeklyStrata = function(spp = c('Chinook', 'Steelhead'),
+                        start_date = NULL,
+                        end_date = NULL,
+                        strata_beg = 'Mon',
                         last_strata_min = 3) {
 
-  # need a year
-  stopifnot(!is.null(spawn_yr))
+  # need a start date
+  stopifnot(!is.null(start_date))
 
-  # set up default start and end days
-  if(is.null(start_day)) start_day = ifelse(spp == 'Chinook', '0301',
-                                            ifelse(spp == 'Steelhead', '0701', NA))
-  if(is.null(end_day)) end_day = ifelse(spp == 'Chinook', '0817',
-                                        ifelse(spp == 'Steelhead', '0630', NA))
+  # set default end date (1 year after start date)
+  if(is.null(end_date)) end_date = format(lubridate::ymd(start_date) + years(1) - days(1), '%Y%m%d')
 
-  # first day to be include?
-  first_date = ifelse(spp == 'Steelhead',
-                      as.character(lubridate::ymd(paste(spawn_yr - 1, start_day))),
-                      as.character(lubridate::ymd(paste(spawn_yr, start_day)))) %>%
-    ymd()
+  # turn start / end date character vectors into actual date objects
+  startDate = lubridate::ymd(start_date)
+  endDate = lubridate::ymd(end_date)
 
-  # last day to be included?
-  last_date = lubridate::ymd(paste(spawn_yr, end_day))
+  if(endDate < startDate) stop('start_date comes after end_date')
 
   # how many weeks total?
-  n_weeks = difftime(last_date, first_date,
+  n_weeks = difftime(endDate, startDate,
                      units = 'weeks') %>%
     as.numeric() %>%
     ceiling()
 
   # to set up strata to begin on certain day of the week
-  if(is.null(strata_beg)) strata_start = first_date
+  if(is.null(strata_beg)) strata_start = startDate
 
   if(!is.null(strata_beg)) {
-    strata_start = tibble(date = first_date + lubridate::days(0:as.integer(difftime(last_date, first_date, units = 'days')))) %>%
+    strata_start = tibble(date = startDate + lubridate::days(0:as.integer(difftime(endDate, startDate, units = 'days')))) %>%
       mutate(day = lubridate::wday(date, label = T)) %>%
       filter(day == strata_beg) %>%
       slice(1) %>%
@@ -63,26 +55,26 @@ weeklyStrata = function(spawn_yr,
 
 
   # put together dataframe of start and end times for each strata
-  strata_df = tibble(start_date = first_date,
+  strata_df = tibble(start_date = startDate,
                      end_date = strata_start - lubridate::dseconds(1)) %>%
     bind_rows(tibble(start_date = strata_start + lubridate::weeks(0:n_weeks)) %>%
                 mutate(end_date = start_date + lubridate::days(7) - lubridate::dseconds(1))) %>%
     filter(start_date < end_date,
-           start_date < last_date)
+           start_date < endDate)
 
-  strata_df$end_date[nrow(strata_df)] = last_date + lubridate::days(1) - lubridate::dseconds(1)
+  strata_df$end_date[nrow(strata_df)] = endDate + lubridate::days(1) - lubridate::dseconds(1)
 
   if(as.numeric(as.duration(lubridate::interval(strata_df$start_date[nrow(strata_df)], strata_df$end_date[nrow(strata_df)])), 'days') < last_strata_min) {
     strata_df = strata_df %>%
       slice(-nrow(strata_df))
-    strata_df$end_date[nrow(strata_df)] = last_date + lubridate::days(1) - lubridate::dseconds(1)
+    strata_df$end_date[nrow(strata_df)] = endDate + lubridate::days(1) - lubridate::dseconds(1)
   }
 
   if(as.numeric(as.duration(interval(strata_df$start_date[1], strata_df$end_date[1])), 'days') < last_strata_min) {
     strata_df = strata_df %>%
       slice(-1)
 
-    strata_df$start_date[1] = first_date
+    strata_df$start_date[1] = startDate
   }
 
   week_strata = lubridate::interval(strata_df$start_date, strata_df$end_date)

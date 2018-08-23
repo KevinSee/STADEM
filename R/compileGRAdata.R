@@ -4,16 +4,11 @@
 #'
 #' @author Kevin See
 #'
+#' @inheritParams getWindowCounts
 #' @param yr spawn year.
-#' @param spp species to focus on. Currently the possible choices are: \code{Chinook} or \code{Steelhead}
-#' @param dam the dam code. Currently only set up for Lower Granite (\code{LWG}). Other possible codes to be implemented in the future are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)
 #' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (\code{GRA}).
-#' @param strata_beg 3 letter code for the day of the week each weekly strata should begin on.
-#' @param start_day date (\code{month / day}) when query should start.
-#' @param end_day date (\code{month / day}) when query should end.
-#' #' @param last_strata_min minimum length (in days) for the final strata. Default value is 3.
-#' @param incl_jacks should jacks be included in the window count totals? \code{T / F}
-#' @param sthd_type should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.
+#' @param strata_beg 3 letter code for the day of the week each weekly strata should begin on. Default value is \code{'Mon'}.
+#' @param last_strata_min minimum length (in days) for the final strata. Default value is 3.
 #' @param sthd_B_run should numbers of B run steelhead be reported? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.
 #' @param trap_path file path where a csv file containing the data from the fish trap is located
 #' @param useDARTrate should the DART query for the trap rate be used? Default is \code{FALSE}, which implies the trap rate is estimated by PIT tags.
@@ -27,30 +22,31 @@
 
 compileGRAdata = function(yr,
                           spp = c('Chinook', 'Steelhead'),
-                          # dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
-                          dam = c('LWG'),
-                          damPIT = 'GRA',
-                          strata_beg = NULL,
-                          start_day = NULL,
-                          end_day = NULL,
-                          last_strata_min = 3,
+                          dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
+                          # dam = c('LWG'),
+                          start_date = NULL,
+                          end_date = NULL,
                           incl_jacks = NULL,
                           sthd_type = c('all', 'unclipped'),
+                          damPIT = c('GRA', 'PRA'),
+                          strata_beg = 'Mon',
+                          last_strata_min = 3,
                           sthd_B_run = FALSE,
                           trap_path = NULL,
                           useDARTrate = F,
                           trap_rate_cv = 0,
                           trap_rate_dist = c('beta', 'logit')) {
 
-  # need a year
-  stopifnot(!is.null(yr))
+  # need a start date
+  stopifnot(!is.null(start_date))
 
   # if not provided, set a few defaults
   spp = match.arg(spp)
   dam = match.arg(dam)
-  if(dam != 'LWG') {
-    stop('Currently only works for Lower Granite (code LWG)')
-  }
+  damPIT = match.arg(damPIT)
+  # if(dam != 'LWG') {
+  #   stop('Currently only works for Lower Granite (code LWG)')
+  # }
 
   sthd_type = match.arg(sthd_type)
   trap_rate_dist = match.arg(trap_rate_dist)
@@ -60,17 +56,16 @@ compileGRAdata = function(yr,
   }
 
   # currently pit tag query only works for Lower Granite
-  try( if(dam != 'LWG') stop('Dam code must be LWG') )
+  try( if(!damPIT %in% c('GRA', 'PRA')) stop('PIT tag queries currently only work for Lower Granite (code GRA) and Priest Rapids (PRA)') )
 
 
   #---------------------------------------------
   # query window counts
   cat('Querying window counts\n')
   win_cnts = getWindowCounts(dam = dam,
-                             spawn_yr = yr,
                              spp = spp,
-                             start_day = start_day,
-                             end_day = end_day,
+                             start_date = start_date,
+                             end_date = end_date,
                              incl_jacks = incl_jacks,
                              sthd_type = sthd_type)
 
@@ -78,18 +73,16 @@ compileGRAdata = function(yr,
   # query PIT tag data from previously tagged fish
   cat('Querying night passage & reascension PIT tags\n')
   pit_df = queryPITtagData(damPIT = 'GRA',
-                           spawn_yr = yr,
                            spp = spp,
-                           start_day = start_day,
-                           end_day = end_day)
+                           start_date = start_date,
+                           end_date = end_date)
 
   #--------------------------------------------------------
   # determine weekly strata
   cat('Dividing into strata\n')
-  week_strata = weeklyStrata(spawn_yr = yr,
-                             spp = spp,
-                             start_day = start_day,
-                             end_day = end_day,
+  week_strata = weeklyStrata(spp = spp,
+                             start_date = start_date,
+                             end_date = end_date,
                              strata_beg = strata_beg,
                              last_strata_min = last_strata_min)
 
