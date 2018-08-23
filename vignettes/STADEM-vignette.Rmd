@@ -260,8 +260,9 @@ yr = 2014
 spp = 'Chinook'
 
 # pull together all data
-stadem_list = compileGRAdata(yr = yr,
-                             spp = spp,
+stadem_list = compileGRAdata(spp = spp,
+                             start_date = paste0(yr, '0301'),
+                             end_date = paste0(yr, '0817'),
                              strata_beg = 'Mon',
                              trap_path = '../inst/extdata/Chnk2014_TrapDatabase.csv')
 ```

@@ -4,39 +4,40 @@
 #'
 #' @author Kevin See
 #'
-#' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA).
-#' @param spp species to query window counts for. Possible choices are: Chinook, Coho, Steelhead, Sockeye
-#' @param spawn_yr spawn year to query for window counts.
-#' @param start_day date (\code{month / day}) when query should start
-#' @param end_day date (\code{month / day}) when query should end
+#' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA) and Priest Rapids (PRA).
+#' @param spp species to query PIT tag data for. Possible choices are: Chinook, Coho, Steelhead, Sockeye
+#' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
+#' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
 #' @import lubridate httr dplyr readr
 #' @export
 #' @return NULL
-#' @examples queryPITtagData(spawn_yr = 2015)
+#' @examples queryPITtagData(start_date = '20150701')
 
 queryPITtagData = function(damPIT = c('GRA', 'PRA'),
                            spp = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
-                           spawn_yr = NULL,
-                           start_day = NULL,
-                           end_day = NULL) {
+                           start_date = NULL,
+                           end_date = NULL) {
 
-  # need a year, and only dam allowed in Lower Granite (GRA)
-  stopifnot(!is.null(spawn_yr))
-  # stopifnot(damPIT == 'GRA')
+  # need a start date
+  stopifnot(!is.null(start_date))
 
   # pull out default dam and species code
   damPIT = match.arg(damPIT)
   spp = match.arg(spp, several.ok = F)
 
-  # set up default start and end days
-  if(damPIT == 'GRA' & spp == 'Chinook' & is.null(start_day)) start_day = '03/01'
-  if(damPIT == 'GRA' & spp == 'Chinook' & is.null(end_day)) end_day = '08/17'
+  # set default end date (1 year after start date)
+  if(is.null(end_date)) end_date = format(lubridate::ymd(start_date) + years(1) - days(1), '%Y%m%d')
 
-  if(damPIT == 'GRA' & grepl('Steelhead', spp) & is.null(start_day)) start_day = '07/01'
-  if(damPIT == 'GRA' & grepl('Steelhead', spp) & is.null(end_day)) end_day = '06/30'
+  # turn start / end date character vectors into actual date objects
+  startDate = lubridate::ymd(start_date)
+  endDate = lubridate::ymd(end_date)
+
+  # get character vectors of start day and end day for query
+  start_day = paste(lubridate::month(startDate), lubridate::day(startDate), sep = '/')
+  end_day = paste(lubridate::month(endDate), lubridate::day(endDate), sep = '/')
 
   # match up species code with species name
   spp_code_df = tibble(Species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
@@ -55,7 +56,7 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   # build query for DART
   queryList = list(type = 'tagid',
                    outputFormat = 'csv',
-                   year = spawn_yr,
+                   year = year(startDate),
                    site = damPIT,
                    species = spp_code,
                    span = 'no',
@@ -63,11 +64,11 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
                    enddate = end_day)
 
   # if(grepl('Steelhead', spp)) {
-  if(lubridate::ymd(paste(spawn_yr, end_day)) < lubridate::ymd(paste(spawn_yr, start_day))) {
+  if(lubridate::year(endDate) > lubridate::year(startDate)) {
     queryList[['span']] = 'yes'
     queryList = c(queryList,
-                  list(syear = spawn_yr - 1,
-                       eyear = spawn_yr))
+                  list(syear = lubridate::year(startDate),
+                       eyear = lubridate::year(endDate)))
   }
 
 
@@ -89,12 +90,12 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
                       col_names = T)
 
   if(is.null(parsed)) {
-    message(paste('DART returned no data for', spp, 'in', spawn_yr, '\n'))
+    message(paste('DART returned no data for', spp, 'in', year(startDate), '\n'))
     stop
   }
 
   if(class(parsed)[1] == 'xml_document') {
-    message(paste('For', spp, 'in', spawn_yr, 'XML document returned by DART instead of data\n'))
+    message(paste('For', spp, 'in', year(startDate), 'XML document returned by DART instead of data\n'))
     stop
   }
 
@@ -117,9 +118,11 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
     # filter(Ladder == damPIT) %>%
     rename(SpCode = Species) %>%
     mutate(Species = spp,
-           Year = spawn_yr) %>%
+           Year = year(endDate)) %>%
     arrange(Date, TagID, `Detection DateTime`) %>%
-    select(Ladder, Year, Species, SpCode, TagID, everything())
+    select(Ladder, Year, Species, SpCode, TagID, everything()) %>%
+    filter(Date >= startDate,
+           Date <= endDate)
 
   names(pit_df) = gsub(' ', '', names(pit_df))
 

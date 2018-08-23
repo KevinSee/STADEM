@@ -6,9 +6,8 @@
 #'
 #' @param dam the dam code for the dam you wish to query for window counts. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)
 #' @param spp_code species code(s) to query window counts for. Possible codes are: fc (Chinook), fk (Coho), fb (Sockeye), fs (Steelhead), fsw (Wild Steelhead), fa (Shad), fcj (Jack Chinook), fkj (Jack Coho), fbj (Jack Sockeye), fsj (Jack Steelhead), fl (Lamprey), ft (Bull Trout
-#' @param spawn_yr spawn year to query for window counts.
-#' @param start_day date (\code{month / day}) when query should start
-#' @param end_day date (\code{month / day}) when query should end
+#' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
+#' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
@@ -19,16 +18,22 @@
 
 queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
                            spp_code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft'),
-                           spawn_yr = NULL,
-                           start_day = NULL,
-                           end_day = NULL) {
+                           start_date = NULL,
+                           end_date = NULL) {
 
-  # need a year
-  stopifnot(!is.null(spawn_yr))
+  # need a start date
+  stopifnot(!is.null(start_date))
 
-  # pull out default start and end dates
-  if(is.null(start_day)) start_day = '01/01'
-  if(is.null(end_day)) start_day = '12/31'
+  # set default end date (1 year after start date)
+  if(is.null(end_date)) end_date = format(lubridate::ymd(start_date) + years(1) - days(1), '%Y%m%d')
+
+  # turn start / end date character vectors into actual date objects
+  startDate = lubridate::ymd(start_date)
+  endDate = lubridate::ymd(end_date)
+
+  # get character vectors of start day and end day for query
+  start_day = paste(lubridate::month(startDate), lubridate::day(startDate), sep = '/')
+  end_day = paste(lubridate::month(endDate), lubridate::day(endDate), sep = '/')
 
   # pull out default dam
   dam = match.arg(dam)
@@ -46,7 +51,7 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
     as.character()
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/KevinSee/damEscapement')
+  ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/mg.php'
@@ -65,11 +70,12 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
                 list(`ftype[]` = spp_code[i]))
   }
 
-  yrList = list(`year[]` = spawn_yr)
+  yrList = list(`year[]` = lubridate::year(startDate))
 
-  if(grepl('Steelhead', spp_name)) {
-    yrList = c(list(`year[]` = spawn_yr - 1),
-               yrList)
+  # if(grepl('Steelhead', spp_name)) {
+  if(lubridate::year(endDate) > lubridate::year(startDate)) {
+    yrList = list(`year[]` = lubridate::year(startDate),
+                  `year[]` = lubridate::year(endDate))
 
     queryList[['startdate']] = '01/01'
     queryList[['enddate']] = '12/31'
@@ -125,14 +131,9 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
            Year = year,
            Date,
            win_cnt = value) %>%
-    tidyr::spread(Species, win_cnt, fill = 0)
-
-
-  if(grepl('Steelhead', spp_name)) {
-    win_cnts = win_cnts %>%
-      filter(Date >= lubridate::ymd(paste(spawn_yr - 1, start_day)),
-             Date <= lubridate::ymd(paste(spawn_yr, end_day)))
-  }
+    tidyr::spread(Species, win_cnt, fill = 0) %>%
+    filter(Date >= startDate,
+           Date <= endDate)
 
   return(win_cnts)
 }
