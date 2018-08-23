@@ -31,6 +31,8 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   startDate = lubridate::ymd(start_date)
   endDate = lubridate::ymd(end_date)
 
+  if(endDate < startDate) stop('start_date comes after end_date')
+
   # get character vectors of start day and end day for query
   start_day = paste(lubridate::month(startDate), lubridate::day(startDate), sep = '/')
   end_day = paste(lubridate::month(endDate), lubridate::day(endDate), sep = '/')

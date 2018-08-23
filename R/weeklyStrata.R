@@ -31,6 +31,8 @@ weeklyStrata = function(spp = c('Chinook', 'Steelhead'),
   startDate = lubridate::ymd(start_date)
   endDate = lubridate::ymd(end_date)
 
+  if(endDate < startDate) stop('start_date comes after end_date')
+
   # how many weeks total?
   n_weeks = difftime(endDate, startDate,
                      units = 'weeks') %>%
