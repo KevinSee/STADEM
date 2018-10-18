@@ -11,7 +11,7 @@
 #' @import dplyr tidyr
 #' @export
 #' @return NULL
-#' @examples getWindowCounts(spawn_yr = 2015)
+#' @examples getWindowCounts(start_date = '20150301', end_date = '20150817')
 
 getWindowCounts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
                            spp = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
