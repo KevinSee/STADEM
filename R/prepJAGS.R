@@ -30,8 +30,8 @@ prepJAGS = function(lgr_weekly = NULL,
 
   if(hw_type == 'Morph') lgr_weekly = lgr_weekly %>%
     rename(wild_fish = Wild.morph,
-           hatch_fish = Hatch.morph,
-           hnc_fish = HNC.morph)
+           hatch_fish = Hatch.morph) %>%
+    mutate(hnc_fish = 0)
 
   # filter out weeks when ladder not open
   lgr_weekly = lgr_weekly %>%
