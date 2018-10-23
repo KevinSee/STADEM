@@ -4,30 +4,32 @@
 \alias{compileGRAdata}
 \title{STADEM Data Summary}
 \usage{
-compileGRAdata(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG"),
-  damPIT = "GRA", strata_beg = NULL, start_day = NULL, end_day = NULL,
-  incl_jacks = NULL, sthd_type = c("all", "unclipped"),
-  sthd_B_run = FALSE, trap_path = NULL, useDARTrate = F,
-  trap_rate_cv = 0, trap_rate_dist = c("beta", "logit"))
+compileGRAdata(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG", "WFF",
+  "BON", "TDA", "JDA", "MCN", "IHR", "LMN", "LGS", "PRO", "ROZ", "PRD", "WAN",
+  "RIS", "TUM", "RRH", "WEL", "ZOS"), start_date = NULL, end_date = NULL,
+  incl_jacks = NULL, sthd_type = c("all", "unclipped"), damPIT = c("GRA",
+  "PRA"), strata_beg = "Mon", last_strata_min = 3, sthd_B_run = FALSE,
+  trap_path = NULL, useDARTrate = F, trap_rate_cv = 0,
+  trap_rate_dist = c("beta", "logit"))
 }
 \arguments{
 \item{yr}{spawn year.}
 
-\item{spp}{species to focus on. Currently the possible choices are: \code{Chinook} or \code{Steelhead}}
+\item{dam}{the dam code for the dam you wish to query for window counts. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)}
 
-\item{dam}{the dam code. Currently only set up for Lower Granite (\code{LWG}). Other possible codes to be implemented in the future are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)}
+\item{start_date}{character vector of date (\code{YYYYMMDD}) when query should start}
 
-\item{damPIT}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (\code{GRA}).}
-
-\item{strata_beg}{3 letter code for the day of the week each weekly strata should begin on.}
-
-\item{start_day}{date (\code{month / day}) when query should start}
-
-\item{end_day}{date (\code{month / day}) when query should end}
+\item{end_date}{character vector of date (\code{YYYYMMDD}) when query should end}
 
 \item{incl_jacks}{should jacks be included in the window count totals? \code{T / F}}
 
 \item{sthd_type}{should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.}
+
+\item{damPIT}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (\code{GRA}).}
+
+\item{strata_beg}{3 letter code for the day of the week each weekly strata should begin on. Default value is \code{'Mon'}.}
+
+\item{last_strata_min}{minimum length (in days) for the final strata. Default value is 3.}
 
 \item{sthd_B_run}{should numbers of B run steelhead be reported? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.}
 

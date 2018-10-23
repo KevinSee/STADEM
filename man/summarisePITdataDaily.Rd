@@ -4,12 +4,10 @@
 \alias{summarisePITdataDaily}
 \title{Summarise PIT tag data}
 \usage{
-summarisePITdataDaily(pit_data, spring_summer_chnk = T)
+summarisePITdataDaily(pit_data)
 }
 \arguments{
 \item{pit_data}{data.frame containing PIT tag data to summarise, queried using \code{queryPITtagData}}
-
-\item{spring_summer_chnk}{should the PIT tag data be filtered to exclude fall and winter run Chinook? Default is \code{TRUE}}
 }
 \description{
 Summarise night passage and re-ascension data from PIT tags at Lower Granite Dam on a daily time-step

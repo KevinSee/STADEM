@@ -4,17 +4,15 @@
 \alias{weeklyStrata}
 \title{Generate weekly strata}
 \usage{
-weeklyStrata(spawn_yr, spp = c("Chinook", "Steelhead"), start_day = NULL,
-  end_day = NULL, strata_beg = NULL, last_strata_min = 3)
+weeklyStrata(spp = c("Chinook", "Steelhead"), start_date = NULL,
+  end_date = NULL, strata_beg = "Mon", last_strata_min = 3)
 }
 \arguments{
-\item{spawn_yr}{spawn year to divide into weekly strata}
-
 \item{spp}{choices are either \code{Chinook} or \code{Steelhead}}
 
-\item{start_day}{date (\code{month / day}) when strata should start}
+\item{start_date}{character vector of date (\code{YYYYMMDD}) when query should start}
 
-\item{end_day}{date (\code{month / day}) when strata should end}
+\item{end_date}{character vector of date (\code{YYYYMMDD}) when query should end}
 
 \item{strata_beg}{3 letter code for the day of the week each weekly strata should begin on. Default value is \code{'Mon'}.}
 
