@@ -103,6 +103,11 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
                       col_names = T,
                       skip = 1)
 
+  if(is.null(parsed) | ncol(parsed) == 1) {
+    stop(paste('DART returned no window count data for', spp_name, 'in', lubridate::year(startDate), '\n'))
+  }
+
+
   if (httr::status_code(web_req) != 200) {
     stop(
       sprintf(

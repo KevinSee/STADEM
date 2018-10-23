@@ -58,7 +58,7 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   # build query for DART
   queryList = list(type = 'tagid',
                    outputFormat = 'csv',
-                   year = year(startDate),
+                   year = lubridate::year(startDate),
                    site = damPIT,
                    species = spp_code,
                    span = 'no',
@@ -91,27 +91,22 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
     readr::read_delim(delim = ',',
                       col_names = T)
 
-  if(is.null(parsed)) {
-    message(paste('DART returned no data for', spp, 'in', year(startDate), '\n'))
-    stop
+  if(is.null(parsed) | grepl(paste('No', spp, 'data found'), parsed)) {
+    stop(paste('DART returned no PIT tag data for', spp, 'in', lubridate::year(startDate), '\n'))
   }
 
   if(class(parsed)[1] == 'xml_document') {
-    message(paste('For', spp, 'in', year(startDate), 'XML document returned by DART instead of data\n'))
-    stop
+    stop(paste('For', spp, 'in', lubridate::year(startDate), 'XML document returned by DART instead of data\n'))
   }
 
   if (httr::status_code(web_req) != 200) {
-    message(
+    stop(
       sprintf(
         "GitHub API request failed [%s]\n%s\n<%s>",
-        status_code(web_req),
+        httr::status_code(web_req),
         parsed$message,
         parsed$documentation_url
-      ),
-      call. = FALSE
-    )
-    stop
+      ))
   }
 
   pit_df = parsed %>%
