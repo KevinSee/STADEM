@@ -8,19 +8,15 @@ getWindowCounts(dam = c("LWG", "WFF", "BON", "TDA", "JDA", "MCN", "IHR",
   "LMN", "LGS", "PRO", "ROZ", "PRD", "WAN", "RIS", "TUM", "RRH", "WEL", "ZOS"),
   spp = c("Chinook", "Coho", "Sockeye", "Steelhead", "Wild_Steelhead", "Shad",
   "Jack_Chinook", "Jack_Coho", "Jack_Sockeye", "Jack_Steelhead", "Lamprey",
-  "Bull_Trout"), spawn_yr = NULL, start_day = NULL, end_day = NULL,
-  incl_jacks = F, sthd_type = c("all", "unclipped"))
+  "Bull_Trout"), start_date = NULL, end_date = NULL, incl_jacks = F,
+  sthd_type = c("all", "unclipped"))
 }
 \arguments{
 \item{dam}{the dam code for the dam you wish to query for window counts. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)}
 
-\item{spp}{species to query window counts for. Possible species are: Chinook, Coho, Sockeye, Steelhead, Wild_Steelhead (unclipped), Shad, Jack_Chinook, Jack_Coho, Jack_Sockeye, Jack_Steelhead, Lamprey, Bull_Trout}
+\item{start_date}{character vector of date (\code{YYYYMMDD}) when query should start}
 
-\item{spawn_yr}{spawn year to query for window counts.}
-
-\item{start_day}{date (\code{month / day}) when query should start}
-
-\item{end_day}{date (\code{month / day}) when query should end}
+\item{end_date}{character vector of date (\code{YYYYMMDD}) when query should end}
 
 \item{incl_jacks}{should jacks be included in the window count totals? \code{T / F}}
 
@@ -30,7 +26,7 @@ getWindowCounts(dam = c("LWG", "WFF", "BON", "TDA", "JDA", "MCN", "IHR",
 Query and compile window count results using the \code{queryWindowCnts} function.
 }
 \examples{
-getWindowCounts(spawn_yr = 2015)
+getWindowCounts(start_date = '20150301', end_date = '20150817')
 }
 \author{
 Kevin See
