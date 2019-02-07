@@ -1,13 +1,13 @@
 ---
-title: "STADEM Vignette"
+title: "STADEM"
 author: "Kevin E. See"
 date: '`r Sys.Date()`'
 output:
-  rmarkdown::html_vignette:
+  pdf_document:
     fig_caption: yes
     toc: yes
     toc_depth: 3
-  pdf_document:
+  rmarkdown::html_vignette:
     fig_caption: yes
     toc: yes
     toc_depth: 3
@@ -237,9 +237,6 @@ library(tidyverse)
 library(lubridate)
 library(STADEM)
 library(jagsUI)
-
-# to make processing of results easier
-library(stringr)
 ```
 
 The STADEM package makes it easy to compile all the necessary data in one convenient function, `compileGRAdata`. The user provides the spawn year and species (either "Chinook" or "Steelhead") they are interested in. STADEM operates on a weekly time-step, and the user has the option to determine the day of the week that most strata will begin on, using the `strata_beg` argument. There are periodic messages describing what is being done within `compileGRAdata`. Within `compileGRAdata`, several internal functions are being called, which may be utilized with the STADEM package for other purposes. They include:
