@@ -22,7 +22,7 @@ readLGRtrapDB = function(trap_path = NULL,
   lgr_trap = read.csv(trap_path) %>%
     tbl_df() %>%
     rename(Tag.ID = LGDNumPIT) %>%
-    mutate(Date = floor_date(ymd_hms(CollectionDate), unit = 'day'),
+    mutate(Date = floor_date(mdy_hms(CollectionDate), unit = 'day'),
            SppCode = LGDSpecies,
            Tag.ID = as.character(Tag.ID),
            Tag.ID = ifelse(nchar(Tag.ID) < 3, NA, Tag.ID),
