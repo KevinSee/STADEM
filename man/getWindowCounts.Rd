@@ -5,11 +5,11 @@
 \title{Compile Window Counts}
 \usage{
 getWindowCounts(dam = c("LWG", "WFF", "BON", "TDA", "JDA", "MCN", "IHR",
-  "LMN", "LGS", "PRO", "ROZ", "PRD", "WAN", "RIS", "TUM", "RRH", "WEL", "ZOS"),
-  spp = c("Chinook", "Coho", "Sockeye", "Steelhead", "Wild_Steelhead", "Shad",
-  "Jack_Chinook", "Jack_Coho", "Jack_Sockeye", "Jack_Steelhead", "Lamprey",
-  "Bull_Trout"), start_date = NULL, end_date = NULL, incl_jacks = F,
-  sthd_type = c("all", "unclipped"))
+  "LMN", "LGS", "PRO", "ROZ", "PRD", "WAN", "RIS", "TUM", "RRH", "WEL",
+  "ZOS"), spp = c("Chinook", "Coho", "Sockeye", "Steelhead",
+  "Wild_Steelhead", "Shad", "Jack_Chinook", "Jack_Coho", "Jack_Sockeye",
+  "Jack_Steelhead", "Lamprey", "Bull_Trout"), start_date = NULL,
+  end_date = NULL, incl_jacks = F, sthd_type = c("all", "unclipped"))
 }
 \arguments{
 \item{dam}{the dam code for the dam you wish to query for window counts. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)}

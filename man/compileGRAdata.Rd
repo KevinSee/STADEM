@@ -4,13 +4,14 @@
 \alias{compileGRAdata}
 \title{STADEM Data Summary}
 \usage{
-compileGRAdata(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG", "WFF",
-  "BON", "TDA", "JDA", "MCN", "IHR", "LMN", "LGS", "PRO", "ROZ", "PRD", "WAN",
-  "RIS", "TUM", "RRH", "WEL", "ZOS"), start_date = NULL, end_date = NULL,
-  incl_jacks = NULL, sthd_type = c("all", "unclipped"), damPIT = c("GRA",
-  "PRA"), strata_beg = "Mon", last_strata_min = 3, sthd_B_run = FALSE,
-  trap_path = NULL, useDARTrate = F, trap_rate_cv = 0,
-  trap_rate_dist = c("beta", "logit"))
+compileGRAdata(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG",
+  "WFF", "BON", "TDA", "JDA", "MCN", "IHR", "LMN", "LGS", "PRO", "ROZ",
+  "PRD", "WAN", "RIS", "TUM", "RRH", "WEL", "ZOS"), start_date = NULL,
+  end_date = NULL, incl_jacks = NULL, sthd_type = c("all",
+  "unclipped"), damPIT = c("GRA", "PRA"), strata_beg = "Mon",
+  last_strata_min = 3, sthd_B_run = FALSE, trap_path = NULL,
+  useDARTrate = F, trap_rate_cv = 0, trap_rate_dist = c("beta",
+  "logit"))
 }
 \arguments{
 \item{yr}{spawn year.}
