@@ -4,7 +4,6 @@
 #'
 #' @author Kevin See
 #'
-#' @param spp choices are either \code{Chinook} or \code{Steelhead}
 #' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
 #' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #' @param strata_beg 3 letter code for the day of the week each weekly strata should begin on. Default value is \code{'Mon'}.
@@ -15,8 +14,7 @@
 #' @return NULL
 #' @examples weeklyStrata(2010:2012)
 
-weeklyStrata = function(spp = c('Chinook', 'Steelhead'),
-                        start_date = NULL,
+weeklyStrata = function(start_date = NULL,
                         end_date = NULL,
                         strata_beg = 'Mon',
                         last_strata_min = 3) {
