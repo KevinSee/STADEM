@@ -301,6 +301,7 @@ Part of the function `runJAGSmodel` writes the JAGS model as a text file. This r
 * `seed` input to `set.seed` function to make the results exactly reproducible
 * `weekly_params` Should weekly estimates of escapement be saved, or only season-wide totals?
 * `win_model` statistical distribution used to model the window counts
+* `trap_est` if set to `FALSE`, the estimate of escapement from the trap and trap rate is not used, and `win_model` is automatically set to Poisson. 
 
 ## Suggestions
 
