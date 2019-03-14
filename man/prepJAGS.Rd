@@ -4,8 +4,8 @@
 \alias{prepJAGS}
 \title{Compile JAGS data}
 \usage{
-prepJAGS(lgr_weekly = NULL, sthd_B_run = F, hw_type = c("PBT", "Morph"),
-  wild_tags = F)
+prepJAGS(lgr_weekly = NULL, sthd_B_run = F, hw_type = c("PBT",
+  "Morph"), wild_tags = F)
 }
 \arguments{
 \item{lgr_weekly}{dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summSTADEM}.}

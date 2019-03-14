@@ -80,8 +80,7 @@ compileGRAdata = function(yr,
   #--------------------------------------------------------
   # determine weekly strata
   cat('Dividing into strata\n')
-  week_strata = weeklyStrata(spp = spp,
-                             start_date = start_date,
+  week_strata = weeklyStrata(start_date = start_date,
                              end_date = end_date,
                              strata_beg = strata_beg,
                              last_strata_min = last_strata_min)
