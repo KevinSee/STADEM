@@ -45,7 +45,7 @@ readLGRtrapDB = function(trap_path = NULL,
            Tag.ID = as.character(Tag.ID),
            Tag.ID = ifelse(nchar(Tag.ID) < 3, NA, Tag.ID),
            # try to correct some incorrect species codes
-           SppCode = ifelse(LGDSpecies != PtagisSpecies & GenSpecies %in% c(1, 3), as.integer(as.character(GenSpecies)), SppCode),
+           # SppCode = ifelse(LGDSpecies != PtagisSpecies & GenSpecies %in% c(1, 3), as.integer(as.character(GenSpecies)), SppCode),
            Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', NA)))
 
   if(is.null(date_range)) {
