@@ -32,7 +32,7 @@ compileGRAdata = function(yr,
                           strata_beg = 'Mon',
                           last_strata_min = 3,
                           sthd_B_run = FALSE,
-                          trap_path = NULL,
+                          trap_dbase = NULL,
                           useDARTrate = F,
                           trap_rate_cv = 0,
                           trap_rate_dist = c('beta', 'logit')) {
@@ -50,6 +50,10 @@ compileGRAdata = function(yr,
 
   sthd_type = match.arg(sthd_type)
   trap_rate_dist = match.arg(trap_rate_dist)
+
+  if(is.null(trap_dbase)) {
+    stop('Trapping data is not supplied.')
+  }
 
   if(is.null(incl_jacks)) {
     incl_jacks = ifelse(spp == 'Chinook', T, F)
@@ -87,9 +91,18 @@ compileGRAdata = function(yr,
 
   # read in data for Chinook and steelhead
   cat('Getting LGR trap data\n')
-  trap_yr = readLGRtrapDB(trap_path = trap_path,
-                          date_range = c(lubridate::ymd(lubridate::int_start(week_strata[1])),
-                                         lubridate::ymd(lubridate::int_end(week_strata[length(week_strata)]) + lubridate::dseconds(1))))
+  trap_yr = trap_dbase %>%
+    rename(Tag.ID = LGDNumPIT) %>%
+    mutate(Date = lubridate::floor_date(CollectionDate, unit = 'day'),
+           SppCode = LGDSpecies,
+           Tag.ID = as.character(Tag.ID),
+           Tag.ID = ifelse(nchar(Tag.ID) < 3, NA, Tag.ID),
+           Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', NA))) %>%
+    filter(Species %in% c('Chinook', 'Steelhead'),   # drop data from other species, and other runs of Chinook
+           Date >= lubridate::ymd(lubridate::int_start(week_strata[1])), # filter out records outside dates of interest
+           Date < lubridate::ymd(lubridate::int_end(week_strata[length(week_strata)]) + lubridate::dseconds(1)),
+           LGDLifeStage == 'RF', # filter out juveniles, keep only adults
+           (PTAgisSxCGRAObs != 'Yes' | is.na(PTAgisSxCGRAObs) ) ) # drop sort-by-code fish
 
   # summarise by date for particular species
   trap_df = summariseLGRtrapDaily(trap_df = trap_yr,
