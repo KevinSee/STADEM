@@ -127,7 +127,9 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
     pit_df = pit_df %>%
       rename(PreviousDate = PreviousDetectDate,
              PreviousHours = DiffPreviousHours,
-             PreviousDays = DiffPreviousDays)
+             PreviousDays = DiffPreviousDays,
+             LadderSide = Ladder_1)
+
   }
 
 
