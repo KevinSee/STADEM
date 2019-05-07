@@ -19,6 +19,7 @@ Suggests:
   jagsUI (>= 1.4.4),
   rjags (>= 4-6),
   knitr,
+  Hmisc (>= 4.2-0),
   rmarkdown,
   tidyverse
 VignetteBuilder: knitr
