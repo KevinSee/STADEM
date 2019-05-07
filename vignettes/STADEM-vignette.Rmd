@@ -3,11 +3,11 @@ title: "STADEM"
 author: "Kevin E. See"
 date: '`r Sys.Date()`'
 output:
-  pdf_document:
+  rmarkdown::html_vignette:
     fig_caption: yes
     toc: yes
     toc_depth: 3
-  rmarkdown::html_vignette:
+  pdf_document:
     fig_caption: yes
     toc: yes
     toc_depth: 3
