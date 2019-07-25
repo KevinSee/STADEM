@@ -34,8 +34,9 @@ prepJAGS = function(lgr_weekly = NULL,
     mutate(hnc_fish = 0)
 
   # filter out weeks when ladder not open
-  lgr_weekly = lgr_weekly %>%
-    filter(window_open | trap_open)
+  # Commented out code to keep weeks aligned with DABOM.
+  #lgr_weekly = lgr_weekly %>%
+  #  filter(window_open | trap_open)
 
   org_exist = lgr_weekly %>%
     select(wild_fish, hnc_fish, hatch_fish) %>%
