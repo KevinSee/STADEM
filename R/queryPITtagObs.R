@@ -92,13 +92,15 @@ queryPITtagObs = function(site = 'GRA',
                         task = 'query data from DART')
 
   # parse the response
-  parsed = httr::content(web_req,
+  parsed = suppressWarnings(
+    httr::content(web_req,
                          'text',
                          encoding = 'ISO-8859-1') %>%
-    readr::read_delim(delim = ',',
+      readr::read_delim(delim = ',',
                       col_names = T) %>%
     filter(!is.na(`Tag ID`)) %>%
     mutate(Year = as.integer(Year))
+  )
 
   names(parsed) = gsub(' ', '', names(parsed))
 

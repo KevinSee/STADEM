@@ -75,6 +75,7 @@ compileGRAdata = function(yr,
   # currently pit tag query only works for Lower Granite
   try( if(!damPIT %in% c('GRA', 'PRA')) stop('PIT tag queries currently only work for Lower Granite (code GRA) and Priest Rapids (PRA)') )
 
+  cat(paste0('Compiling data for ', spp, ' spawn year ', lubridate::year(lubridate::ymd(end_date)),'\n'))
 
   #---------------------------------------------
   # query window counts
@@ -131,7 +132,7 @@ compileGRAdata = function(yr,
                           week_strata = week_strata) %>%
     mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
     left_join(tibble(Start_Date = lubridate::int_start(week_strata),
-                     week_num = 1:length(week_strata))) %>%
+                     week_num = 1:length(week_strata)), by = 'week_num') %>%
     rename(n_trap_tags = n_trap,
            n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
            trap_rate = rate,
@@ -183,10 +184,10 @@ compileGRAdata = function(yr,
   dam_daily = win_cnts %>%
     select(-Year) %>%
     full_join(summarisePITdataDaily(pit_df) %>%
-                select(-SpawnYear)) %>%
+                select(-SpawnYear), by = c('Species', 'Date')) %>%
     mutate_at(vars(tot_tags:reascent_tags_H),
               funs(ifelse(is.na(.), 0, .))) %>%
-    left_join(trap_df)
+    left_join(trap_df, by = 'Date')
 
   #------------------------------------------
   # get week strata for each date
@@ -209,7 +210,7 @@ compileGRAdata = function(yr,
                              funs(sum), na.rm = T) %>%
                 ungroup() %>%
                 mutate_at(vars(win_cnt:n_invalid),
-                          funs(ifelse(is.na(.), 0, .)))) %>%
+                          funs(ifelse(is.na(.), 0, .))), by = 'week_num') %>%
     mutate(window_open = ifelse(win_cnt > 0, T, F)) %>%
     select(Species, Start_Date, week_num, everything()) %>%
     addTrapRate(trap_rate,

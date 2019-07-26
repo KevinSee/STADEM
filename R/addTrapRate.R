@@ -19,7 +19,7 @@ addTrapRate = function(lgr_weekly = NULL,
   stopifnot(!is.null(trap_rate))
 
   lgr_week_trapRate = lgr_weekly %>%
-    left_join(trap_rate) %>%
+    left_join(trap_rate, by = c('Start_Date', 'week_num')) %>%
     mutate(trap_open = ifelse(is.na(trap_open), F, trap_open)) %>%
     mutate(trap_est = ifelse(trap_open, trap_fish / trap_rate, NA)) %>%
     mutate(trap_est_se = sqrt(trap_rate_se^2 * (-trap_fish * trap_rate^(-2))^2)) %>%

@@ -97,11 +97,14 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
 
 
   # parse the response
-  parsed = httr::content(web_req,
-                         'text') %>%
+  parsed = suppressWarnings(
+    httr::content(web_req,
+                         'text',
+                         encoding = 'UTF-8') %>%
     readr::read_delim(delim = ',',
                       col_names = T,
                       skip = 1)
+  )
 
   if(is.null(parsed) | ncol(parsed) == 1) {
     stop(paste('DART returned no window count data for', spp_name, 'in', lubridate::year(startDate), '\n'))
@@ -122,6 +125,7 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
 
   # re-format
   win_cnts = parsed %>%
+    filter(year == lubridate::year(startDate) | year == lubridate::year(endDate)) %>%
     mutate(year = as.integer(year)) %>%
     filter(!is.na(year)) %>%
     mutate(Date = lubridate::ymd(paste(year, `mm-dd`, sep = '-'))) %>%
