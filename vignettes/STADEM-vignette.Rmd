@@ -261,7 +261,8 @@ stadem_list = compileGRAdata(spp = spp,
                              start_date = paste0(yr, '0301'),
                              end_date = paste0(yr, '0817'),
                              strata_beg = 'Mon',
-                             trap_path = '../inst/extdata/Chnk2014_TrapDatabase.csv')
+                             trap_dbase = readLGRtrapDB('../inst/extdata/Chnk2014_TrapDatabase.csv') %>%
+                               rename(LGDNumPIT = Tag.ID))
 ```
 
 ```{r fig_cap2, echo = F}
