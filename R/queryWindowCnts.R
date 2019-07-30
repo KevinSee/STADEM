@@ -33,6 +33,8 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
 
   if(endDate < startDate) stop('start_date comes after end_date')
 
+  if(as.integer(year(endDate)) - as.integer(year(startDate)) > 1) stop('Years must be consecutive')
+
   # get character vectors of start day and end day for query
   start_day = paste(lubridate::month(startDate), lubridate::day(startDate), sep = '/')
   end_day = paste(lubridate::month(endDate), lubridate::day(endDate), sep = '/')
@@ -125,7 +127,6 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
 
   # re-format
   win_cnts = parsed %>%
-    filter(year == lubridate::year(startDate) | year == lubridate::year(endDate)) %>%
     mutate(year = as.integer(year)) %>%
     filter(!is.na(year)) %>%
     mutate(Date = lubridate::ymd(paste(year, `mm-dd`, sep = '-'))) %>%
