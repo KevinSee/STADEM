@@ -89,8 +89,8 @@ writeJAGSmodel = function(file_name = NULL,
 
         # parameter clean-up
         for(i in 1 :TotLadderWeeks) {
-          day.true[i] <- ilogit(day.true.logit[i])
-          reasc.true[i] <- ilogit(reasc.true.logit[i])
+          day.true[i] <- ilogit(day.true.logit[i]) * ladder[i]
+          reasc.true[i] <- ilogit(reasc.true.logit[i]) * ladder[i]
         }
 
         ####################################
@@ -107,7 +107,7 @@ writeJAGSmodel = function(file_name = NULL,
         # derived parameters
         for(i in 1:TotLadderWeeks) {
 
-          X.all[i] <- round(exp(X.log.all[i]))
+          X.all[i] <- round(exp(X.log.all[i]) * ladder[i])
           X.day[i] <- round(X.all[i] * day.true[i])
           X.night[i] <- X.all[i] - X.day[i]
           X.reasc[i] <- round(X.all[i] * reasc.true[i])
@@ -242,8 +242,8 @@ if(win_model == 'neg_bin2') {
 
       # parameter clean-up
       for(i in 1 :TotLadderWeeks) {
-        day.true[i] <- ilogit(day.true.logit[i])
-        reasc.true[i] <- ilogit(reasc.true.logit[i])
+        day.true[i] <- ilogit(day.true.logit[i]) * ladder[i]
+        reasc.true[i] <- ilogit(reasc.true.logit[i]) * ladder[i]
       }
 
       ####################################
@@ -260,7 +260,7 @@ if(win_model == 'neg_bin2') {
       # derived parameters
       for(i in 1:TotLadderWeeks) {
 
-        X.all[i] <- round(exp(X.log.all[i]))
+        X.all[i] <- round(exp(X.log.all[i]) * ladder[i])
         X.day[i] <- round(X.all[i] * day.true[i])
         X.night[i] <- X.all[i] - X.day[i]
         X.reasc[i] <- round(X.all[i] * reasc.true[i])
@@ -393,8 +393,8 @@ if(win_model == 'pois') {
 
       # parameter clean-up
       for(i in 1 :TotLadderWeeks) {
-        day.true[i] <- ilogit(day.true.logit[i])
-        reasc.true[i] <- ilogit(reasc.true.logit[i])
+        day.true[i] <- ilogit(day.true.logit[i]) * ladder[i]
+        reasc.true[i] <- ilogit(reasc.true.logit[i]) * ladder[i]
       }
 
       ####################################
@@ -411,7 +411,7 @@ if(win_model == 'pois') {
       # derived parameters
       for(i in 1:TotLadderWeeks) {
 
-        X.all[i] <- round(exp(X.log.all[i]))
+        X.all[i] <- round(exp(X.log.all[i]) * ladder[i])
         X.day[i] <- round(X.all[i] * day.true[i])
         X.night[i] <- X.all[i] - X.day[i]
         X.reasc[i] <- round(X.all[i] * reasc.true[i])
@@ -540,8 +540,8 @@ if(win_model == 'quasi_pois') {
 
       # parameter clean-up
       for(i in 1 :TotLadderWeeks) {
-        day.true[i] <- ilogit(day.true.logit[i])
-        reasc.true[i] <- ilogit(reasc.true.logit[i])
+        day.true[i] <- ilogit(day.true.logit[i]) * ladder[i]
+        reasc.true[i] <- ilogit(reasc.true.logit[i]) * ladder[i]
       }
 
       ####################################
@@ -558,7 +558,7 @@ if(win_model == 'quasi_pois') {
       # derived parameters
       for(i in 1:TotLadderWeeks) {
 
-        X.all[i] <- round(exp(X.log.all[i]))
+        X.all[i] <- round(exp(X.log.all[i]) * ladder[i])
         X.day[i] <- round(X.all[i] * day.true[i])
         X.night[i] <- X.all[i] - X.day[i]
         X.reasc[i] <- round(X.all[i] * reasc.true[i])
@@ -634,149 +634,149 @@ if(win_model == 'quasi_pois') {
     model_code = '
     model {
 
-    ####################################
-    # Set up parameters and initial states...
-    ####################################
-    X.sigma ~ dunif(0, 20) # process error in log space
-    X.tau <- pow(X.sigma, -2)
-    X.log.all[1] ~ dunif(0,10) # initial state in log space
+      ####################################
+      # Set up parameters and initial states...
+      ####################################
+      X.sigma ~ dunif(0, 20) # process error in log space
+      X.tau <- pow(X.sigma, -2)
+      X.log.all[1] ~ dunif(0,10) # initial state in log space
 
-    # modeling proportion of fish available for window counts
-    day.true.logit[1] ~ dnorm(0, 0.001)	# daytime ascension rate for week 1
-    day.sigma ~ dunif(0, 10) # process error on daytime (window open) proportion
-    day.tau <- pow(day.sigma, -2)
+      # modeling proportion of fish available for window counts
+      day.true.logit[1] ~ dnorm(0, 0.001)	# daytime ascension rate for week 1
+      day.sigma ~ dunif(0, 10) # process error on daytime (window open) proportion
+      day.tau <- pow(day.sigma, -2)
 
-    # modeling proportion of fish re-ascending the dam
-    reasc.true.logit[1] ~ dnorm(0, 0.001) # re-ascension rate for week 1
-    reasc.sigma ~ dunif(0, 10) # process error on re-ascension proportion
-    reasc.tau <- pow(reasc.sigma, -2)
+      # modeling proportion of fish re-ascending the dam
+      reasc.true.logit[1] ~ dnorm(0, 0.001) # re-ascension rate for week 1
+      reasc.sigma ~ dunif(0, 10) # process error on re-ascension proportion
+      reasc.tau <- pow(reasc.sigma, -2)
 
-    # modeling proportion of fish that are wild, hatchery no-clip and hatchery
-    # set probability for any type of fish that was never caught to 0
-    # prior on log odds ratio for initial week
-    for(j in 1:2) {
-    org.phi[1,j] ~ dnorm(0, 0.01)
-    exp.org.phi[1,j] <- exp(org.phi[1,j]) * org.exist[j]
-    }
+      # modeling proportion of fish that are wild, hatchery no-clip and hatchery
+      # set probability for any type of fish that was never caught to 0
+      # prior on log odds ratio for initial week
+      for(j in 1:2) {
+        org.phi[1,j] ~ dnorm(0, 0.01)
+        exp.org.phi[1,j] <- exp(org.phi[1,j]) * org.exist[j]
+      }
 
-    # set hatchery as baseline
-    for(i in 1:TotLadderWeeks) {
-    org.phi[i,3] <- 0
-    exp.org.phi[i,3] <- exp(org.phi[i,3]) * org.exist[3]
-    # get sum of all phis
-    sum.exp.phi[i] <- sum(exp.org.phi[i,])
-    }
+      # set hatchery as baseline
+      for(i in 1:TotLadderWeeks) {
+        org.phi[i,3] <- 0
+        exp.org.phi[i,3] <- exp(org.phi[i,3]) * org.exist[3]
+        # get sum of all phis
+        sum.exp.phi[i] <- sum(exp.org.phi[i,])
+      }
 
-    # extract initial movement probabilities for week 1
-    for(j in 1:3) {
-    org.prop[1,j] <- ifelse(org.exist[j] == 0, 0, exp.org.phi[1,j] / sum.exp.phi[1])
-    }
+      # extract initial movement probabilities for week 1
+      for(j in 1:3) {
+        org.prop[1,j] <- ifelse(org.exist[j] == 0, 0, exp.org.phi[1,j] / sum.exp.phi[1])
+      }
 
-    # variation in time-varying random walk movement probabilities
-    org.sigma ~ dunif(0, 10)
-    org.tau <- pow(org.sigma, -2)
+      # variation in time-varying random walk movement probabilities
+      org.sigma ~ dunif(0, 10)
+      org.tau <- pow(org.sigma, -2)
 
-    for(i in 2:TotLadderWeeks) {
-    for(j in 1:2) {
-    epsilon[i,j] ~ dnorm(0, org.tau)
-    # set phi for any type of fish that was never caught to 0
-    org.phi[i,j] <- ifelse(org.exist[j] == 0, 0, org.phi[i - 1, j] + epsilon[i,j])
-    exp.org.phi[i,j] <- exp(org.phi[i,j]) * org.exist[j]
-    }
+      for(i in 2:TotLadderWeeks) {
+        for(j in 1:2) {
+          epsilon[i,j] ~ dnorm(0, org.tau)
+          # set phi for any type of fish that was never caught to 0
+          org.phi[i,j] <- ifelse(org.exist[j] == 0, 0, org.phi[i - 1, j] + epsilon[i,j])
+          exp.org.phi[i,j] <- exp(org.phi[i,j]) * org.exist[j]
+        }
 
-    for (j in 1:3) {
-    org.prop[i,j] <- exp.org.phi[i,j] / sum.exp.phi[i]
-    }
-    }
+        for (j in 1:3) {
+          org.prop[i,j] <- exp.org.phi[i,j] / sum.exp.phi[i]
+        }
+      }
 
-    # parameter clean-up
-    for(i in 1 :TotLadderWeeks) {
-    day.true[i] <- ilogit(day.true.logit[i])
-    reasc.true[i] <- ilogit(reasc.true.logit[i])
-    }
+      # parameter clean-up
+      for(i in 1 :TotLadderWeeks) {
+        day.true[i] <- ilogit(day.true.logit[i]) * ladder[i]
+        reasc.true[i] <- ilogit(reasc.true.logit[i]) * ladder[i]
+      }
 
-    ####################################
-    ## True state of nature
-    ####################################
+      ####################################
+      ## True state of nature
+      ####################################
 
-    for(i in 2:TotLadderWeeks) {
-    # random walks
-    X.log.all[i] ~ dnorm(X.log.all[i-1], X.tau)
-    day.true.logit[i] ~ dnorm(day.true.logit[i-1], day.tau)
-    reasc.true.logit[i] ~ dnorm(reasc.true.logit[i-1], reasc.tau)
-    }
+      for(i in 2:TotLadderWeeks) {
+        # random walks
+        X.log.all[i] ~ dnorm(X.log.all[i-1], X.tau)
+        day.true.logit[i] ~ dnorm(day.true.logit[i-1], day.tau)
+        reasc.true.logit[i] ~ dnorm(reasc.true.logit[i-1], reasc.tau)
+      }
 
-    # derived parameters
-    for(i in 1:TotLadderWeeks) {
+      # derived parameters
+      for(i in 1:TotLadderWeeks) {
 
-    X.all[i] <- round(exp(X.log.all[i]))
-    X.day[i] <- round(X.all[i] * day.true[i])
-    X.day.log[i] <- log(X.all[i] * day.true[i])
-    X.night[i] <- X.all[i] - X.day[i]
-    X.reasc[i] <- round(X.all[i] * reasc.true[i])
+        X.all[i] <- round(exp(X.log.all[i]) * ladder[i])
+        X.day[i] <- round(X.all[i] * day.true[i])
+        X.day.log[i] <- log(X.all[i] * day.true[i])
+        X.night[i] <- X.all[i] - X.day[i]
+        X.reasc[i] <- round(X.all[i] * reasc.true[i])
 
-    X.all.wild[i] <- round(X.all[i] * org.prop[i,1])
-    X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
-    X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
+        X.all.wild[i] <- round(X.all[i] * org.prop[i,1])
+        X.all.hnc[i] <- round(X.all[i] * org.prop[i,2])
+        X.all.hatch[i] <- round(X.all[i] * org.prop[i,3])
 
-    X.new.tot[i] <- round(X.all[i] * (1 - reasc.true[i]))
-    X.new.wild[i] <- round(X.new.tot[i] * org.prop[i,1])
-    X.new.hnc[i] <- round(X.new.tot[i] * org.prop[i,2])
-    X.new.hatch[i] <- round(X.new.tot[i] * org.prop[i,3])
+        X.new.tot[i] <- round(X.all[i] * (1 - reasc.true[i]))
+        X.new.wild[i] <- round(X.new.tot[i] * org.prop[i,1])
+        X.new.hnc[i] <- round(X.new.tot[i] * org.prop[i,2])
+        X.new.hatch[i] <- round(X.new.tot[i] * org.prop[i,3])
 
-    X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
-    X.night.wild[i] <- X.new.wild[i] * (1 - day.true[i])
+        X.reasc.wild[i] <- X.all.wild[i] - X.new.wild[i]
+        X.night.wild[i] <- X.new.wild[i] * (1 - day.true[i])
 
-    }
+      }
 
-    ####################################
-    ## What we observe
-    ####################################
+      ####################################
+      ## What we observe
+      ####################################
 
-    win.sigma ~ dunif(0, 5)
-    win.tau = pow(win.sigma, -2)
+      win.sigma ~ dunif(0, 5)
+      win.tau = pow(win.sigma, -2)
 
-    for(i in 1:TotLadderWeeks) {
-    # at window:
-    Y.window.log[i] ~ dnorm(X.day.log[i], win.tau)
+      for(i in 1:TotLadderWeeks) {
+        # at window:
+        Y.window.log[i] ~ dnorm(X.day.log[i], win.tau)
 
-    # in trap
-    # uncertainty in trap rate
-    trap.rate.true[i] ~ dbeta(trap.alpha[i], trap.beta[i])
-    Y.trap[i] ~ dbin(trap.rate.true[i], X.all[i])
+        # in trap
+        # uncertainty in trap rate
+        trap.rate.true[i] ~ dbeta(trap.alpha[i], trap.beta[i])
+        Y.trap[i] ~ dbin(trap.rate.true[i], X.all[i])
 
-    # fish in trap by origin
-    trap.fish.matrix[i,1:3] ~ dmulti(org.prop[i,], trap.fish[i])
+        # fish in trap by origin
+        trap.fish.matrix[i,1:3] ~ dmulti(org.prop[i,], trap.fish[i])
 
-    # day-time tags
-    DC.tags[i] ~ dbin(day.true[i], Tot.tags[i])
+        # day-time tags
+        DC.tags[i] ~ dbin(day.true[i], Tot.tags[i])
 
-    # re-ascension tags
-    ReAsc.tags[i] ~ dbin(reasc.true[i], Tot.tags[i])
-    }
+        # re-ascension tags
+        ReAsc.tags[i] ~ dbin(reasc.true[i], Tot.tags[i])
+      }
 
-    ####################################
-    ## Summary statistics
-    ####################################
+      ####################################
+      ## Summary statistics
+      ####################################
 
-    X.tot.all <- sum(X.all)
-    X.tot.day <- sum(X.day)
-    X.tot.night <- sum(X.night)
-    X.tot.reasc <- sum(X.reasc)
+      X.tot.all <- sum(X.all)
+      X.tot.day <- sum(X.day)
+      X.tot.night <- sum(X.night)
+      X.tot.reasc <- sum(X.reasc)
 
-    X.tot.all.wild <- sum(X.all.wild)
-    X.tot.all.hatch <- sum(X.all.hatch)
-    X.tot.all.hnc <- sum(X.all.hnc)
+      X.tot.all.wild <- sum(X.all.wild)
+      X.tot.all.hatch <- sum(X.all.hatch)
+      X.tot.all.hnc <- sum(X.all.hnc)
 
-    X.tot.new.all <- sum(X.new.tot)
-    X.tot.new.wild <- sum(X.new.wild)
-    X.tot.new.hatch <- sum(X.new.hatch)
-    X.tot.new.hnc <- sum(X.new.hnc)
+      X.tot.new.all <- sum(X.new.tot)
+      X.tot.new.wild <- sum(X.new.wild)
+      X.tot.new.hatch <- sum(X.new.hatch)
+      X.tot.new.hnc <- sum(X.new.hnc)
 
-    X.tot.night.wild <- sum(X.night.wild)
-    X.tot.reasc.wild <- sum(X.reasc.wild)
+      X.tot.night.wild <- sum(X.night.wild)
+      X.tot.reasc.wild <- sum(X.reasc.wild)
 
-    prop.tagged <- sum(trap.fish.matrix[,1]) / X.tot.new.wild
+      prop.tagged <- sum(trap.fish.matrix[,1]) / X.tot.new.wild
 
     }
 ' }

@@ -35,9 +35,11 @@ prepJAGS = function(lgr_weekly = NULL,
            hatch_fish = Hatch.morph) %>%
     mutate(hnc_fish = 0)
 
-  # filter out weeks when ladder not open
-  lgr_weekly = lgr_weekly %>%
-    filter(window_open | trap_open)
+  # is ladder open? 1 if yes, 0 if no
+  ladder = lgr_weekly %>%
+    transmute(open = if_else(window_open | trap_open,
+                             1, 0)) %>%
+    pull(open)
 
   org_exist = lgr_weekly %>%
     select(wild_fish, hnc_fish, hatch_fish) %>%
@@ -45,6 +47,7 @@ prepJAGS = function(lgr_weekly = NULL,
   org_exist = ifelse(org_exist > 0, 1, org_exist)
 
   jags_data_list = list('TotLadderWeeks' = nrow(lgr_weekly),
+                        'ladder' = ladder,
                         'Y.window' = lgr_weekly %>%
                           mutate(win_cnt = ifelse(!window_open, NA, win_cnt)) %>%
                           select(win_cnt) %>%
@@ -62,8 +65,9 @@ prepJAGS = function(lgr_weekly = NULL,
                           select(wild_fish, hnc_fish, hatch_fish) %>%
                           as.matrix(),
                         'org.exist' = org_exist,
-                        # 'trap.rate' = lgr_weekly %>% mutate(trap_rate = ifelse(!trap_open | !trap_valid | is.na(trap_fish), 0, trap_rate)) %>%
-                        #   select(trap_rate) %>% as.matrix() %>% as.vector(),
+                        # 'trap.rate' = lgr_weekly %>%
+                        #   mutate(trap_rate = ifelse(!trap_open | !trap_valid | is.na(trap_fish), 0, trap_rate)) %>%
+                        #   pull(trap_rate),
                         'trap.alpha' = lgr_weekly %>%
                           select(trap_alpha) %>%
                           as.matrix() %>% as.vector(),
