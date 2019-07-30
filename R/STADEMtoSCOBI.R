@@ -27,9 +27,8 @@ STADEMtoSCBOI = function(stadem_mod = NULL,
            param = stringr::str_extract_all(var, "[:alpha:]+", simplify = T)[,3]) %>%
     tbl_df() %>%
     select(var, param, week, everything()) %>%
-    left_join(lgr_weekly %>%
-                filter(window_open | trap_open) %>%
-                mutate(week = 1:n()))
+    left_join(stadem_list[['weeklyData']],
+              by = c('week' = 'week_num'))
 
   scobi_input = week_est %>%
     mutate(Strata = lubridate::week(Start_Date)) %>%

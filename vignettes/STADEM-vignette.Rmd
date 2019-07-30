@@ -377,7 +377,6 @@ pt_est_tab = week_df %>%
   mutate(mean = round(mean)) %>%
   spread(param, mean) %>%
   left_join(stadem_list[['weeklyData']] %>%
-              filter(window_open | trap_open) %>%
               mutate(week = 1:n())) %>%
   select(Week = week,
          Win.Cnt = win_cnt,
@@ -393,7 +392,6 @@ est_tab = week_df %>%
   select(-sd, -mean) %>%
   spread(param, prnt_val) %>%
   left_join(stadem_list[['weeklyData']] %>%
-              filter(window_open | trap_open) %>%
               mutate(week = 1:n())) %>%
   select(Week = week,
          Win.Cnt = win_cnt,
@@ -420,9 +418,8 @@ week_est = mod$summary[grep('^X.all', rownames(mod$summary)),] %>%
          param = ifelse(param == '', 'all', param)) %>%
   tbl_df() %>%
   select(var, param, week, everything()) %>%
-  left_join(stadem_list[['weeklyData']] %>%
-              filter(window_open | trap_open) %>%
-              mutate(week = 1:n()))
+  left_join(stadem_list[['weeklyData']],
+            by = c('week' = 'week_num'))
 ```
 
 ```{r time-series_plot, fig.height = 5, fig.width = 7, fig.cap = fig_nums('jags_fit_fig')}
@@ -472,12 +469,10 @@ rate_est = mod$summary[grepl('^day.true', rownames(mod$summary)) |
          param = str_extract_all(var, "[:alpha:]+", simplify = T)[,1]) %>%
   tbl_df() %>%
   select(var, param, week, everything()) %>%
-  left_join(stadem_list[['weeklyData']] %>%
-              filter(window_open | trap_open) %>%
-              mutate(week = 1:n()))
+  left_join(stadem_list[['weeklyData']],
+            by = c('week' = 'week_num'))
 
 rate_est %>%
-  filter(tot_tags > 0) %>%
   ggplot(aes(x = Start_Date,
              y = `50%`)) +
   geom_ribbon(aes(ymin = `2.5%`,
