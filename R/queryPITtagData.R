@@ -86,12 +86,16 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   # stringi::stri_enc_detect(content(web_req, "raw"))
 
   # parse the response
-  parsed = httr::content(web_req,
-                         'text') %>%
+  parsed = suppressWarnings(
+    httr::content(web_req,
+                         'text',
+                  encoding = 'UTF-8') %>%
     readr::read_delim(delim = ',',
                       col_names = T)
+  )
 
-  if(is.null(parsed) | grepl(paste('No', spp, 'data found'), parsed)) {
+  #if(is.null(parsed) | grepl(paste('No', spp, 'data found'), parsed)) {
+    if(is.null(parsed) | ncol(parsed) == 1) {
     stop(paste('DART returned no PIT tag data for', spp, 'in', lubridate::year(startDate), '\n'))
   }
 
@@ -110,6 +114,8 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   }
 
   pit_df = parsed %>%
+    filter(!is.na(Date)) %>%
+    filter(Date != 'Date') %>%
     mutate(Date = lubridate::ymd(Date),
            `Detection DateTime` = lubridate::ymd_hms(`Detection DateTime`)) %>%
     # filter(Ladder == damPIT) %>%

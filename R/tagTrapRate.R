@@ -54,7 +54,7 @@ tagTrapRate = function(trap_dataframe = NULL,
     select(TagID = Tag.ID, TrapDate = Date, SRR) %>%
     full_join(pit_gra %>%
                 filter(!TagID %in% gra_tags) %>%
-                select(TagID, SpRRT, MarkSite, ReleaseDate, matches('Time'))) %>%
+                select(TagID, SpRRT, MarkSite, ReleaseDate, matches('Time')), by = 'TagID') %>%
     mutate(Species = ifelse(grepl('^1', SpRRT) | grepl('^1', SRR),
                             'Chinook',
                             ifelse(grepl('^3', SpRRT) | grepl('^3', SRR),

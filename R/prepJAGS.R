@@ -23,6 +23,8 @@ prepJAGS = function(lgr_weekly = NULL,
 
   hw_type = match.arg(hw_type)
 
+  cat('Prepping JAGS data \n')
+
   if(hw_type == 'PBT') lgr_weekly = lgr_weekly %>%
     rename(wild_fish = Wild.PBT,
            hatch_fish = Hatch.PBT,

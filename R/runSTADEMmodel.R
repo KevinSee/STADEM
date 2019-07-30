@@ -41,6 +41,7 @@ runSTADEMmodel = function(file_name = NULL,
          call. = FALSE)
   }
 
+  cat('Running JAGS model\n')
 
   # which distribution is used to model window counts?
   win_model = match.arg(win_model)
