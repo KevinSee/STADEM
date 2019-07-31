@@ -196,11 +196,11 @@ writeJAGSmodel = function(file_name = NULL,
                                                                  '    theta ~ dgamma(0.01, 0.01)')
 
     model_file[seq(grep('# at window: over-dispersed negative binomial', model_file),
-                   length.out = 5)] = c('    # at window: over-dispersed negative binomial',
-                                        '    # like quasi-Poisson if theta = 0, like neg. binomial if omega = 1, like Poisson if theta = 0 & omega = 1',
-                                        '    r[i] <- X.all[i] / (omega - 1 + (theta * X.all[i]))',
-                                        '    p[i] <- 1 / (omega + theta * X.all[i])',
-                                        '    Y.window[i] ~ dnegbin(p[i], r[i])')
+                   length.out = 5)] = c('        # at window: over-dispersed negative binomial',
+                                        '        # like quasi-Poisson if theta = 0, like neg. binomial if omega = 1, like Poisson if theta = 0 & omega = 1',
+                                        '        r[i] <- X.all[i] / (omega - 1 + (theta * X.all[i]))',
+                                        '        p[i] <- 1 / (omega + theta * X.all[i])',
+                                        '        Y.window[i] ~ dnegbin(p[i], r[i])')
   }
 
   # Poisson
@@ -208,8 +208,8 @@ writeJAGSmodel = function(file_name = NULL,
     model_file = model_file[-seq(grep('r ~', model_file) - 1, length.out = 3)]
 
     model_file[seq(grep('at window', model_file), length.out = 4)] =
-      c('    # at window: Poisson',
-        '    Y.window[i] ~ dpois(X.day[i])',
+      c('        # at window: Poisson',
+        '        Y.window[i] ~ dpois(X.day[i])',
         '', '')
   }
 
@@ -221,9 +221,9 @@ writeJAGSmodel = function(file_name = NULL,
         '    qp.sigma <- pow(qp.tau, -2)')
 
     model_file[seq(grep('at window', model_file), length.out = 4)] =
-      c('    # at window: quasi-Poisson (modeled with random effects for each week)',
-        '    wkRE[i] ~ dnorm(0, qp.tau)',
-        '    Y.window[i] ~ dpois(X.day[i] * exp(wkRE[i]) )',
+      c('        # at window: quasi-Poisson (modeled with random effects for each week)',
+        '        wkRE[i] ~ dnorm(0, qp.tau)',
+        '        Y.window[i] ~ dpois(X.day[i] * exp(wkRE[i]) )',
         '')
 
   }
@@ -236,8 +236,8 @@ writeJAGSmodel = function(file_name = NULL,
         '    win.tau = pow(win.sigma, -2)')
 
     model_file[seq(grep('at window', model_file), length.out = 4)] =
-      c('    # at window: normal errors in log space',
-        '    Y.window.log[i] ~ dnorm(X.day.log[i], win.tau)',
+      c('        # at window: normal errors in log space',
+        '        Y.window.log[i] ~ dnorm(X.day.log[i], win.tau)',
         '', '')
   }
 
