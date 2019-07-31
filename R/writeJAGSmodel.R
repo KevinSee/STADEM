@@ -174,11 +174,12 @@ writeJAGSmodel = function(file_name = NULL,
 
     prop.tagged <- sum(trap.fish.matrix[,1]) / X.tot.new.wild
 
-  }'
+  }
+
+  '
 
   # write model as text file
-  cat(model_code,
-      file = file_name)
+  writeLines(model_code, file_name)
 
   # read back in to make any necessary modifications
   model_file = readLines(file_name)
@@ -237,7 +238,7 @@ writeJAGSmodel = function(file_name = NULL,
 
     model_file[seq(grep('at window', model_file), length.out = 4)] =
       c('        # at window: normal errors in log space',
-        '        Y.window.log[i] ~ dnorm(X.day.log[i], win.tau)',
+        '        Y.window.log[i] ~ dnorm(log(X.day[i]), win.tau)',
         '', '')
   }
 
