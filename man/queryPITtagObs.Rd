@@ -8,21 +8,16 @@
 }
 \usage{
 queryPITtagObs(site = "GRA", spp = c("Chinook", "Coho", "Steelhead",
-  "Sockeye"), yr = NULL, start_day = NULL, end_day = NULL,
-  span_yrs = NULL)
+  "Sockeye"), start_date = NULL, end_date = NULL)
 }
 \arguments{
 \item{site}{The site to query observations for.}
 
-\item{spp}{species to query window counts for. Possible choices are: Chinook, Coho, Steelhead, Sockeye}
+\item{spp}{species to query PIT tag observations for. Possible choices are: Chinook, Coho, Steelhead, Sockeye}
 
-\item{yr}{year to query for window counts.}
+\item{start_date}{character vector of date (\code{YYYYMMDD}) when query should start}
 
-\item{start_day}{date (\code{month / day}) when query should start}
-
-\item{end_day}{date (\code{month / day}) when query should end}
-
-\item{span_yrs}{Should the query span mulitple years? If \code{NULL}, default value is chosen based on species.}
+\item{end_date}{character vector of date (\code{YYYYMMDD}) when query should end}
 }
 \description{
 Query and download data about PIT tags observed crossing a particular site, using DART.
