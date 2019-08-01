@@ -35,11 +35,17 @@ queryTrapRate = function(week_strata = NULL,
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/lib/file_wrapper.php'
 
   trap_rate_dart = NULL
-  for(yr in sort(unique(year(int_start(week_strata))))) {
+  for(yr in sort(unique(lubridate::year(lubridate::int_start(week_strata))))) {
     web_req = httr::GET(url_req, ua,
                         query = list(type = 'csv',
                                      fname = paste0('pit_adult_valid_', yr, '_', spp_code, '.csv'),
                                      dname = 'inc'))
+
+    if(httr::content(web_req,
+                     'text',
+                     encoding = 'ISO-8859-1') == '') {
+      stop(paste('DART returned no trap rate data for', spp, 'in', lubridate::year(lubridate::int_start(week_strata)[1]), '\n'))
+    }
 
     # what encoding to use?
     # stringi::stri_enc_detect(httr::content(web_req, "raw"))
