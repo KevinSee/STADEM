@@ -1,11 +1,11 @@
 #' @title DART reported trap rate
 #'
-#' @description Estimate the trap rate at Lower Granite by using a mark-recapture model. The trap is the marking event, and detections at the weir at the top of the fish ladder is the 2nd capture event.
+#' @description Query DART for the reported trap rate at Lower Granite dam.
 #'
 #' @author Kevin See
 #'
 #' @param week_strata vector of intervals delimiting the weekly strata to summarize mark-recapture data over, as returned by \code{weeklyStrata()}.
-#' @param spp species to query window counts for. Possible choices are: \code{Chinook} or \code{Steelhead}
+#' @param spp species to query trap rate for. Possible choices are: \code{Chinook} or \code{Steelhead}
 #' @param return_weekly Should the results be summarised on weekly basis? Default is \code{TRUE}.
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
