@@ -19,24 +19,17 @@ tagTrapRate = function(trap_dataframe = NULL,
 
   # query PIT tag detections at Lower Granite
   pit_gra = bind_rows(queryPITtagObs(spp = 'Chinook',
-                                     yr = lubridate::year(lubridate::int_start(week_strata[length(week_strata)])),
-                                     start_day = paste(lubridate::month(lubridate::int_start(week_strata[1])),
-                                                       lubridate::mday(lubridate::int_start(week_strata[1])),
-                                                       sep = '/'),
-                                     end_day = paste(lubridate::month(lubridate::int_end(week_strata[length(week_strata)])),
-                                                     lubridate::mday(lubridate::int_end(week_strata[length(week_strata)])),
-                                                     sep = '/'),
-                                     span_yrs = ifelse(lubridate::year(lubridate::int_start(week_strata[length(week_strata)])) - lubridate::year(lubridate::int_start(week_strata[1])) == 0, F, T)) %>%
+                                     start_date = lubridate::int_start(week_strata[1]) %>%
+                                       format('%Y%m%d'),
+                                     end_date = lubridate::int_end(week_strata[length(week_strata)]) %>%
+                                       format('%Y%m%d')) %>%
+                        # filter out Fall Chinook detections, since they're weird
                         filter(lubridate::month(ObsTime) <= 8 | (lubridate::month(ObsTime) == 8 & lubridate::day(ObsTime) <= 17)),
                       queryPITtagObs(spp = 'Steelhead',
-                                     yr = lubridate::year(lubridate::int_start(week_strata[length(week_strata)])),
-                                     start_day = paste(lubridate::month(lubridate::int_start(week_strata[1])),
-                                                       lubridate::mday(lubridate::int_start(week_strata[1])),
-                                                       sep = '/'),
-                                     end_day = paste(lubridate::month(lubridate::int_end(week_strata[length(week_strata)])),
-                                                     lubridate::mday(lubridate::int_end(week_strata[length(week_strata)])),
-                                                     sep = '/'),
-                                     span_yrs = ifelse(lubridate::year(lubridate::int_start(week_strata[length(week_strata)])) - lubridate::year(lubridate::int_start(week_strata[1])) == 0, F, T))) %>%
+                                     start_date = lubridate::int_start(week_strata[1]) %>%
+                                       format('%Y%m%d'),
+                                     end_date = lubridate::int_end(week_strata[length(week_strata)]) %>%
+                                       format('%Y%m%d'))) %>%
     arrange(ObsTime)
 
 
