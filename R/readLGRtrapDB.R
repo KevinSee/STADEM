@@ -39,11 +39,10 @@ readLGRtrapDB = function(trap_path = NULL,
   }
 
   lgr_trap = lgr_trap %>%
-    rename(Tag.ID = LGDNumPIT) %>%
     mutate(Date = lubridate::floor_date(CollectionDate, unit = 'day'),
            SppCode = LGDSpecies,
-           Tag.ID = as.character(Tag.ID),
-           Tag.ID = ifelse(nchar(Tag.ID) < 3, NA, Tag.ID),
+           LGDNumPIT = as.character(LGDNumPIT),
+           LGDNumPIT = ifelse(nchar(LGDNumPIT) < 3, NA, LGDNumPIT),
            # try to correct some incorrect species codes
            # SppCode = ifelse(LGDSpecies != PtagisSpecies & GenSpecies %in% c(1, 3), as.integer(as.character(GenSpecies)), SppCode),
            Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', NA)))

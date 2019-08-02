@@ -1,11 +1,11 @@
 #' @title DART reported trap rate
 #'
-#' @description Estimate the trap rate at Lower Granite by using a mark-recapture model. The trap is the marking event, and detections at the weir at the top of the fish ladder is the 2nd capture event.
+#' @description Query DART for the reported trap rate at Lower Granite dam.
 #'
 #' @author Kevin See
 #'
 #' @param week_strata vector of intervals delimiting the weekly strata to summarize mark-recapture data over, as returned by \code{weeklyStrata()}.
-#' @param spp species to query window counts for. Possible choices are: \code{Chinook} or \code{Steelhead}
+#' @param spp species to query trap rate for. Possible choices are: \code{Chinook} or \code{Steelhead}
 #' @param return_weekly Should the results be summarised on weekly basis? Default is \code{TRUE}.
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
@@ -35,11 +35,17 @@ queryTrapRate = function(week_strata = NULL,
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/lib/file_wrapper.php'
 
   trap_rate_dart = NULL
-  for(yr in sort(unique(year(int_start(week_strata))))) {
+  for(yr in sort(unique(lubridate::year(lubridate::int_start(week_strata))))) {
     web_req = httr::GET(url_req, ua,
                         query = list(type = 'csv',
                                      fname = paste0('pit_adult_valid_', yr, '_', spp_code, '.csv'),
                                      dname = 'inc'))
+
+    if(httr::content(web_req,
+                     'text',
+                     encoding = 'ISO-8859-1') == '') {
+      stop(paste('DART returned no trap rate data for', spp, 'in', lubridate::year(lubridate::int_start(week_strata)[1]), '\n'))
+    }
 
     # what encoding to use?
     # stringi::stri_enc_detect(httr::content(web_req, "raw"))

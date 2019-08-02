@@ -5,11 +5,9 @@
 #' @author Kevin See
 #'
 #' @param site The site to query observations for.
-#' @param spp species to query window counts for. Possible choices are: Chinook, Coho, Steelhead, Sockeye
-#' @param yr year to query for window counts.
-#' @param start_day date (\code{month / day}) when query should start
-#' @param end_day date (\code{month / day}) when query should end
-#' @param span_yrs Should the query span mulitple years? If \code{NULL}, default value is chosen based on species.
+#' @param spp species to query PIT tag observations for. Possible choices are: Chinook, Coho, Steelhead, Sockeye
+#' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
+#' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
@@ -20,14 +18,19 @@
 
 queryPITtagObs = function(site = 'GRA',
                           spp = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
-                          yr = NULL,
-                          start_day = NULL,
-                          end_day = NULL,
-                          span_yrs = NULL) {
+                          start_date = NULL,
+                          end_date = NULL) {
 
-  # need a year
-  stopifnot(!is.null(yr))
+  # need a start date
+  stopifnot(!is.null(start_date))
 
+  # set default end date (1 year after start date)
+  if(is.null(end_date)) end_date = format(lubridate::ymd(start_date) + years(1) - days(1), '%Y%m%d')
+
+  # set year to match end_date
+  yr = lubridate::year(lubridate::ymd(end_date))
+
+  if(site != 'GRA') stop('Query only set up for GRA at this time')
   if(site == 'GRA') proj = 'GRA:Lower Granite Dam Adult Fishway (GRA) rkm 522.173'
 
   # default values
@@ -39,18 +42,18 @@ queryPITtagObs = function(site = 'GRA',
 
   spp_code = spp_code_df$code[match(spp, spp_code_df$Species)]
 
-  # set up default start and end days
-  if(site == 'GRA' & spp == 'Chinook' & is.null(start_day)) start_day = '03/01'
-  if(site == 'GRA' & spp == 'Chinook' & is.null(end_day)) end_day = '08/17'
+  # turn start / end date character vectors into actual date objects
+  startDate = lubridate::ymd(start_date)
+  endDate = lubridate::ymd(end_date)
 
-  if(site == 'GRA' & grepl('Steelhead', spp) & is.null(start_day)) start_day = '07/01'
-  if(site == 'GRA' & grepl('Steelhead', spp) & is.null(end_day)) end_day = '06/30'
+  if(endDate < startDate) stop('start_date comes after end_date')
 
-  if(is.null(span_yrs)) {
-    if(spp == 'Steelhead') span_yrs = T
-    if(spp != 'Steelhead') span_yrs = F
-  }
+  # get character vectors of start day and end day for query
+  start_day = paste(lubridate::month(startDate), lubridate::day(startDate), sep = '/')
+  end_day = paste(lubridate::month(endDate), lubridate::day(endDate), sep = '/')
 
+  span_yrs = if_else(lubridate::year(startDate) != lubridate::year(endDate),
+                     'yes', 'no')
 
   # assign user agent to the GitHub repo for this package
   ua = httr::user_agent('https://github.com/KevinSee/damEscapement')
@@ -68,14 +71,14 @@ queryPITtagObs = function(site = 'GRA',
                    species = spp_code,
                    run = NULL,
                    rear_type = NULL,
-                   span = ifelse(span_yrs, 'yes', 'no'),
+                   span = span_yrs,
                    startdate = start_day,
                    enddate = end_day,
                    reltype = 'alpha',
                    summary = 'yes')
 
 
-  if(span_yrs) {
+  if(span_yrs == 'yes') {
     queryList[['span']] = 'yes'
     queryList = c(queryList,
                   list(syear = yr - 1,
@@ -92,15 +95,17 @@ queryPITtagObs = function(site = 'GRA',
                         task = 'query data from DART')
 
   # parse the response
-  parsed = suppressWarnings(
+  parsed = try(suppressWarnings(
     httr::content(web_req,
-                         'text',
-                         encoding = 'ISO-8859-1') %>%
+                  'text',
+                  encoding = 'ISO-8859-1') %>%
       readr::read_delim(delim = ',',
-                      col_names = T) %>%
-    filter(!is.na(`Tag ID`)) %>%
-    mutate(Year = as.integer(Year))
-  )
+                        col_names = T) %>%
+      filter(!is.na(`Tag ID`)) %>%
+      mutate(Year = as.integer(Year))
+  ))
+
+  if(class(parsed)[1] == 'try-error') stop(paste('DART returned no PIT tag observations for', spp, 'in', yr))
 
   names(parsed) = gsub(' ', '', names(parsed))
 

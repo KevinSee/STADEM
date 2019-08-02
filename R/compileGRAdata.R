@@ -128,20 +128,23 @@ compileGRAdata = function(yr,
   cat('Estimating trap rate\n')
 
   # estimate trap rate from PIT tags
-  trap_rate = tagTrapRate(trap_dataframe = trap_yr,
-                          week_strata = week_strata) %>%
-    mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
-    left_join(tibble(Start_Date = lubridate::int_start(week_strata),
-                     week_num = 1:length(week_strata)), by = 'week_num') %>%
-    rename(n_trap_tags = n_trap,
-           n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
-           trap_rate = rate,
-           trap_rate_se = rate_se) %>%
-    mutate(Start_Date = ymd(Start_Date)) %>%
-    select(Start_Date,
-           week_num,
-           trap_open,
-           everything())
+  if(!useDARTrate) {
+    trap_rate = tagTrapRate(trap_dataframe = trap_yr,
+                            week_strata = week_strata) %>%
+      # mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
+      left_join(tibble(Start_Date = lubridate::int_start(week_strata),
+                       week_num = 1:length(week_strata)), by = 'week_num') %>%
+      mutate(Start_Date = lubridate::ymd(Start_Date)) %>%
+      rename(n_trap_tags = n_trap,
+             n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
+             trap_rate = rate,
+             trap_rate_se = rate_se) %>%
+      mutate(trap_open = if_else(n_trap_tags > 0, T, F)) %>%
+      select(Start_Date,
+             week_num,
+             trap_open,
+             everything())
+  }
 
   # to use DART trap rate instead
   # impose constant CV on trap rate estimates
@@ -152,31 +155,49 @@ compileGRAdata = function(yr,
                               return_weekly = T)) %>%
       mutate(trap_rate = ActualRateInclusiveTime,
              # add some error
-             trap_rate_se = trap_rate * trap_rate_cv)
+             trap_rate_se = trap_rate * trap_rate_cv) %>%
+      mutate(trap_open = if_else(trap_rate > 0, T, F)) %>%
+      select(Start_Date,
+             week_num,
+             trap_open,
+             everything())
   }
 
-
-  if(trap_rate_dist == 'beta') {
-    trap_rate = trap_rate %>%
-      # set up parameters describing trap rate as a beta distribution
-      mutate(trap_alpha = ((1 - trap_rate) / trap_rate_se^2 - 1 / trap_rate) * trap_rate^2,
-             trap_alpha = ifelse(trap_alpha < 0, 0.01, trap_alpha),
-             trap_beta = trap_alpha * (1 / trap_rate - 1),
-             trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
-             trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
-      select(Start_Date, week_num, n_trap_tags, n_poss_tags, matches('^trap')) %>%  # include the tag observations
-      distinct()
+  trap_yr$week_num = NA
+  for(i in 1:length(week_strata)) {
+    trap_yr$week_num[with(trap_yr, which(Date %within% week_strata[i]))] = i
   }
+  trap_rate = trap_rate %>%
+    left_join(trap_yr %>%
+                group_by(week_num) %>%
+                summarise(trap_fish = n()),
+              by = 'week_num') %>%
+    mutate(trap_open = if_else(!trap_open & trap_fish > 0,
+                               T, trap_open),
+           trap_open = if_else(is.na(trap_open), F, trap_open)) %>%
+    select(-trap_fish)
 
-  if(trap_rate_dist == 'logit') {
-    trap_rate = trap_rate %>%
-      # set up parameters describing trap rate as a logit distribution
-      mutate(trap_mu = ifelse(trap_open, boot::logit(trap_rate), 1e-12),
-             trap_sd = ifelse(trap_open, (1 / n_trap_tags) + (1 / (n_poss_tags - n_trap_tags)), 0)) %>%
-      # trap_sd = ifelse(trap_open, boot::logit(trap_rate_se), 0)) %>%
-      select(Start_Date, week_num, matches('^trap')) %>%
-      distinct()
-  }
+  # if(trap_rate_dist == 'beta') {
+  #   trap_rate = trap_rate %>%
+  #     # set up parameters describing trap rate as a beta distribution
+  #     mutate(trap_alpha = ((1 - trap_rate) / trap_rate_se^2 - 1 / trap_rate) * trap_rate^2,
+  #            trap_alpha = ifelse(trap_alpha < 0, 0.01, trap_alpha),
+  #            trap_beta = trap_alpha * (1 / trap_rate - 1),
+  #            trap_alpha = ifelse(trap_open, trap_alpha, 1e-12),
+  #            trap_beta = ifelse(trap_open, trap_beta, 1)) %>%
+  #     select(Start_Date, week_num, n_trap_tags, n_poss_tags, matches('^trap')) %>%  # include the tag observations
+  #     distinct()
+  # }
+  #
+  # if(trap_rate_dist == 'logit') {
+  #   trap_rate = trap_rate %>%
+  #     # set up parameters describing trap rate as a logit distribution
+  #     mutate(trap_mu = ifelse(trap_open, boot::logit(trap_rate), 1e-12),
+  #            trap_sd = ifelse(trap_open, (1 / n_trap_tags) + (1 / (n_poss_tags - n_trap_tags)), 0)) %>%
+  #     # trap_sd = ifelse(trap_open, boot::logit(trap_rate_se), 0)) %>%
+  #     select(Start_Date, week_num, matches('^trap')) %>%
+  #     distinct()
+  # }
 
   #--------------------------------------------------------
   # comnbine window counts, PIT tag data and trap summary on daily time-step
@@ -184,10 +205,12 @@ compileGRAdata = function(yr,
   dam_daily = win_cnts %>%
     select(-Year) %>%
     full_join(summarisePITdataDaily(pit_df) %>%
-                select(-SpawnYear), by = c('Species', 'Date')) %>%
+                select(-SpawnYear),
+              by = c('Species', 'Date')) %>%
     mutate_at(vars(tot_tags:reascent_tags_H),
-              funs(ifelse(is.na(.), 0, .))) %>%
-    left_join(trap_df, by = 'Date')
+              list(~ifelse(is.na(.), 0, .))) %>%
+    left_join(trap_df,
+              by = 'Date')
 
   #------------------------------------------
   # get week strata for each date

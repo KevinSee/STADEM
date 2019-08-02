@@ -19,24 +19,17 @@ tagTrapRate = function(trap_dataframe = NULL,
 
   # query PIT tag detections at Lower Granite
   pit_gra = bind_rows(queryPITtagObs(spp = 'Chinook',
-                                     yr = lubridate::year(lubridate::int_start(week_strata[length(week_strata)])),
-                                     start_day = paste(lubridate::month(lubridate::int_start(week_strata[1])),
-                                                       lubridate::mday(lubridate::int_start(week_strata[1])),
-                                                       sep = '/'),
-                                     end_day = paste(lubridate::month(lubridate::int_end(week_strata[length(week_strata)])),
-                                                     lubridate::mday(lubridate::int_end(week_strata[length(week_strata)])),
-                                                     sep = '/'),
-                                     span_yrs = ifelse(lubridate::year(lubridate::int_start(week_strata[length(week_strata)])) - lubridate::year(lubridate::int_start(week_strata[1])) == 0, F, T)) %>%
+                                     start_date = lubridate::int_start(week_strata[1]) %>%
+                                       format('%Y%m%d'),
+                                     end_date = lubridate::int_end(week_strata[length(week_strata)]) %>%
+                                       format('%Y%m%d')) %>%
+                        # filter out Fall Chinook detections, since they're weird (full of sort by code fish)
                         filter(lubridate::month(ObsTime) <= 8 | (lubridate::month(ObsTime) == 8 & lubridate::day(ObsTime) <= 17)),
                       queryPITtagObs(spp = 'Steelhead',
-                                     yr = lubridate::year(lubridate::int_start(week_strata[length(week_strata)])),
-                                     start_day = paste(lubridate::month(lubridate::int_start(week_strata[1])),
-                                                       lubridate::mday(lubridate::int_start(week_strata[1])),
-                                                       sep = '/'),
-                                     end_day = paste(lubridate::month(lubridate::int_end(week_strata[length(week_strata)])),
-                                                     lubridate::mday(lubridate::int_end(week_strata[length(week_strata)])),
-                                                     sep = '/'),
-                                     span_yrs = ifelse(lubridate::year(lubridate::int_start(week_strata[length(week_strata)])) - lubridate::year(lubridate::int_start(week_strata[1])) == 0, F, T))) %>%
+                                     start_date = lubridate::int_start(week_strata[1]) %>%
+                                       format('%Y%m%d'),
+                                     end_date = lubridate::int_end(week_strata[length(week_strata)]) %>%
+                                       format('%Y%m%d'))) %>%
     arrange(ObsTime)
 
 
@@ -54,7 +47,8 @@ tagTrapRate = function(trap_dataframe = NULL,
     select(TagID = Tag.ID, TrapDate = Date, SRR) %>%
     full_join(pit_gra %>%
                 filter(!TagID %in% gra_tags) %>%
-                select(TagID, SpRRT, MarkSite, ReleaseDate, matches('Time')), by = 'TagID') %>%
+                select(TagID, SpRRT, MarkSite, ReleaseDate, matches('Time')),
+              by = 'TagID') %>%
     mutate(Species = ifelse(grepl('^1', SpRRT) | grepl('^1', SRR),
                             'Chinook',
                             ifelse(grepl('^3', SpRRT) | grepl('^3', SRR),
@@ -62,7 +56,7 @@ tagTrapRate = function(trap_dataframe = NULL,
     mutate(ObsDate = lubridate::floor_date(ObsTime, unit = 'days'),
            diff = as.numeric(difftime(ObsDate, TrapDate, units = 'days'))) %>%
     mutate_at(vars(TrapDate, ObsDate),
-              funs(lubridate::ymd)) %>%
+              list(lubridate::ymd)) %>%
     mutate(modDate = if_else(is.na(TrapDate), ObsDate, TrapDate)) %>%
     # mutate(modDate = if_else(abs(diff) < 2, modDate, floor_date(MaxTime, unit = 'days'))) %>%
     mutate(inTrap = if_else(!is.na(TrapDate), T, F))
@@ -75,12 +69,14 @@ tagTrapRate = function(trap_dataframe = NULL,
 
   prop_rate = trap_rate_mr %>%
     filter(!is.na(ObsTime)) %>%
+    # filter(!is.na(modDate)) %>%
     group_by(week_num) %>%
     summarise(n_trap = sum(inTrap),
               n_tot = n_distinct(TagID),
               rate = n_trap / n_tot,
               rate_se = sqrt((rate * (1 - rate)) / n_tot),
-              rate_cv = rate_se / rate)
+              rate_cv = rate_se / rate) %>%
+    ungroup()
 
   return(prop_rate)
 

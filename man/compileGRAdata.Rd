@@ -9,7 +9,7 @@ compileGRAdata(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG",
   "PRD", "WAN", "RIS", "TUM", "RRH", "WEL", "ZOS"), start_date = NULL,
   end_date = NULL, incl_jacks = NULL, sthd_type = c("all",
   "unclipped"), damPIT = c("GRA", "PRA"), strata_beg = "Mon",
-  last_strata_min = 3, sthd_B_run = FALSE, trap_path = NULL,
+  last_strata_min = 3, sthd_B_run = FALSE, trap_dbase = NULL,
   useDARTrate = F, trap_rate_cv = 0, trap_rate_dist = c("beta",
   "logit"))
 }
@@ -26,21 +26,34 @@ compileGRAdata(yr, spp = c("Chinook", "Steelhead"), dam = c("LWG",
 
 \item{sthd_type}{should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.}
 
-\item{damPIT}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (\code{GRA}).}
+\item{damPIT}{the dam code for the dam you wish to query for PIT tag data.
+Currently only available for Lower Granite Dam (\code{GRA}).}
 
-\item{strata_beg}{3 letter code for the day of the week each weekly strata should begin on. Default value is \code{'Mon'}.}
+\item{strata_beg}{3 letter code for the day of the week each weekly strata
+should begin on. Default value is \code{'Mon'}.}
 
-\item{last_strata_min}{minimum length (in days) for the final strata. Default value is 3.}
+\item{last_strata_min}{minimum length (in days) for the final strata. Default
+value is 3.}
 
-\item{sthd_B_run}{should numbers of B run steelhead be reported? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.}
+\item{sthd_B_run}{should numbers of B run steelhead be reported? These are
+defined as wild steelhead greater than 780mm in length. Default is
+\code{FALSE}.}
 
-\item{trap_path}{file path where a csv file containing the data from the fish trap is located}
+\item{trap_dbase}{data frame object containing the GRA trapping data with
+identical data types as in tblLGDMasterCombineExportJodyW; required fields
+include MasterID, LGDNumPIT, CollectionDate, SRR, LGDSpecies, LGDRear,
+LGDLifeStage, LGDMarkAD, LGDValid, LGDFlmm, PTAGISSxCGRAObse.}
 
-\item{useDARTrate}{should the DART query for the trap rate be used? Default is \code{FALSE}, which implies the trap rate is estimated by PIT tags.}
+\item{useDARTrate}{should the DART query for the trap rate be used? Default
+is \code{FALSE}, which implies the trap rate is estimated by PIT tags.}
 
-\item{trap_rate_cv}{constant coefficient of variation (CV) that should be applied to estimates of trap rate queried by DART. Default value is \code{0}.}
+\item{trap_rate_cv}{constant coefficient of variation (CV) that should be
+applied to estimates of trap rate queried by DART. Default value is
+\code{0}.}
 
-\item{trap_rate_dist}{distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space.}
+\item{trap_rate_dist}{distributional form for trap rate prior. \code{beta}
+returns alpha and beta parameters for beta distribution. \code{logit}
+returns mean and standard deviation in logit space.}
 }
 \description{
 Query and summarise data for STADEM
