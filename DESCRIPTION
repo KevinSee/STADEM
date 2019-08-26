@@ -7,7 +7,7 @@ Maintainer: Kevin See <Kevin.See@biomark.com>
 Description: Estimate wild, hatchery and hatchery no-clip escapement for Chinook or steelhead (focused on Lower Granite dam) in a given year, accounting for error in window counts, re-ascension and night-time passage rates and uncertain trap rates.
 Depends: 
   R (>= 3.2.3),
-  dplyr(>= 0.7.0)
+  dplyr(>= 0.8.0.1)
 License: GPL-2
 LazyData: TRUE
 Imports:
