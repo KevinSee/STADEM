@@ -46,6 +46,7 @@ compileGRAdata = function(yr,
                           last_strata_min = 3,
                           sthd_B_run = FALSE,
                           trap_dbase = NULL,
+                          incl_trapRate = T,
                           useDARTrate = F,
                           trap_rate_cv = 0,
                           trap_rate_dist = c('beta', 'logit')) {
@@ -123,59 +124,64 @@ compileGRAdata = function(yr,
                                   spp = spp,
                                   sthd_B_run = sthd_B_run)
 
-  #--------------------------------------------------------
-  # Query trap rate from DART
-  cat('Estimating trap rate\n')
-
-  # estimate trap rate from PIT tags
-  if(!useDARTrate) {
-    trap_rate = tagTrapRate(trap_dataframe = trap_yr,
-                            week_strata = week_strata) %>%
-      # mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
-      left_join(tibble(Start_Date = lubridate::int_start(week_strata),
-                       week_num = 1:length(week_strata)), by = 'week_num') %>%
-      mutate(Start_Date = lubridate::ymd(Start_Date)) %>%
-      rename(n_trap_tags = n_trap,
-             n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
-             trap_rate = rate,
-             trap_rate_se = rate_se) %>%
-      mutate(trap_open = if_else(n_trap_tags > 0, T, F)) %>%
-      select(Start_Date,
-             week_num,
-             trap_open,
-             everything())
-  }
-
-  # to use DART trap rate instead
-  # impose constant CV on trap rate estimates
-  if(useDARTrate) {
-    trap_rate = trap_rate %>%
-      left_join(queryTrapRate(week_strata,
-                              spp = spp,
-                              return_weekly = T)) %>%
-      mutate(trap_rate = ActualRateInclusiveTime,
-             # add some error
-             trap_rate_se = trap_rate * trap_rate_cv) %>%
-      mutate(trap_open = if_else(trap_rate > 0, T, F)) %>%
-      select(Start_Date,
-             week_num,
-             trap_open,
-             everything())
-  }
-
+  # add week number to trap data
   trap_yr$week_num = NA
   for(i in 1:length(week_strata)) {
     trap_yr$week_num[with(trap_yr, which(Date %within% week_strata[i]))] = i
   }
-  trap_rate = trap_rate %>%
-    left_join(trap_yr %>%
-                group_by(week_num) %>%
-                summarise(trap_fish = n()),
-              by = 'week_num') %>%
-    mutate(trap_open = if_else(!trap_open & trap_fish > 0,
-                               T, trap_open),
-           trap_open = if_else(is.na(trap_open), F, trap_open)) %>%
-    select(-trap_fish)
+
+  #--------------------------------------------------------
+  if(incl_trapRate) {
+    # Query trap rate from DART
+    cat('Estimating trap rate\n')
+
+    # estimate trap rate from PIT tags
+    if(!useDARTrate) {
+      trap_rate = tagTrapRate(trap_dataframe = trap_yr,
+                              week_strata = week_strata) %>%
+        # mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
+        left_join(tibble(Start_Date = lubridate::int_start(week_strata),
+                         week_num = 1:length(week_strata)), by = 'week_num') %>%
+        mutate(Start_Date = lubridate::ymd(Start_Date)) %>%
+        rename(n_trap_tags = n_trap,
+               n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
+               trap_rate = rate,
+               trap_rate_se = rate_se) %>%
+        mutate(trap_open = if_else(n_trap_tags > 0, T, F)) %>%
+        select(Start_Date,
+               week_num,
+               trap_open,
+               everything())
+    }
+
+    # to use DART trap rate instead
+    # impose constant CV on trap rate estimates
+    if(useDARTrate) {
+      trap_rate = trap_rate %>%
+        left_join(queryTrapRate(week_strata,
+                                spp = spp,
+                                return_weekly = T)) %>%
+        mutate(trap_rate = ActualRateInclusiveTime,
+               # add some error
+               trap_rate_se = trap_rate * trap_rate_cv) %>%
+        mutate(trap_open = if_else(trap_rate > 0, T, F)) %>%
+        select(Start_Date,
+               week_num,
+               trap_open,
+               everything())
+    }
+
+    trap_rate = trap_rate %>%
+      left_join(trap_yr %>%
+                  group_by(week_num) %>%
+                  summarise(trap_fish = n()),
+                by = 'week_num') %>%
+      mutate(trap_open = if_else(!trap_open & trap_fish > 0,
+                                 T, trap_open),
+             trap_open = if_else(is.na(trap_open), F, trap_open)) %>%
+      select(-trap_fish)
+
+  }
 
   # if(trap_rate_dist == 'beta') {
   #   trap_rate = trap_rate %>%
@@ -230,14 +236,19 @@ compileGRAdata = function(yr,
     left_join(dam_daily %>%
                 group_by(week_num) %>%
                 summarise_at(vars(win_cnt:n_invalid),
-                             funs(sum), na.rm = T) %>%
+                             list(sum),
+                             na.rm = T) %>%
                 ungroup() %>%
                 mutate_at(vars(win_cnt:n_invalid),
-                          funs(ifelse(is.na(.), 0, .))), by = 'week_num') %>%
+                          list(~ifelse(is.na(.), 0, .))), by = 'week_num') %>%
     mutate(window_open = ifelse(win_cnt > 0, T, F)) %>%
-    select(Species, Start_Date, week_num, everything()) %>%
-    addTrapRate(trap_rate,
-                trap_rate_dist)
+    select(Species, Start_Date, week_num, everything())
+
+  if(incl_trapRate) {
+    dam_weekly = addTrapRate(dam_weekly,
+                             trap_rate,
+                             trap_rate_dist)
+  }
 
   return(list('weekStrata' = week_strata,
               'trapData' = trap_yr,
