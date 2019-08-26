@@ -49,7 +49,8 @@ summariseLGRweekly = function(wind_data = NULL,
   # for window counts, split by species
   wind_data = wind_data %>%
     mutate(window_open = wind_open) %>%
-    mutate_each(funs(ifelse(is.na(.), 0, .)), -Year, -Date, -window_open)
+    mutate_at(vars(-Year, -Date, -window_open),
+              list(~ifelse(is.na(.), 0, .)))
 
   if(incl_chnk_jacks) wind_data = wind_data %>%
     mutate(Chinook = Chinook + Jack_Chinook) %>%
@@ -78,7 +79,7 @@ summariseLGRweekly = function(wind_data = NULL,
            Date >= min(lubridate::int_start(week_strata)),
            Date <= max(lubridate::int_end(week_strata))) %>%
     mutate_at(vars(win_cnt, trap_fish:reascent_tags_H),
-              funs(as.integer)) %>%
+              list(as.integer)) %>%
     # assign week numbers to each day
     mutate(week_num_org = NA)
 
@@ -96,7 +97,7 @@ summariseLGRweekly = function(wind_data = NULL,
            !(Species == 'Chinook' & Date > lubridate::ymd(paste(lubridate::year(Date), '0817')))) %>%
     group_by(Species, SpawnYear, week_num_org) %>%
     summarise_at(vars(win_cnt:reascent_tags_H),
-                 funs(sum),
+                 list(sum),
                  na.rm = T) %>%
     ungroup() %>%
     left_join(lgr_daily %>%
@@ -133,7 +134,7 @@ summariseLGRweekly = function(wind_data = NULL,
   #                 !(Species == 'Chinook' & Date < ymd(paste(year(Date), '0301'))),
   #                 !(Species == 'Chinook' & Date > ymd(paste(year(Date), '0817')))) %>%
   #   group_by(Species, SpawnYear, week_num_org) %>%
-  #   summarise_at(vars(tot_tags:reascent_tags_H), funs(sum), na.rm = T) %>%
+  #   summarise_at(vars(tot_tags:reascent_tags_H), list(sum), na.rm = T) %>%
   #   ungroup()
   #
   # # summarise trap data weekly
@@ -145,7 +146,7 @@ summariseLGRweekly = function(wind_data = NULL,
   #                 !(Species == 'Chinook' & Date < ymd(paste(year(Date), '0301'))),
   #                 !(Species == 'Chinook' & Date > ymd(paste(year(Date), '0817')))) %>%
   #   group_by(Species, SpawnYear, week_num_org) %>%
-  #   summarise_at(vars(trap_fish:n_invalid), funs(sum), na.rm = T) %>%
+  #   summarise_at(vars(trap_fish:n_invalid), list(sum), na.rm = T) %>%
   #   ungroup()
   #
   # # summarise window counts weekly
@@ -170,8 +171,8 @@ summariseLGRweekly = function(wind_data = NULL,
   #   mutate(week_num = week_num_org - min(week_num_org) + 1) %>%
   #   ungroup() %>%
   #   select(Species:week_num_org, week_num, Start_Date, window_open, everything()) %>%
-  #   mutate_at(vars(win_cnt, trap_fish:reascent_tags_H), funs(ifelse(is.na(.), 0, .))) %>%
-  #   mutate_at(vars(win_cnt, trap_fish:reascent_tags_H), funs(as.integer))
+  #   mutate_at(vars(win_cnt, trap_fish:reascent_tags_H), list(ifelse(is.na(.), 0, .))) %>%
+  #   mutate_at(vars(win_cnt, trap_fish:reascent_tags_H), list(as.integer))
 
 
 

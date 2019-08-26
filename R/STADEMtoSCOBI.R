@@ -38,7 +38,8 @@ STADEMtoSCBOI = function(stadem_mod = NULL,
            Estimate = mean,
            SE = sd) %>%
     mutate_at(vars(Estimate),
-              funs(round)) %>%
+              list(round),
+              digits = 0) %>%
     mutate(Collapse = NA)
 
   if(saveCSV) {

@@ -73,12 +73,13 @@ queryTrapRate = function(week_strata = NULL,
   trap_rate_obs = trap_rate_dart %>%
     group_by(Date, Year, DOY) %>%
     summarise_at(vars(SampTime:n_Close, TotFishTrap:ALLPit),
-                 funs(sum), na.rm = T) %>%
+                 list(sum),
+                 na.rm = T) %>%
     mutate(SecondsInDay = 2 * (60*60*24)) %>% # multiplied by 2 because there are 2 flumes in trap
     left_join(trap_rate_dart %>%
                 group_by(Date, Year, DOY) %>%
                 summarise_at(vars(Rate:ActualRateInclusiveTime),
-                             funs(weighted.mean(., na.rm = T, w = TotalTime)))) %>%
+                             list(~weighted.mean(., na.rm = T, w = TotalTime)))) %>%
     mutate(trap_open = ifelse(TotalTime > 0, T, F),
            RateCalc = TotalTimeInclusive / SecondsInDay) %>%
     ungroup()
@@ -102,13 +103,13 @@ queryTrapRate = function(week_strata = NULL,
                 filter(!is.na(week_num)) %>%
                 group_by(Year, week_num) %>%
                 summarise_at(vars(SampTime:n_Close, TotFishTrap:ALLPit, trap_open),
-                             funs(sum),
+                             list(sum),
                              na.rm = T)) %>%
     left_join(trap_rate_obs %>%
                 filter(!is.na(week_num)) %>%
                 group_by(Year, week_num) %>%
                 summarise_at(vars(Rate:ActualRateInclusiveTime),
-                             funs(mean),
+                             list(mean),
                              na.rm = T)) %>%
     mutate(CalcRate = TotalTimeInclusive / SecondsInWeek,
            trap_open = ifelse(trap_open > 0, T, F)) %>%

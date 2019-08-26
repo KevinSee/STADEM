@@ -65,7 +65,8 @@ getWindowCounts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
 
     win_cnts = adult_cnts %>%
       full_join(jack_cnts, by = c('Year', 'Date')) %>%
-      mutate_at(vars(adults, jacks), funs(ifelse(is.na(.), 0, .))) %>%
+      mutate_at(vars(adults, jacks),
+                list(~ifelse(is.na(.), 0, .))) %>%
       mutate(win_cnt = adults + jacks) %>%
       mutate(Species = spp) %>%
       select(Species, Year, Date, win_cnt)
