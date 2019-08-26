@@ -4,6 +4,8 @@ Title: Estimate escapement past a dam with a window and trap facility
 Version: 0.1.0
 Author: Kevin See <Kevin.See@biomark.com>
 Maintainer: Kevin See <Kevin.See@biomark.com>
+URL: https://github.com/KevinSee/STADEM
+BugReports: https://github.com/KevinSee/STADEM/issues
 Description: Estimate wild, hatchery and hatchery no-clip escapement for Chinook or steelhead (focused on Lower Granite dam) in a given year, accounting for error in window counts, re-ascension and night-time passage rates and uncertain trap rates.
 Depends: 
   R (>= 3.2.3),
