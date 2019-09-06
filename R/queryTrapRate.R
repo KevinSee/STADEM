@@ -16,13 +16,15 @@
 #' @return NULL
 
 queryTrapRate = function(week_strata = NULL,
-                         spp = c('Chinook', 'Steelhead'),
+                         spp = c('Steelhead', 'Chinook'),
                          return_weekly = T) {
 
   # match up species code with species name
   spp_code_df = data.frame(Species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
                            code = 1:4)
 
+  # use steelhead as default
+  spp = match.arg(spp)
   spp_code = spp_code_df$code[match(spp, spp_code_df$Species)]
 
   # # use only steelhead, since that covers an entire year

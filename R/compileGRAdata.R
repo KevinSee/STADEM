@@ -157,10 +157,9 @@ compileGRAdata = function(yr,
     # to use DART trap rate instead
     # impose constant CV on trap rate estimates
     if(useDARTrate) {
-      trap_rate = trap_rate %>%
-        left_join(queryTrapRate(week_strata,
-                                spp = spp,
-                                return_weekly = T)) %>%
+      trap_rate = queryTrapRate(week_strata,
+                                # spp = spp,
+                                return_weekly = T) %>%
         mutate(trap_rate = ActualRateInclusiveTime,
                # add some error
                trap_rate_se = trap_rate * trap_rate_cv) %>%
