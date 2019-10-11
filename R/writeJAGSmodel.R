@@ -37,11 +37,9 @@ writeJAGSmodel = function(file_name = NULL,
 
     # for over-dispersed negative binomial
     # overdispersed if r is small, approximately Poisson if r is very large
-    # r ~ dgamma(0.01, 0.01)
     # use a half-Cauchy distribution (equivalent to t-distribution with 1 degree of freedom)
     r ~ dt(0, 0.001, 1) T(0,)
     k <- 1/r
-
 
     # modeling proportion of fish available for window counts
     day.true.logit[1] ~ dnorm(0, 0.001)	# daytime ascension rate for week 1
