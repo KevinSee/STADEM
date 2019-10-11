@@ -36,8 +36,12 @@ writeJAGSmodel = function(file_name = NULL,
     X.log.all[1] ~ dunif(-10,10) # initial state in log space
 
     # for over-dispersed negative binomial
-    k ~ dgamma(0.001, 0.001)
-    r <- 1/k
+    #k ~ dgamma(0.001, 0.001)
+    #r <- 1/k
+
+    r ~ dt(0, 0.001, 1) T(0,)
+    k <- 1/r
+
 
     # modeling proportion of fish available for window counts
     day.true.logit[1] ~ dnorm(0, 0.001)	# daytime ascension rate for week 1
