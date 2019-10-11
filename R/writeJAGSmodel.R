@@ -36,9 +36,9 @@ writeJAGSmodel = function(file_name = NULL,
     X.log.all[1] ~ dunif(-10,10) # initial state in log space
 
     # for over-dispersed negative binomial
-    #k ~ dgamma(0.001, 0.001)
-    #r <- 1/k
-
+    # overdispersed if r is small, approximately Poisson if r is very large
+    # r ~ dgamma(0.01, 0.01)
+    # use a half-Cauchy distribution (equivalent to t-distribution with 1 degree of freedom)
     r ~ dt(0, 0.001, 1) T(0,)
     k <- 1/r
 
