@@ -73,7 +73,7 @@ writeJAGSmodel = function(file_name = NULL,
     }
 
     # variation in time-varying random walk movement probabilities
-    org.simga ~ dt(0, 0.001, 1) T(0,) # half-Cauchy
+    org.sigma ~ dt(0, 0.001, 1) T(0,) # half-Cauchy
     org.tau <- pow(org.sigma, -2)
 
     for(i in 2:TotLadderWeeks) {
