@@ -31,7 +31,7 @@ writeJAGSmodel = function(file_name = NULL,
     ####################################
     # Set up parameters and initial states...
     ####################################
-    X.sigma ~ dunif(0, 20) # process error in log space
+    X.sigma ~ dt(0, 0.001, 1) T(0,) # process error in log space, use a half-Cauchy distribution (equivalent to t-distribution with 1 degree of freedom)
     X.tau <- pow(X.sigma, -2)
     X.log.all[1] ~ dunif(-10,10) # initial state in log space
 
@@ -43,12 +43,12 @@ writeJAGSmodel = function(file_name = NULL,
 
     # modeling proportion of fish available for window counts
     day.true.logit[1] ~ dnorm(0, 0.001)	# daytime ascension rate for week 1
-    day.sigma ~ dunif(0, 10) # process error on daytime (window open) proportion
+    day.sigma ~ dt(0, 0.001, 1) T(0,) # process error on daytime (window open) proportion - half-Cauchy
     day.tau <- pow(day.sigma, -2)
 
     # modeling proportion of fish re-ascending the dam
     reasc.true.logit[1] ~ dnorm(0, 0.001) # re-ascension rate for week 1
-    reasc.sigma ~ dunif(0, 10) # process error on re-ascension proportion
+    reasc.sigma ~ dt(0, 0.001, 1) T(0,) # process error on re-ascension proportion - half-Cauchy
     reasc.tau <- pow(reasc.sigma, -2)
 
     # modeling proportion of fish that are wild, hatchery no-clip and hatchery
@@ -73,7 +73,7 @@ writeJAGSmodel = function(file_name = NULL,
     }
 
     # variation in time-varying random walk movement probabilities
-    org.sigma ~ dunif(0, 10)
+    org.simga ~ dt(0, 0.001, 1) T(0,) # half-Cauchy
     org.tau <- pow(org.sigma, -2)
 
     for(i in 2:TotLadderWeeks) {
@@ -173,6 +173,9 @@ writeJAGSmodel = function(file_name = NULL,
 
     X.tot.night.wild <- sum(X.night.wild)
     X.tot.reasc.wild <- sum(X.reasc.wild)
+
+    # combine all hatchery fish
+    X.tot.new.hatch.all = X.tot.new.hatch + X.tot.new.hnc
 
     prop.tagged <- sum(trap.fish.matrix[,1]) / X.tot.new.wild
 
