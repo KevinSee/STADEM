@@ -74,11 +74,11 @@ prepJAGS = function(lgr_weekly = NULL,
                           pull(Tot_tags),
                         'ReAsc.tags' = lgr_weekly %>%
                           mutate(ReAsc_tags = ifelse(reascent_tags > tot_tags, tot_tags, reascent_tags),
-                                 ReAsc_tags = ifelse(!trap_open, NA, ReAsc_tags)) %>%
+                                 ReAsc_tags = ifelse(!ladder, NA, ReAsc_tags)) %>%
                           pull(ReAsc_tags),
                         'DC.tags' = lgr_weekly %>%
                           mutate(Day_tags = ifelse(day_tags > tot_tags, tot_tags, day_tags),
-                                 Day_tags = ifelse(!trap_open, NA, Day_tags)) %>%
+                                 Day_tags = ifelse(!ladder, NA, Day_tags)) %>%
                           pull(Day_tags)
   )
 
