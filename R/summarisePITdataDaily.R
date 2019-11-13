@@ -14,10 +14,15 @@
 summarisePITdataDaily = function(pit_data) {
   # clean up a few columns
   pit_data = pit_data %>%
-    mutate(Period = factor(Period, levels = c('D', 'N')),
-           ReAscent = ifelse(TagIDAscentCount > 1, T, F),
-           SpawnYear = ifelse(Species == 'Chinook', Year,
-                              ifelse(Species == 'Steelhead' & Date >= ymd(paste0(Year, '0701')), Year + 1, Year)))
+    mutate(Period = factor(Period,
+                           levels = c('D', 'N')),
+           ReAscent = if_else(!is.na(TagIDAscentCount) & TagIDAscentCount > 1,
+                              T, F),
+           SpawnYear = if_else(Species == 'Chinook',
+                               Year,
+                               if_else(Species == 'Steelhead' & Date >= ymd(paste0(Year, '0701')),
+                                       Year + 1,
+                                       Year)))
 
   # summarise rates by day
   lgr_night_reasc_daily = pit_data %>%
@@ -26,14 +31,14 @@ summarisePITdataDaily = function(pit_data) {
     arrange(Species, SpawnYear, TagID, Date) %>%
     group_by(Species, SpawnYear, Date) %>%
     summarise(tot_tags = n_distinct(TagID),
-              day_tags = length(unique(TagID[Period=='D'])),
-              reascent_tags = length(unique(TagID[ReAscent])),
-              tot_tags_W = length(unique(TagID[RearType == 'W'])),
-              day_tags_W = length(unique(TagID[Period=='D' & RearType == 'W'])),
-              reascent_tags_W = length(unique(TagID[ReAscent & RearType == 'W'])),
-              tot_tags_H = length(unique(TagID[RearType == 'H'])),
-              day_tags_H = length(unique(TagID[Period=='D' & RearType == 'H'])),
-              reascent_tags_H = length(unique(TagID[ReAscent & RearType == 'H']))) %>%
+              day_tags = n_distinct(TagID[Period=='D']),
+              reascent_tags = n_distinct(TagID[ReAscent]),
+              tot_tags_W = n_distinct(TagID[RearType == 'W']),
+              day_tags_W = n_distinct(TagID[Period=='D' & RearType == 'W']),
+              reascent_tags_W = n_distinct(TagID[ReAscent & RearType == 'W']),
+              tot_tags_H = n_distinct(TagID[RearType == 'H']),
+              day_tags_H = n_distinct(TagID[Period=='D' & RearType == 'H']),
+              reascent_tags_H = n_distinct(TagID[ReAscent & RearType == 'H'])) %>%
     ungroup()
 
   return(lgr_night_reasc_daily)
