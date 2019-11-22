@@ -25,30 +25,46 @@ plotTimeSeries = function(stadem_mod = NULL,
            param = ifelse(param == '', 'all', param)) %>%
     select(var, param, week, everything()) %>%
     left_join(weeklyData %>%
-                rename(week = week_num))
+                rename(week = week_num)) %>%
+    # adjust window count for night-time passage
+    mutate(win_cnt_adj = win_cnt / (day_tags / tot_tags)) %>%
+    mutate_at(vars(win_cnt_adj,
+                   trap_est),
+              list(~ if_else(. == Inf,
+                             as.numeric(NA),
+                             .))) %>%
+    # mark trap estimate as NA if not considered valid
+    mutate(trap_est_valid = if_else(trap_valid,
+                                    trap_est,
+                                    as.numeric(NA)))
 
 
   plot_df %>%
     filter(param == 'all') %>%
-    ggplot(aes(x = Start_Date,
-               y = `50%`)) +
+    ggplot(aes(x = Start_Date)) +
     geom_ribbon(aes(ymin = `2.5%`,
                     ymax = `97.5%`),
                 alpha = 0.2) +
-    geom_line(aes(y = win_cnt / (day_tags / tot_tags),
+    geom_line(aes(y = win_cnt_adj,
                   color = 'Window (adj)')) +
-    geom_point(aes(y = win_cnt / (day_tags / tot_tags),
+    geom_point(aes(y = win_cnt_adj,
                    color = 'Window (adj)')) +
     geom_line(aes(y = win_cnt,
                   color = 'Window (raw)')) +
     geom_point(aes(y = win_cnt,
                    color = 'Window (raw)')) +
-    geom_line(aes(y = trap_est,
+    geom_line(aes(y = trap_est_valid,
                   color = 'Trap')) +
     geom_point(aes(y = trap_est,
+                   shape = trap_valid,
                    color = 'Trap')) +
-    geom_line(aes(color = 'Model')) +
-    geom_point(aes(color = 'Model')) +
+    scale_shape_manual(values = c('TRUE' = 19,
+                                  'FALSE' = 1),
+                       name = 'Valid Est.') +
+    geom_line(aes(y = `50%`,
+                  color = 'Model')) +
+    geom_point(aes(y = `50%`,
+                   color = 'Model')) +
     scale_color_manual(values = c('Model' = 'black',
                                   'Window (raw)' = 'lightblue',
                                   'Window (adj)' = 'blue',
