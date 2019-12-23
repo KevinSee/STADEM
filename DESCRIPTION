@@ -16,6 +16,7 @@ Imports:
   boot,
   httr (>= 1.2.1),
   lubridate (>= 1.3.3),
+  dplyr (>= 0.8.3)
 RoxygenNote: 6.1.1
 Suggests: 
   jagsUI (>= 1.4.4),
