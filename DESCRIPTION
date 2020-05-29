@@ -10,7 +10,7 @@ Description: Estimate wild, hatchery and hatchery no-clip escapement for Chinook
 Depends: 
   R (>= 3.2.3),
   dplyr(>= 0.8.0.1)
-License: GPL-2
+License: MIT + file LICENSE
 LazyData: TRUE
 Imports:
   boot,
