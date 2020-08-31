@@ -42,12 +42,14 @@ writeJAGSmodel = function(file_name = NULL,
     k <- 1/r
 
     # modeling proportion of fish available for window counts
-    day.true.logit[1] ~ dnorm(0, 0.001)	# daytime ascension rate for week 1
+    day.true.prior1 ~ dunif(0, 1) # daytime ascension rate for week 1
+    day.true.logit[1] <- logit(day.true.prior1)
     day.sigma ~ dt(0, 0.001, 1) T(0,) # process error on daytime (window open) proportion - half-Cauchy
     day.tau <- pow(day.sigma, -2)
 
     # modeling proportion of fish re-ascending the dam
-    reasc.true.logit[1] ~ dnorm(0, 0.001) # re-ascension rate for week 1
+    reasc.true.prior1 ~ dunif(0, 1)  # re-ascension rate for week 1
+    reasc.true.logit[1] <- logit(reasc.true.prior1)
     reasc.sigma ~ dt(0, 0.001, 1) T(0,) # process error on re-ascension proportion - half-Cauchy
     reasc.tau <- pow(reasc.sigma, -2)
 
