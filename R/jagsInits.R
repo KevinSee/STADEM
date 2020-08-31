@@ -20,8 +20,10 @@ jagsInits = function(jags_data,
   }
 
   if('trap.rate.true' %in% params) {
+    # init_list = c(init_list,
+    #               list('trap.rate.true' = with(jags_data, trap.alpha / (trap.alpha + trap.beta) + 0.0001)))
     init_list = c(init_list,
-                  list('trap.rate.true' = with(jags_data, trap.alpha / (trap.alpha + trap.beta) + 0.0001)))
+                  list('trap.rate.true' = with(jags_data, n.trap.tags / n.poss.tags + 0.0001)))
   }
 
   return(init_list)

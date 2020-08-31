@@ -33,7 +33,8 @@ writeJAGSmodel = function(file_name = NULL,
     ####################################
     X.sigma ~ dt(0, 0.001, 1) T(0,) # process error in log space, use a half-Cauchy distribution (equivalent to t-distribution with 1 degree of freedom)
     X.tau <- pow(X.sigma, -2)
-    X.log.all[1] ~ dunif(-10,10) # initial state in log space
+    X.all.prior1 ~ dt(0, 0.001, 1) T(0,) # initial state, half-Cauchy distribution
+    X.log.all[1] <- log(X.all.prior1)
 
     # for over-dispersed negative binomial
     # overdispersed if r is small, approximately Poisson if r is very large
@@ -57,7 +58,7 @@ writeJAGSmodel = function(file_name = NULL,
     # set probability for any type of fish that was never caught to 0
     # prior on log odds ratio for initial week
     for(j in 1:2) {
-      org.phi[1,j] ~ dnorm(0, 0.01)
+      org.phi[1,j] ~ dunif(-3, 3)
       exp.org.phi[1,j] <- exp(org.phi[1,j]) * org.exist[j]
     }
 
@@ -142,7 +143,8 @@ writeJAGSmodel = function(file_name = NULL,
 
       # in trap
       # uncertainty in trap rate
-      trap.rate.true[i] ~ dbeta(trap.alpha[i], trap.beta[i])
+      trap.rate.true[i] ~ dbeta(1, 1)
+      n.trap.tags[i] ~ dbin(trap.rate.true[i], n.poss.tags[i])
       Y.trap[i] ~ dbin(trap.rate.true[i], X.all[i])
 
       # fish in trap by origin
@@ -193,7 +195,7 @@ writeJAGSmodel = function(file_name = NULL,
 
   # comment out lines related to the trap estimate
   if(!trap_est) {
-    model_file[seq(grep('# in trap', model_file), length.out = 4)] = paste('#', model_file[seq(grep('# in trap', model_file), length.out = 4)])
+    model_file[seq(grep('# in trap', model_file), length.out = 5)] = paste('#', model_file[seq(grep('# in trap', model_file), length.out = 5)])
   }
 
   # modifications of model for different ways to model the window counts

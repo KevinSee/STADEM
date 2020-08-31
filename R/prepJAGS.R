@@ -65,10 +65,16 @@ prepJAGS = function(lgr_weekly = NULL,
                         # 'trap.rate' = lgr_weekly %>%
                         #   mutate(trap_rate = ifelse(!trap_open | !trap_valid | is.na(trap_fish), 0, trap_rate)) %>%
                         #   pull(trap_rate),
-                        'trap.alpha' = lgr_weekly %>%
-                          pull(trap_alpha),
-                        'trap.beta' = lgr_weekly %>%
-                          pull(trap_beta),
+                        # 'trap.alpha' = lgr_weekly %>%
+                        #   pull(trap_alpha),
+                        # 'trap.beta' = lgr_weekly %>%
+                        #   pull(trap_beta),
+                        'n.trap.tags' = lgr_weekly %>%
+                          mutate(n_tags = if_else(trap_valid & trap_open & !is.na(n_poss_tags), n_trap_tags, NA_integer_)) %>%
+                          pull(n_tags),
+                        'n.poss.tags' = lgr_weekly %>%
+                          mutate(n_poss_tags = if_else(is.na(n_poss_tags), as.integer(0), n_poss_tags)) %>%
+                          pull(n_poss_tags),
                         'Tot.tags' = lgr_weekly %>%
                           mutate(Tot_tags = ifelse(is.na(tot_tags), 0, tot_tags)) %>%
                           pull(Tot_tags),
