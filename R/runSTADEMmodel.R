@@ -67,10 +67,9 @@ runSTADEMmodel = function(file_name = NULL,
   if(weekly_params) jags_params = c(jags_params, 'X.all', 'X.day', 'X.night', 'X.reasc', 'X.all.wild', 'X.all.hatch', 'X.all.hnc', 'X.new.tot', 'X.new.wild', 'X.new.hatch', 'X.new.hnc', 'X.night.wild', 'X.reasc.wild', 'day.true', 'reasc.true', 'org.prop', 'trap.rate.true')
 
   # set initial values
+  if(!is.null(seed)) set.seed(seed)
   jags_inits = vector('list', mcmc_chains)
   for(i in 1:mcmc_chains) jags_inits[[i]] = jagsInits(jags_data)
-
-  if(!is.null(seed)) set.seed(seed)
 
   # ptm = proc.time()
   jags_model = try(jagsUI::jags(data = jags_data,
