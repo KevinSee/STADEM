@@ -16,7 +16,7 @@ jagsInits = function(jags_data,
   init_list = NULL
   if('X.log.all' %in% params) {
     init_list = c(init_list,
-                  list('X.log.all' = log(jags_data$Y.window + 1)))
+                  list('X.all.prior1' = jags_data$Y.window + 1))
   }
 
   if('trap.rate.true' %in% params) {
