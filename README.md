@@ -3,7 +3,7 @@
 
 # STADEM
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KevinSee/STADEM/master?urlpath=rstudio)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BiomarkABS/STADEM/master?urlpath=rstudio)
 
 **ST**ate space **A**dult **D**am **E**scapement **M**odel
 
@@ -49,14 +49,14 @@ NOTE: To use devtools, you may also have to download and install Rtools
 <https://cran.r-project.org/bin/windows/Rtools/>
 
 You can download the compendium as a zip from from this URL:
-<https://github.com/KevinSee/STADEM/archive/master.zip>
+<https://github.com/BiomarkABS/STADEM/archive/master.zip>
 
 Or you can install this compendium as an R package, STADEM, from GitHub
 with:
 
 ``` r
 # install.packages("devtools")
-remotes::install_github("KevinSee/STADEM", build_vignettes = TRUE)
+remotes::install_github("BiomarkABS/STADEM", build_vignettes = TRUE)
 ```
 
 STADEM requires the JAGS software (**J**ust **A**nother **G**ibbs
