@@ -48,7 +48,7 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   spp_code = spp_code_df$code[match(spp, spp_code_df$Species)]
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/KevinSee/STADEM')
+  ua = httr::user_agent('https://github.com/BiomarkABS/STADEM')
 
   # compose url with query
   if(damPIT == 'GRA') url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_window_new.php'

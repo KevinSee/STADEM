@@ -17,7 +17,7 @@ queryLGRtrapDatabase = function(username = NULL,
   url_req = 'https://collaboration.idfg.idaho.gov/qci/default.aspx'
 
   # assign user agent to the GitHub repo for this package
-  ua = user_agent('https://github.com/KevinSee/damEscapement')
+  ua = httr::user_agent('https://github.com/BiomarkABS/STADEM')
 
   # where zip file of trap database lives
   url_req = 'https://collaboration.idfg.idaho.gov/qci/Shared%20Documents/LGTrappingExportJodyW.zip'

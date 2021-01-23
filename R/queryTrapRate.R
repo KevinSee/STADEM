@@ -31,7 +31,7 @@ queryTrapRate = function(week_strata = NULL,
   # spp_code = 3
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/KevinSee/damEscapement')
+  ua = httr::user_agent('https://github.com/BiomarkABS/STADEM')
 
   # compose url with query
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/lib/file_wrapper.php'
