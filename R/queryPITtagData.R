@@ -114,6 +114,7 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   }
 
   pit_df = parsed %>%
+    rename(Date = `Clock Date`) %>%
     filter(!is.na(Date)) %>%
     filter(Date != 'Date') %>%
     mutate(Date = lubridate::ymd(Date),

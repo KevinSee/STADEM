@@ -129,6 +129,7 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
     suppressWarnings() %>%
     filter(!is.na(year)) %>%
     mutate(Date = lubridate::ymd(paste(year, `mm-dd`, sep = '-'))) %>%
+    suppressWarnings() %>%
     mutate(Species = recode(parameter,
                             'Chin' = 'Chinook',
                             'JChin' = 'Jack_Chinook',
