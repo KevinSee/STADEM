@@ -45,14 +45,12 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   spp_code = match.arg(spp_code, several.ok = T)
 
   # match up species code with species name
-  spp_name = data.frame(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
+  spp_name = tibble(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
                         code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft')) %>%
     filter(code %in% spp_code) %>%
     mutate(code = factor(code, levels = spp_code)) %>%
     arrange(code) %>%
-    select(Species) %>%
-    as.matrix() %>%
-    as.character()
+    pull(Species)
 
   # assign user agent to the GitHub repo for this package
   ua = httr::user_agent('https://github.com/BiomarkABS/STADEM')
@@ -128,6 +126,7 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   # re-format
   win_cnts = parsed %>%
     mutate(year = as.integer(year)) %>%
+    suppressWarnings() %>%
     filter(!is.na(year)) %>%
     mutate(Date = lubridate::ymd(paste(year, `mm-dd`, sep = '-'))) %>%
     mutate(Species = recode(parameter,
@@ -143,7 +142,9 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
            Year = year,
            Date,
            win_cnt = value) %>%
-    tidyr::spread(Species, win_cnt, fill = 0) %>%
+    tidyr::pivot_wider(names_from = "Species",
+                       values_from = "win_cnt",
+                       values_fill = 0) %>%
     filter(Date >= startDate,
            Date <= endDate)
 
