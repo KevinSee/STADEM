@@ -88,14 +88,14 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   # parse the response
   parsed = suppressWarnings(
     httr::content(web_req,
-                         'text',
+                  'text',
                   encoding = 'UTF-8') %>%
-    readr::read_delim(delim = ',',
-                      col_names = T)
+      readr::read_delim(delim = ',',
+                        col_names = T)
   )
 
   #if(is.null(parsed) | grepl(paste('No', spp, 'data found'), parsed)) {
-    if(is.null(parsed) | ncol(parsed) == 1) {
+  if(is.null(parsed) | ncol(parsed) == 1) {
     stop(paste('DART returned no PIT tag data for', spp, 'in', lubridate::year(startDate), '\n'))
   }
 
@@ -113,8 +113,12 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
       ))
   }
 
+  if("Clock Date" %in% names(parsed)) {
+    parsed = parsed %>%
+      rename(Date = `Clock Date`)
+  }
+
   pit_df = parsed %>%
-    rename(Date = `Clock Date`) %>%
     filter(!is.na(Date)) %>%
     filter(Date != 'Date') %>%
     mutate(Date = lubridate::ymd(Date),
