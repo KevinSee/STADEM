@@ -7,8 +7,12 @@
 \url{http://www.cbr.washington.edu/dart}
 }
 \usage{
-queryPITtagObs(site = "GRA", spp = c("Chinook", "Coho", "Steelhead",
-  "Sockeye"), start_date = NULL, end_date = NULL)
+queryPITtagObs(
+  site = "GRA",
+  spp = c("Chinook", "Coho", "Steelhead", "Sockeye"),
+  start_date = NULL,
+  end_date = NULL
+)
 }
 \arguments{
 \item{site}{The site to query observations for.}

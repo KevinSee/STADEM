@@ -7,8 +7,12 @@
 \url{http://www.cbr.washington.edu/dart}
 }
 \usage{
-queryPITtagData(damPIT = c("GRA", "PRA"), spp = c("Chinook", "Coho",
-  "Steelhead", "Sockeye"), start_date = NULL, end_date = NULL)
+queryPITtagData(
+  damPIT = c("GRA", "PRA"),
+  spp = c("Chinook", "Coho", "Steelhead", "Sockeye"),
+  start_date = NULL,
+  end_date = NULL
+)
 }
 \arguments{
 \item{damPIT}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA) and Priest Rapids (PRA).}

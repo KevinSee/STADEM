@@ -4,8 +4,12 @@
 \alias{weeklyStrata}
 \title{Generate weekly strata}
 \usage{
-weeklyStrata(start_date = NULL, end_date = NULL, strata_beg = "Mon",
-  last_strata_min = 3)
+weeklyStrata(
+  start_date = NULL,
+  end_date = NULL,
+  strata_beg = "Mon",
+  last_strata_min = 3
+)
 }
 \arguments{
 \item{start_date}{character vector of date (\code{YYYYMMDD}) when query should start}

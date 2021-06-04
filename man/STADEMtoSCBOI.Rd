@@ -4,8 +4,12 @@
 \alias{STADEMtoSCBOI}
 \title{Summarise STADEM output for SCOBI}
 \usage{
-STADEMtoSCBOI(stadem_mod = NULL, lgr_weekly = NULL, saveCSV = F,
-  fileName = "SCOBI_input.csv")
+STADEMtoSCBOI(
+  stadem_mod = NULL,
+  lgr_weekly = NULL,
+  saveCSV = F,
+  fileName = "SCOBI_input.csv"
+)
 }
 \arguments{
 \item{stadem_mod}{results of STADEM model, of class \code{jagsUI}.}

@@ -4,8 +4,14 @@
 \alias{summariseLGRweekly}
 \title{Compile weekly data for Lower Granite dam}
 \usage{
-summariseLGRweekly(wind_data = NULL, pit_all = NULL, trap_df = NULL,
-  incl_clip_sthd = FALSE, sthd_B_run = FALSE, incl_chnk_jacks = TRUE)
+summariseLGRweekly(
+  wind_data = NULL,
+  pit_all = NULL,
+  trap_df = NULL,
+  incl_clip_sthd = FALSE,
+  sthd_B_run = FALSE,
+  incl_chnk_jacks = TRUE
+)
 }
 \arguments{
 \item{wind_data}{data.frame containing window count data to summarise, queried using \code{queryWindCnts}, and potentially combined across calendar years}

@@ -4,8 +4,11 @@
 \alias{addTrapRate}
 \title{Combine fish and trap rate data}
 \usage{
-addTrapRate(lgr_weekly = NULL, trap_rate = NULL,
-  trap_rate_dist = c("beta", "logit"))
+addTrapRate(
+  lgr_weekly = NULL,
+  trap_rate = NULL,
+  trap_rate_dist = c("beta", "logit")
+)
 }
 \arguments{
 \item{lgr_weekly}{dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summariseLGRweekly}.}

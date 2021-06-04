@@ -4,8 +4,12 @@
 \alias{summariseLGRtrapDaily}
 \title{Summarise LGR Trap Database}
 \usage{
-summariseLGRtrapDaily(trap_df, spp = c("Chinook", "Steelhead"),
-  incl_clip_sthd = TRUE, sthd_B_run = FALSE)
+summariseLGRtrapDaily(
+  trap_df,
+  spp = c("Chinook", "Steelhead"),
+  incl_clip_sthd = TRUE,
+  sthd_B_run = FALSE
+)
 }
 \arguments{
 \item{trap_df}{data.frame as created by \code{readLGRtrapDB}.}

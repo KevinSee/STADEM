@@ -4,10 +4,12 @@
 \alias{jagsInits}
 \title{Initial values}
 \usage{
-jagsInits(jags_data)
+jagsInits(jags_data, params = c("X.log.all", "trap.rate.true"))
 }
 \arguments{
 \item{jags_data}{list of data being passed to \code{JAGS} model}
+
+\item{params}{vector describing which parameters should have an initial value function applied to them. Currently accepts one or more of \code{X.log.all}, \code{trap.rate.true}. Default is all of them.}
 }
 \description{
 Function to set appropriate initial values
