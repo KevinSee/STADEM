@@ -11,7 +11,7 @@
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
-#' @import lubridate httr dplyr readr
+#' @import lubridate httr dplyr readr janitor
 #' @export
 #' @return NULL
 #' @examples queryPITtagData(start_date = '20150701')
@@ -113,6 +113,10 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
       ))
   }
 
+  if(" Clock Date" %in% names(parsed)) {
+    parsed = parsed %>%
+      rename(Date = ` Clock Date`)
+  }
   if("Clock Date" %in% names(parsed)) {
     parsed = parsed %>%
       rename(Date = `Clock Date`)
@@ -130,9 +134,11 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
     arrange(Date, TagID, `Detection DateTime`) %>%
     select(Ladder, Year, Species, SpCode, TagID, everything()) %>%
     filter(Date >= startDate,
-           Date <= endDate)
+           Date <= endDate) %>%
+    janitor::clean_names(case = "upper_camel") %>%
+    rename(ReleaseRKM = ReleaseRkm)
 
-  names(pit_df) = gsub(' ', '', names(pit_df))
+  # names(pit_df) = gsub(' ', '', names(pit_df))
 
   if(damPIT == 'PRA') {
     pit_df = pit_df %>%
