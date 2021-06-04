@@ -7,8 +7,11 @@
 \url{http://www.cbr.washington.edu/dart}
 }
 \usage{
-queryTrapRate(week_strata = NULL, spp = c("Chinook", "Steelhead"),
-  return_weekly = T)
+queryTrapRate(
+  week_strata = NULL,
+  spp = c("Steelhead", "Chinook"),
+  return_weekly = T
+)
 }
 \arguments{
 \item{week_strata}{vector of intervals delimiting the weekly strata to summarize mark-recapture data over, as returned by \code{weeklyStrata()}.}

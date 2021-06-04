@@ -4,8 +4,11 @@
 \alias{writeJAGSmodel}
 \title{Write JAGS model}
 \usage{
-writeJAGSmodel(file_name = NULL, win_model = c("neg_bin", "neg_bin2",
-  "pois", "quasi_pois", "log_space"), trap_est = T)
+writeJAGSmodel(
+  file_name = NULL,
+  win_model = c("neg_bin", "neg_bin2", "pois", "quasi_pois", "log_space"),
+  trap_est = T
+)
 }
 \arguments{
 \item{file_name}{name (with file path) to save the model as}

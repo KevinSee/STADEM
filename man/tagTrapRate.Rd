@@ -4,8 +4,11 @@
 \alias{tagTrapRate}
 \title{PIT tag based trap rate}
 \usage{
-tagTrapRate(trap_dataframe = NULL, week_strata = NULL,
-  mark_site = c("LGRLDR", "LGR"))
+tagTrapRate(
+  trap_dataframe = NULL,
+  week_strata = NULL,
+  mark_site = c("LGRLDR", "LGR")
+)
 }
 \arguments{
 \item{trap_dataframe}{dataframe containing data from the fish trap, including columns named \code{Tag.ID}, \code{CollectionDate} and \code{SRR}.}

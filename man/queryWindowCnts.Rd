@@ -7,10 +7,14 @@
 \url{http://www.cbr.washington.edu/dart}
 }
 \usage{
-queryWindowCnts(dam = c("LWG", "WFF", "BON", "TDA", "JDA", "MCN", "IHR",
-  "LMN", "LGS", "PRO", "ROZ", "PRD", "WAN", "RIS", "TUM", "RRH", "WEL",
-  "ZOS"), spp_code = c("fc", "fk", "fb", "fs", "fsw", "fa", "fcj", "fkj",
-  "fbj", "fsj", "fl", "ft"), start_date = NULL, end_date = NULL)
+queryWindowCnts(
+  dam = c("LWG", "WFF", "BON", "TDA", "JDA", "MCN", "IHR", "LMN", "LGS", "PRO", "ROZ",
+    "PRD", "WAN", "RIS", "TUM", "RRH", "WEL", "ZOS"),
+  spp_code = c("fc", "fk", "fb", "fs", "fsw", "fa", "fcj", "fkj", "fbj", "fsj", "fl",
+    "ft"),
+  start_date = NULL,
+  end_date = NULL
+)
 }
 \arguments{
 \item{dam}{the dam code for the dam you wish to query for window counts. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)}
