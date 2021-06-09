@@ -130,13 +130,17 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
     # filter(Ladder == damPIT) %>%
     rename(SpCode = Species) %>%
     mutate(Species = spp,
-           Year = year(endDate)) %>%
+           Year = lubridate::year(endDate)) %>%
     arrange(Date, TagID, `Detection DateTime`) %>%
     select(Ladder, Year, Species, SpCode, TagID, everything()) %>%
     filter(Date >= startDate,
            Date <= endDate) %>%
-    janitor::clean_names(case = "upper_camel") %>%
-    rename(ReleaseRKM = ReleaseRkm)
+    janitor::clean_names(case = "upper_camel")
+
+  if("ReleaseRkm" %in% names(pit_df)) {
+    pit_df = pit_df %>%
+      rename(ReleaseRKM = ReleaseRkm)
+  }
 
   # names(pit_df) = gsub(' ', '', names(pit_df))
 
@@ -145,7 +149,7 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
       rename(PreviousDate = PreviousDetectDate,
              PreviousHours = DiffPreviousHours,
              PreviousDays = DiffPreviousDays,
-             LadderSide = Ladder_1)
+             LadderSide = Ladder1)
 
   }
 
