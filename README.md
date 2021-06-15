@@ -26,6 +26,13 @@ using the jagsUI package in R. Some of the functions can be applied to
 other dams, and we are actively working to be able to run STADEM at
 locations other than Lower Granite Dam.
 
+Further details about STADEM can be found in our published paper:
+
+> See, K.E., R.N. Kinzer and M.W. Ackerman (2021). *State-Space Model to
+> Estimate Salmon Escapement Using Multiple Data Sources*. North
+> American Journal of Fisheries Management
+> <https://doi.org/10.1002/nafm.10649>
+
 ## Installation instructions
 
 `STADEM` requires several packages that are available through the
@@ -36,27 +43,27 @@ using:
 install.packages("tidyverse", "rjags", "jagsUI")
 ```
 
-To install `STADEM` you can use Hadley Wickham’s `devtools` package. To
-install and load the devtools package use:
-
-``` r
-install.packages("devtools")
-library(devtools)
-```
-
-NOTE: To use devtools, you may also have to download and install Rtools
-(although you shouldn’t). The latest version on Rtools can be found at
-<https://cran.r-project.org/bin/windows/Rtools/>
-
-You can download the compendium as a zip from from this URL:
+The `STADEM` compendium can be downloaded as a zip from from this URL:
 <https://github.com/BiomarkABS/STADEM/archive/master.zip>
 
-Or you can install this compendium as an R package, STADEM, from GitHub
-with:
+Or the user can install the compendium as an R package from GitHub by
+using Hadley Wickham’s `devtools` package:
 
 ``` r
-# install.packages("devtools")
-remotes::install_github("BiomarkABS/STADEM", build_vignettes = TRUE)
+# install and load remotes, if necessary
+install.packages("devtools")
+devtools::install_github("BiomarkABS/STADEM", 
+                         build_vignettes = TRUE)
+```
+
+`devtools` may require the downloading and installation of Rtools. The
+latest version of Rtools can be found
+[here](https://cran.r-project.org/bin/windows/Rtools/).
+
+For the latest development version:
+
+``` r
+devtools::install_github("BiomarkABS/STADEM@develop")
 ```
 
 STADEM requires the JAGS software (**J**ust **A**nother **G**ibbs
