@@ -34,164 +34,122 @@ vignette: |
 
 ```{r setUp_options, echo = F, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+
+library(ggplot2)
+library(ggpubr)
+library(kableExtra)
+
 ```
 
 ```{r stadem_model_fig, echo = F}
-library(ggplot2)
-library(ggpubr)
+arrow_length = unit(0.15, 'inches')
+arrow_height = 1.05
+my_xlim = c(-4, 7.5)
+my_ylim = c(0.08, 1.2)
 
-# function to extract the legend from a plot
-g_legend <- function(a.gplot){
-  tmp <- ggplot_gtable(ggplot_build(a.gplot))
-  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
-  legend <- tmp$grobs[[leg]]
-  return(legend)}
-
-
-arrow_length = grid::unit(0.15, 'inches')
-my_xlim = c(-3, 7.5)
-my_ylim = c(0.05, 0.9)
-plot_df = data.frame(x = c(-5, 8))
-
-p1 = ggplot(plot_df,
+# choose appropriate color scale for color vs. black & white
+p1 = ggplot(data.frame(x = c(-5, 8)),
             aes(x)) +
   stat_function(fun = dnorm,
-                args = list(mean = 4, sd = 0.5),
-                aes(color = 'Daytime Fish'),
-                lwd = 2) +
-  scale_color_brewer(palette = 'Set1') +
-  geom_vline(xintercept = 4,
-             linetype = 2) +
-  coord_cartesian(xlim = my_xlim,
-                  ylim = my_ylim) +
-  theme(axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        legend.position = 'none') +
-  labs(x = 'Escapement',
-       y = 'Density',
-       color = 'Fish Type',
-       title = 'Daytime Fish')
-
-p2 = ggplot(plot_df,
-            aes(x)) +
-  stat_function(fun = dnorm,
-                args = list(mean = 4, sd = 0.5),
+                args = list(mean = 4, sd = 0.4),
                 aes(color = 'Daytime Fish'),
                 lwd = 2) +
   stat_function(fun = dnorm,
                 args = list(mean = 6, sd = 0.55),
                 aes(color = 'Total Fish'),
-                lwd = 2) +
-  geom_segment(x = 4,
-               y = 0.85,
-               xend = 6,
-               yend = 0.85,
-               arrow = arrow(length=arrow_length)) +
-  scale_color_brewer(palette = 'Set1') +
-  geom_vline(xintercept = 4,
-             linetype = 2) +
-  coord_cartesian(xlim = my_xlim,
-                  ylim = my_ylim) +
-  theme(axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        legend.position = 'none') +
-  labs(x = 'Escapement',
-       y = 'Density',
-       color = 'Fish Type',
-       title = 'Including Night Passage')
-
-p3 = ggplot(plot_df,
-            aes(x)) +
-  stat_function(fun = dnorm,
-                args = list(mean = 4, sd = 0.5),
-                aes(color = 'Daytime Fish'),
-                lwd = 2) +
-  stat_function(fun = dnorm,
-                args = list(mean = 6, sd = 0.55),
-                aes(color = 'Total Fish'),
-                lwd = 2) +
+                geom = 'blank') +
   stat_function(fun = dnorm,
                 args = list(mean = 5, sd = 0.6),
                 aes(color = 'Unique Fish'),
-                lwd = 2) +
-  geom_segment(x = 6,
-               y = 0.85,
-               xend = 5,
-               yend = 0.85,
-               arrow = arrow(length=arrow_length)) +
-  scale_color_brewer(palette = 'Set1') +
-  geom_vline(xintercept = 4,
-             linetype = 2) +
-  coord_cartesian(xlim = my_xlim,
-                  ylim = my_ylim) +
-  theme(axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        legend.position = 'none') +
-  labs(x = 'Escapement',
-       y = 'Density',
-       color = 'Fish Type',
-       title = 'Account for Reascension')
-
-p4 = ggplot(plot_df,
-            aes(x)) +
-  stat_function(fun = dnorm,
-                args = list(mean = 4, sd = 0.5),
-                aes(color = 'Daytime Fish'),
-                lwd = 2) +
-  stat_function(fun = dnorm,
-                args = list(mean = 6, sd = 0.55),
-                aes(color = 'Total Fish'),
-                lwd = 2) +
-  stat_function(fun = dnorm,
-                args = list(mean = 5, sd = 0.6),
-                aes(color = 'Unique Fish'),
-                lwd = 2) +
+                geom = 'blank') +
   stat_function(fun = dnorm,
                 args = list(mean = -1, sd = 0.75),
                 aes(color = 'Unique Wild Fish'),
-                lwd = 2) +
-  geom_segment(x = 5,
-               y = 0.85,
-               xend = -1,
-               yend = 0.85,
-               arrow = arrow(length=arrow_length)) +
-  scale_color_brewer(palette = 'Set1') +
+                geom = 'blank') +
+  stat_function(fun = dnorm,
+                args = list(mean = -1, sd = 0.75),
+                aes(color = 'Unique Hatchery Fish'),
+                geom = 'blank') +
+  stat_function(fun = dnorm,
+                args = list(mean = -1, sd = 0.75),
+                aes(color = 'Unique HNC Fish'),
+                geom = 'blank') +
+  scale_color_brewer(palette = "Spectral") +
   geom_vline(xintercept = 4,
              linetype = 2) +
-  coord_cartesian(xlim = my_xlim,
-                  ylim = my_ylim) +
+  theme_pubr(legend = "bottom") +
+  guides(color = guide_legend(nrow = 3,
+                              title.position = 'top')) +
   theme(axis.text = element_blank(),
         axis.ticks = element_blank(),
-        legend.position = 'bottom') +
+        axis.title.y = element_blank()) +
   labs(x = 'Escapement',
-       y = 'Density',
        color = 'Fish Type',
-       title = 'Proportion Wild')
+       title = '   Daytime Fish') +
+  coord_cartesian(xlim = my_xlim,
+                  ylim = my_ylim)
+# coord_fixed(ratio = 4,
+#             xlim = my_xlim,
+#             ylim = my_ylim)
 
-mylegend = g_legend(p4)
+p2 = p1 +
+  stat_function(fun = dnorm,
+                args = list(mean = 6, sd = 0.55),
+                aes(color = 'Total Fish'),
+                lwd = 2) +
+  labs(title = '   Nighttime Passage')
 
-examp_p = ggarrange(ggarrange(p1, p2, p3, p4 + theme(legend.position = 'none'),
-                              labels = c('A', 'B', 'C', 'D'),
-                              ncol = 2,
-                              nrow = 2),
-                    mylegend,
-                    labels = NULL,
-                    heights = c(5, 0.5),
-                    ncol = 1,
-                    nrow = 2)
+p2a = p2 +
+  geom_segment(x = 4,
+               y = arrow_height,
+               xend = 6,
+               yend = arrow_height,
+               arrow = arrow(length = arrow_length))
+
+p3 = p2 +
+  stat_function(fun = dnorm,
+                args = list(mean = 5, sd = 0.6),
+                aes(color = 'Unique Fish'),
+                lwd = 2) +
+  labs(title = '   Re-ascension')
+
+p3a = p3 +
+  geom_segment(x = 6,
+               y = arrow_height,
+               xend = 5,
+               yend = arrow_height,
+               arrow = arrow(length = arrow_length))
+
+p4 = p3 +
+  stat_function(fun = dnorm,
+                args = list(mean = -1, sd = 0.85),
+                aes(color = 'Unique Wild Fish'),
+                lwd = 2) +
+  stat_function(fun = dnorm,
+                args = list(mean = 1, sd = 0.75),
+                aes(color = 'Unique Hatchery Fish'),
+                lwd = 2) +
+  stat_function(fun = dnorm,
+                args = list(mean = -2, sd = 1.25),
+                aes(color = 'Unique HNC Fish'),
+                lwd = 2) +
+  geom_segment(x = 5,
+               y = arrow_height,
+               xend = -1,
+               yend = arrow_height,
+               arrow = arrow(length = arrow_length)) +
+  labs(title = '   Origin Proportion')
+
+
+examp_p = ggarrange(p1, p2a, p3a, p4,
+                      labels = 'AUTO',
+                      ncol = 2,
+                      nrow = 2,
+                      align = 'v',
+                      common.legend = T,
+                      legend = 'bottom')
+
 ```
-
-```{r fig_tab_captions, echo = F}
-library(captioner)
-# set up figure and table number functions
-# tab_nums = captioner(prefix = 'Table')
-fig_nums = captioner()
-
-stadem_examp_fig = fig_nums('stadem_examp_fig',
-                            'Schematic of how the STADEM model works. Panel A shows the posterior of the estimate of fish crossing while the window is open (dashed line shows observed window counts). That estimate is divided by the nighttime passage rate (B). The total fish is then discounted by the reascension rate to estimate unique fish (C). Those unique fish are then multiplied by the proportion of wild fish (D), to estimate unique wild fish. ')
-
-```
-
 
 # Introduction
 
@@ -220,9 +178,9 @@ STADEM relies on several pieces of data, which must be compiled from multiple so
 
 # High-level overview
 
-STADEM estimates the total number of fish crossing the dam each week, based on two major data sources: the window counts and the total fish in the trap, while also accounting for two known biological processes: night-time passage and fallback-and-reascension. Using a state-space approach, STADEM assumes that the window counts and the estimates from the trap (fish in the trap divided by trap rate that week) are generated by processes with observation error. In the case of the window counts, there is some inherent error in the counting process, and it fails to account for fish that cross the dam while the window is closed. In the case of the trap, there is sampling variation and uncertainty in what the realized trap rate is. In addition, STADEM accounts for potential double-counting of fish that have fallen back and re-ascended the dam. It then partitions the estimate of total fish over the dam by origin, to provide the needed data for management goals (`r fig_nums('stadem_examp_fig', display = 'c')`).
+STADEM estimates the total number of fish crossing the dam each week, based on two major data sources: the window counts and the total fish in the trap, while also accounting for two known biological processes: night-time passage and fallback-and-reascension. Using a state-space approach, STADEM assumes that the window counts and the estimates from the trap (fish in the trap divided by trap rate that week) are generated by processes with observation error. In the case of the window counts, there is some inherent error in the counting process, and it fails to account for fish that cross the dam while the window is closed. In the case of the trap, there is sampling variation and uncertainty in what the realized trap rate is. In addition, STADEM accounts for potential double-counting of fish that have fallen back and re-ascended the dam. It then partitions the estimate of total fish over the dam by origin, to provide the needed data for management goals (Figure \@ref(fig:stadem_model_figure)).
 
-```{r stadem_model_figure, echo = F, fig.height = 6, fig.width = 6, fig.cap = fig_nums('stadem_examp_fig')}
+```{r stadem_model_figure, echo = F, fig.height = 6, fig.width = 6, fig.cap = 'Schematic of how the STADEM model works. Panel A shows the posterior of the estimate of fish crossing while the window is open (dashed line shows observed window counts). That estimate is divided by the nighttime passage rate (B). The total fish is then discounted by the reascension rate to estimate unique fish (C). Those unique fish are then multiplied by the proportion of wild fish (D), to estimate unique wild fish.'}
 plot(examp_p)
 ```
 
@@ -262,16 +220,6 @@ stadem_list = compileGRAdata(spp = spp,
                              end_date = paste0(yr, '0817'),
                              strata_beg = 'Mon',
                              trap_dbase = readLGRtrapDB('../inst/extdata/Chnk2014_TrapDatabase.csv'))
-```
-
-```{r fig_cap2, echo = F}
-jags_fit_fig = fig_nums('jags_fit_fig',
-                        paste('Time-series plot showing estimates of total escapement for',
-                              spp, 'in', yr, ', including raw window counts, window counts adjusted for nighttime passage, trap estimates and STADEM estimates.'))
-
-rate_fig = fig_nums('rate_fig',
-                    'Time-series of estimated day-time passage (red) and re-ascension (blue) rates, with points representing the observed data and shaded polygons represeneting the 95% credible intervals.')
-
 ```
 
 The `compileGRAdata()` function returns several pieces of information, consolidated into a named list we have called `stadem_list`:
@@ -346,7 +294,9 @@ The JAGS object returned by `runSTADEMmodel` contains many parameter estimates. 
 
 ```{r summary_total_escapement}
 mod$summary[grep('X.tot', rownames(mod$summary)),] %>%
-  pander::pander()
+  kbl(booktabs = T,
+      linesep = "") %>%
+  kable_styling()
 ```
 
 Another table that summarizes some of the output by week can be found by using the code below.
@@ -401,12 +351,14 @@ est_tab = week_df %>%
          Unique)
   
 est_tab %>%
-  pander::pander(big.mark = ',',
-                 split.table = Inf)
+  kbl(booktabs = T,
+      linesep = "",
+      format.args = list(big.mark = ',')) %>%
+  kable_styling()
 
 ```
 
-A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates (`r fig_nums('jags_fit_fig', display = 'c')`).
+A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates (Figure \@ref(fig:time-series_plot)).
 
 ```{r compile_time-series_data}
 week_est = mod$summary[grep('^X.all', rownames(mod$summary)),] %>%
@@ -421,7 +373,7 @@ week_est = mod$summary[grep('^X.all', rownames(mod$summary)),] %>%
             by = c('week' = 'week_num'))
 ```
 
-```{r time-series_plot, fig.height = 5, fig.width = 7, fig.cap = fig_nums('jags_fit_fig')}
+```{r time-series_plot, fig.height = 5, fig.width = 7, fig.cap = 'Time-series plot showing estimates of total escapement for Chinook in 2014, including raw window counts, window counts adjusted for nighttime passage, trap estimates and STADEM estimates.'}
 # plot time-series of model estimates, window counts and trap estimates
 week_est %>%
   filter(param == 'all') %>%
@@ -459,7 +411,7 @@ week_est %>%
 
 It's also possible to examine estimates of night-time passage or re-ascension rates. The plot below shows the observed values as points, the estimated rates as lines, with 95% credible intervals around them.
 
-```{r, fig.height = 5, fig.width = 7, fig.cap = fig_nums('rate_fig')}
+```{r, fig.height = 5, fig.width = 7, fig.cap = 'Time-series of estimated day-time passage (red) and re-ascension (blue) rates, with points representing the observed data and shaded polygons represeneting the 95% credible intervals.'}
 rate_est = mod$summary[grepl('^day.true', rownames(mod$summary)) | 
                          grepl('^reasc.true', rownames(mod$summary)),] %>%
   as.data.frame() %>%

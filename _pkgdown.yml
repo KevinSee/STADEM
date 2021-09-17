@@ -1,0 +1,5 @@
+url: https://kevinsee.github.io/STADEM/index.html
+
+template:
+  params:
+    bootswatch: sandstone

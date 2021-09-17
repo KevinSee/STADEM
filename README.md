@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# STADEM
+# STADEM <a href='https://github.com/KevinSee/STADEM'><img src='man/figures/logo.png' align="right" height="139" /></a>
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BiomarkABS/STADEM/master?urlpath=rstudio)
 
@@ -25,6 +25,10 @@ data to fit a STADEM model, as well as write the JAGS model and run it
 using the jagsUI package in R. Some of the functions can be applied to
 other dams, and we are actively working to be able to run STADEM at
 locations other than Lower Granite Dam.
+
+The user can find more information related to installation and use of
+this package on the [package
+website](https://kevinsee.github.io/STADEM/).
 
 Further details about STADEM can be found in our published paper:
 
