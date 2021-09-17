@@ -26,6 +26,8 @@ The primary goal of this project is to estimate total adult escapement of spring
 
 This package contains functions to query and summarise the necessary data to fit a STADEM model, as well as write the JAGS model and run it using the jagsUI package in R. Some of the functions can be applied to other dams, and we are actively working to be able to run STADEM at locations other than Lower Granite Dam.
 
+The user can find more information related to installation and use of this package on the [package website](https://kevinsee.github.io/STADEM/).
+
 Further details about STADEM can be found in our published paper:
 
 > See, K.E., R.N. Kinzer and M.W. Ackerman (2021). _State-Space Model to Estimate Salmon Escapement Using Multiple Data Sources_. North American Journal of Fisheries Management <https://doi.org/10.1002/nafm.10649>

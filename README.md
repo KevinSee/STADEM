@@ -26,6 +26,10 @@ using the jagsUI package in R. Some of the functions can be applied to
 other dams, and we are actively working to be able to run STADEM at
 locations other than Lower Granite Dam.
 
+The user can find more information related to installation and use of
+this package on the [package
+website](https://kevinsee.github.io/STADEM/).
+
 Further details about STADEM can be found in our published paper:
 
 > See, K.E., R.N. Kinzer and M.W. Ackerman (2021). *State-Space Model to
