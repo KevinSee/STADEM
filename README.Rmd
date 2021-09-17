@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 # Title <- "Title of your paper goes here"
 ```
 
-# STADEM
+# STADEM <a href='https://github.com/KevinSee/STADEM'><img src='man/figures/logo.png' align="right" height="139" /></a>
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BiomarkABS/STADEM/master?urlpath=rstudio)
 
