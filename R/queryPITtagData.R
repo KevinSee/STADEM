@@ -48,7 +48,7 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   spp_code = spp_code_df$code[match(spp, spp_code_df$Species)]
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/BiomarkABS/STADEM')
+  ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
   if(damPIT == 'GRA') url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_window_new.php'
@@ -123,11 +123,11 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   }
 
   pit_df = parsed %>%
-    filter(!is.na(Date)) %>%
-    filter(Date != 'Date') %>%
-    mutate(Date = lubridate::ymd(Date),
-           `Detection DateTime` = lubridate::ymd_hms(`Detection DateTime`)) %>%
-    # filter(Ladder == damPIT) %>%
+    filter(!is.na(Species)) %>%
+    mutate(across(Date,
+                  lubridate::ymd),
+           across(`Detection DateTime`,
+                  lubridate::ymd_hms)) %>%
     rename(SpCode = Species) %>%
     mutate(Species = spp,
            Year = lubridate::year(endDate)) %>%
