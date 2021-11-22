@@ -132,7 +132,7 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
     mutate(Species = spp,
            Year = lubridate::year(endDate)) %>%
     arrange(Date, TagID, `Detection DateTime`) %>%
-    select(Ladder, Year, Species, SpCode, TagID, everything()) %>%
+    select(matches("Ladder"), Year, Species, SpCode, TagID, everything()) %>%
     filter(Date >= startDate,
            Date <= endDate) %>%
     janitor::clean_names(case = "upper_camel")
@@ -149,7 +149,8 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
       rename(PreviousDate = PreviousDetectDate,
              PreviousHours = DiffPreviousHours,
              PreviousDays = DiffPreviousDays,
-             LadderSide = Ladder1)
+             Ladder = `Ladder...2`,
+             LadderSide = `Ladder...9`)
 
   }
 
