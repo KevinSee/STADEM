@@ -149,8 +149,8 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
       rename(PreviousDate = PreviousDetectDate,
              PreviousHours = DiffPreviousHours,
              PreviousDays = DiffPreviousDays,
-             Ladder = Ladder2,
-             LadderSide = Ladder9)
+             Ladder = `Ladder...2`,
+             LadderSide = `Ladder...9`)
 
   }
 
