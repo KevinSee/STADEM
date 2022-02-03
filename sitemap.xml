@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://kevinsee.github.io/STADEM/index.html/404.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/STADEM/index.html/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/STADEM/index.html/articles/STADEM-vignette.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/STADEM/index.html/authors.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/STADEM/index.html/CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/STADEM/index.html/CONTRIBUTING.html</loc>
+  </url>
+  <url>
     <loc>https://kevinsee.github.io/STADEM/index.html/index.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/STADEMtoSCBOI.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/index.html/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/STADEM/index.html/LICENSE.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/STADEM/index.html/reference/addTrapRate.html</loc>
@@ -14,6 +35,9 @@
   </url>
   <url>
     <loc>https://kevinsee.github.io/STADEM/index.html/reference/getWindowCounts.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/STADEM/index.html/reference/index.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/STADEM/index.html/reference/jagsInits.html</loc>
@@ -46,6 +70,9 @@
     <loc>https://kevinsee.github.io/STADEM/index.html/reference/runSTADEMmodel.html</loc>
   </url>
   <url>
+    <loc>https://kevinsee.github.io/STADEM/index.html/reference/STADEMtoSCBOI.html</loc>
+  </url>
+  <url>
     <loc>https://kevinsee.github.io/STADEM/index.html/reference/summariseLGRtrapDaily.html</loc>
   </url>
   <url>
@@ -62,8 +89,5 @@
   </url>
   <url>
     <loc>https://kevinsee.github.io/STADEM/index.html/reference/writeJAGSmodel.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/articles/STADEM-vignette.html</loc>
   </url>
 </urlset>

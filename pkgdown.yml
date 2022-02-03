@@ -1,9 +1,9 @@
-pandoc: 2.7.3
-pkgdown: 1.6.1
+pandoc: 2.14.0.3
+pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   STADEM-vignette: STADEM-vignette.html
-last_built: 2021-09-17T21:57Z
+last_built: 2022-02-03T20:43Z
 urls:
   reference: https://kevinsee.github.io/STADEM/index.html/reference
   article: https://kevinsee.github.io/STADEM/index.html/articles

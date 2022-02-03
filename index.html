@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,18 +40,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">STADEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -68,7 +64,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/KevinSee/STADEM/">
+  <a href="https://github.com/KevinSee/STADEM/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -85,48 +81,48 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="stadem-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#stadem-" class="anchor"></a>STADEM <a href="https://github.com/KevinSee/STADEM"><img src="reference/figures/logo.png" align="right" height="139"></a>
+<div class="section level1">
+<div class="page-header"><h1 id="stadem-">STADEM <a href="https://github.com/KevinSee/STADEM" class="external-link"><img src="reference/figures/logo.png" align="right" height="139"></a>
+<a class="anchor" aria-label="anchor" href="#stadem-"></a>
 </h1></div>
 
 <p><strong>ST</strong>ate space <strong>A</strong>dult <strong>D</strong>am <strong>E</strong>scapement <strong>M</strong>odel</p>
-<div id="description" class="section level2">
-<h2 class="hasAnchor">
-<a href="#description" class="anchor"></a>Description</h2>
+<div class="section level2">
+<h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
+</h2>
 <p>The primary goal of this project is to estimate total adult escapement of spring/summer Chinook salmon and steelhead that cross Lower Granite dam (LGD). In addition, to meet desired management and research objectives, total escapement has to include estimates of uncertainty and be parsed into weekly strata by three origin groups; wild, hatchery and hatchery no-clip. To reach this goal, we have developed the <strong>ST</strong>ate space <strong>A</strong>dult <strong>D</strong>am <strong>E</strong>scapement <strong>M</strong>odel (STADEM) model that incorporates fish ladder window counts, data from sampled fish at the LGD adult trap, and observations of previously PIT tagged fish at LGD adult detection sites.</p>
 <p>This package contains functions to query and summarise the necessary data to fit a STADEM model, as well as write the JAGS model and run it using the jagsUI package in R. Some of the functions can be applied to other dams, and we are actively working to be able to run STADEM at locations other than Lower Granite Dam.</p>
-<p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/STADEM/">package website</a>.</p>
+<p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/STADEM/" class="external-link">package website</a>.</p>
 <p>Further details about STADEM can be found in our published paper:</p>
 <blockquote>
-<p>See, K.E., R.N. Kinzer and M.W. Ackerman (2021). <em>State-Space Model to Estimate Salmon Escapement Using Multiple Data Sources</em>. North American Journal of Fisheries Management <a href="https://doi.org/10.1002/nafm.10649" class="uri">https://doi.org/10.1002/nafm.10649</a></p>
+<p>See, K.E., R.N. Kinzer and M.W. Ackerman (2021). <em>State-Space Model to Estimate Salmon Escapement Using Multiple Data Sources</em>. North American Journal of Fisheries Management <a href="https://doi.org/10.1002/nafm.10649" class="external-link uri">https://doi.org/10.1002/nafm.10649</a></p>
 </blockquote>
 </div>
-<div id="installation-instructions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation-instructions" class="anchor"></a>Installation instructions</h2>
+<div class="section level2">
+<h2 id="installation-instructions">Installation instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
+</h2>
 <p><code>STADEM</code> requires several packages that are available through the <code>tidyverse</code> package. You can install all the necessary packages by using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, <span class="st">"rjags"</span>, <span class="st">"jagsUI"</span><span class="op">)</span></code></pre></div>
-<p>The <code>STADEM</code> compendium can be downloaded as a zip from from this URL: <a href="https://github.com/BiomarkABS/STADEM/archive/master.zip" class="uri">https://github.com/BiomarkABS/STADEM/archive/master.zip</a></p>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, <span class="st">"rjags"</span>, <span class="st">"jagsUI"</span><span class="op">)</span></code></pre></div>
+<p>The <code>STADEM</code> compendium can be downloaded as a zip from from this URL: <a href="https://github.com/KevinSee/STADEM/archive/master.zip" class="external-link uri">https://github.com/KevinSee/STADEM/archive/master.zip</a></p>
 <p>Or the user can install the compendium as an R package from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install and load remotes, if necessary</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"BiomarkABS/STADEM"</span>, 
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/STADEM"</span>, 
                          build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/">here</a>.</p>
+<p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</p>
 <p>For the latest development version:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"BiomarkABS/STADEM@develop"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/STADEM@develop"</span><span class="op">)</span></code></pre></div>
 <p>STADEM requires the JAGS software (<strong>J</strong>ust <strong>A</strong>nother <strong>G</strong>ibbs <strong>S</strong>ampler). This can be downloaded here:</p>
-<p><a href="https://sourceforge.net/projects/mcmc-jags/files/" class="uri">https://sourceforge.net/projects/mcmc-jags/files/</a></p>
+<p><a href="https://sourceforge.net/projects/mcmc-jags/files/" class="external-link uri">https://sourceforge.net/projects/mcmc-jags/files/</a></p>
 <p>Please download version &gt;= 4.0.0</p>
-<p>Further instructions on how to use STADEM can be found in the package vignette, accessed by typing <code><a href="https://rdrr.io/r/utils/browseVignettes.html">browseVignettes(package = 'STADEM')</a></code></p>
+<p>Further instructions on how to use STADEM can be found in the package vignette, accessed by typing <code>browseVignettes(package = 'STADEM')</code></p>
 </div>
-<div id="authors" class="section level2">
-<h2 class="hasAnchor">
-<a href="#authors" class="anchor"></a>Authors</h2>
+<div class="section level2">
+<h2 id="authors">Authors<a class="anchor" aria-label="anchor" href="#authors"></a>
+</h2>
 <p>STADEM is a collaborative project, with the primary contributors being:</p>
 <ul>
 <li>Kevin See (Biomark, Inc.)</li>
@@ -134,16 +130,16 @@
 <li>Rick Orme (Nez Perce Tribe)</li>
 <li>Mike Ackerman (Biomark, Inc.)</li>
 </ul>
-<div id="licenses" class="section level3">
-<h3 class="hasAnchor">
-<a href="#licenses" class="anchor"></a>Licenses</h3>
-<p><strong>Text and figures :</strong> <a href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a></p>
+<div class="section level3">
+<h3 id="licenses">Licenses<a class="anchor" aria-label="anchor" href="#licenses"></a>
+</h3>
+<p><strong>Text and figures :</strong> <a href="http://creativecommons.org/licenses/by/4.0/" class="external-link">CC-BY-4.0</a></p>
 <p><strong>Code :</strong> See the <a href="DESCRIPTION">DESCRIPTION</a> file</p>
-<p><strong>Data :</strong> <a href="http://creativecommons.org/publicdomain/zero/1.0/">CC-0</a> attribution requested in reuse</p>
+<p><strong>Data :</strong> <a href="http://creativecommons.org/publicdomain/zero/1.0/" class="external-link">CC-0</a> attribution requested in reuse</p>
 </div>
-<div id="contributions" class="section level3">
-<h3 class="hasAnchor">
-<a href="#contributions" class="anchor"></a>Contributions</h3>
+<div class="section level3">
+<h3 id="contributions">Contributions<a class="anchor" aria-label="anchor" href="#contributions"></a>
+</h3>
 <p>We welcome contributions from everyone. Before you get started, please see our <a href="CONTRIBUTING.html">contributor guidelines</a>. Please note that this project is released with a <a href="CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
 </div>
 </div>
@@ -152,50 +148,61 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/KevinSee/STADEM/">https://​github.com/​KevinSee/​STADEM/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/KevinSee/STADEM/issues">https://​github.com/​KevinSee/​STADEM/​issues</a>
-</li>
+<li><a href="https://github.com/KevinSee/STADEM/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/KevinSee/STADEM/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
+
 <div class="community">
-<h2>Community</h2>
+<h2 data-toc-skip>Community</h2>
 <ul class="list-unstyled">
 <li><a href="CONTRIBUTING.html">Contributing guide</a></li>
 </ul>
 </div>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing STADEM</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Kevin See <br><small class="roles"> Maintainer </small>  </li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://mybinder.org/v2/gh/BiomarkABS/STADEM/master?urlpath=rstudio"><img src="https://mybinder.org/badge_logo.svg" alt="Binder"></a></li>
+<li><a href="https://mybinder.org/v2/gh/KevinSee/STADEM/master?urlpath=rstudio" class="external-link"><img src="https://mybinder.org/badge_logo.svg" alt="Binder"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Kevin See.</p>
+  <p></p>
+<p>Developed by Kevin See.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -203,6 +210,8 @@
 
   
 
+
+  
 
   </body>
 </html>
