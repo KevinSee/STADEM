@@ -3,7 +3,7 @@ pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   STADEM-vignette: STADEM-vignette.html
-last_built: 2022-02-03T22:57Z
+last_built: 2022-02-03T23:09Z
 urls:
   reference: https://kevinsee.github.io/STADEM/index.html/reference
   article: https://kevinsee.github.io/STADEM/index.html/articles
