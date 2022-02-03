@@ -3,7 +3,7 @@
 
 # STADEM <a href='https://github.com/KevinSee/STADEM'><img src='man/figures/logo.png' align="right" height="139" /></a>
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BiomarkABS/STADEM/master?urlpath=rstudio)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KevinSee/STADEM/master?urlpath=rstudio)
 
 **ST**ate space **A**dult **D**am **E**scapement **M**odel
 
@@ -48,7 +48,7 @@ install.packages("tidyverse", "rjags", "jagsUI")
 ```
 
 The `STADEM` compendium can be downloaded as a zip from from this URL:
-<https://github.com/BiomarkABS/STADEM/archive/master.zip>
+<https://github.com/KevinSee/STADEM/archive/master.zip>
 
 Or the user can install the compendium as an R package from GitHub by
 using Hadley Wickham’s `devtools` package:
@@ -56,7 +56,7 @@ using Hadley Wickham’s `devtools` package:
 ``` r
 # install and load remotes, if necessary
 install.packages("devtools")
-devtools::install_github("BiomarkABS/STADEM", 
+remotes::install_github("KevinSee/STADEM", 
                          build_vignettes = TRUE)
 ```
 
@@ -67,7 +67,7 @@ latest version of Rtools can be found
 For the latest development version:
 
 ``` r
-devtools::install_github("BiomarkABS/STADEM@develop")
+remotes::install_github("KevinSee/STADEM@develop")
 ```
 
 STADEM requires the JAGS software (**J**ust **A**nother **G**ibbs
@@ -84,10 +84,10 @@ vignette, accessed by typing `browseVignettes(package = 'STADEM')`
 
 STADEM is a collaborative project, with the primary contributors being:
 
-  - Kevin See (Biomark, Inc.)
-  - Ryan N. Kinzer (Nez Perce Tribe)
-  - Rick Orme (Nez Perce Tribe)
-  - Mike Ackerman (Biomark, Inc.)
+-   Kevin See (Biomark, Inc.)
+-   Ryan N. Kinzer (Nez Perce Tribe)
+-   Rick Orme (Nez Perce Tribe)
+-   Mike Ackerman (Biomark, Inc.)
 
 ### Licenses
 
