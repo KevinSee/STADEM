@@ -4,7 +4,7 @@
 #'
 #' @author Kevin See
 #'
-#' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA) and Priest Rapids (PRA).
+#' @param damPIT the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA), Priest Rapids (PRA), Rock Island (RIA) and Rocky Reach (RRF).
 #' @param spp species to query PIT tag data for. Possible choices are: Chinook, Coho, Steelhead, Sockeye
 #' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
 #' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
@@ -16,7 +16,7 @@
 #' @return NULL
 #' @examples queryPITtagData(start_date = '20150701')
 
-queryPITtagData = function(damPIT = c('GRA', 'PRA'),
+queryPITtagData = function(damPIT = c('GRA', 'PRA', "RIA", "RRF"),
                            spp = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
                            start_date = NULL,
                            end_date = NULL) {
@@ -53,7 +53,7 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
   # compose url with query
   if(damPIT == 'GRA') url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_window_new.php'
 
-  if(damPIT == 'PRA') url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_ladder_pra.php'
+  if(damPIT %in% c('PRA', "RIA", "RRF")) url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_ladder_upcol.php'
 
   # build query for DART
   queryList = list(type = 'tagid',
@@ -144,7 +144,7 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA'),
 
   # names(pit_df) = gsub(' ', '', names(pit_df))
 
-  if(damPIT == 'PRA') {
+  if(damPIT  %in% c('PRA', "RIA", "RRF")) {
     pit_df = pit_df %>%
       rename(PreviousDate = PreviousDetectDate,
              PreviousHours = DiffPreviousHours,

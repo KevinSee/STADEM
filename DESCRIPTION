@@ -21,7 +21,7 @@ Imports:
     dplyr (>= 0.8.3),
     Hmisc (>= 4.2-0),
     janitor (>= 2.0.0)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
   knitr,
   rmarkdown,

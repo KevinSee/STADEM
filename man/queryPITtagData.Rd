@@ -8,14 +8,14 @@
 }
 \usage{
 queryPITtagData(
-  damPIT = c("GRA", "PRA"),
+  damPIT = c("GRA", "PRA", "RIA", "RRF"),
   spp = c("Chinook", "Coho", "Steelhead", "Sockeye"),
   start_date = NULL,
   end_date = NULL
 )
 }
 \arguments{
-\item{damPIT}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA) and Priest Rapids (PRA).}
+\item{damPIT}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA), Priest Rapids (PRA), Rock Island (RIA) and Rocky Reach (RRF).}
 
 \item{spp}{species to query PIT tag data for. Possible choices are: Chinook, Coho, Steelhead, Sockeye}
 
