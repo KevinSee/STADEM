@@ -96,21 +96,24 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA', "RIA", "RRF"),
 
   #if(is.null(parsed) | grepl(paste('No', spp, 'data found'), parsed)) {
   if(is.null(parsed) | ncol(parsed) == 1) {
-    stop(paste('DART returned no PIT tag data for', spp, 'in', lubridate::year(startDate), '\n'))
+    message(paste('DART returned no PIT tag data for', spp, 'in', lubridate::year(startDate), '\n'))
+    stop()
   }
 
   if(class(parsed)[1] == 'xml_document') {
-    stop(paste('For', spp, 'in', lubridate::year(startDate), 'XML document returned by DART instead of data\n'))
+    message(paste('For', spp, 'in', lubridate::year(startDate), 'XML document returned by DART instead of data\n'))
+    stop()
   }
 
   if (httr::status_code(web_req) != 200) {
-    stop(
+    message(
       sprintf(
         "GitHub API request failed [%s]\n%s\n<%s>",
         httr::status_code(web_req),
         parsed$message,
         parsed$documentation_url
       ))
+    stop()
   }
 
   if(" Clock Date" %in% names(parsed)) {
