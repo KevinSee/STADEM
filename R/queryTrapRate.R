@@ -26,49 +26,10 @@ queryTrapRate = function(week_strata = NULL,
   spp = match.arg(spp)
   spp_code = spp_code_df$code[match(spp, spp_code_df$Species)]
 
-  # # use only steelhead, since that covers an entire year
-  # spp_code = 3
-
-  # # assign user agent to the GitHub repo for this package
+  # assign user agent to the GitHub repo for this package
   # ua = httr::user_agent('https://github.com/KevinSee/STADEM')
-  #
-  # # compose url with query
-  # url_req = 'http://www.cbr.washington.edu/dart/cs/php/lib/file_wrapper.php'
-  #
-  # trap_rate_dart = NULL
-  # for(yr in sort(unique(lubridate::year(lubridate::int_start(week_strata))))) {
-  #   web_req = httr::GET(url_req, ua,
-  #                       query = list(type = 'csv',
-  #                                    fname = paste0('pit_adult_valid_', yr, '_', spp_code, '.csv'),
-  #                                    dname = 'inc'))
-  #
-  #   if(httr::content(web_req,
-  #                    'text',
-  #                    encoding = 'ISO-8859-1') == '') {
-      # stop(paste('DART returned no trap rate data for', spp, 'in', lubridate::year(lubridate::int_start(week_strata)[1]), '\n'))
-  #   }
-  #
-  #   # what encoding to use?
-  #   # stringi::stri_enc_detect(httr::content(web_req, "raw"))
-  #
-  #   # parse the response
-  #   parsed = httr::content(web_req,
-  #                          'text',
-  #                          encoding = 'ISO-8859-1') %>%
-  #     readr::read_delim(delim = ',',
-  #                       col_names = T) %>%
-  #     mutate(Date = mdy(Date),
-  #            DOY = as.integer(DOY)) %>%
-  #     rename(n_Samples = `#Samples`,
-  #            n_SbyC = `#SbyC`,
-  #            n_Close = `#Close`)
-  #
-  #   if(is.null(trap_rate_dart)) trap_rate_dart = parsed
-  #
-  #   else trap_rate_dart = trap_rate_dart %>%
-  #     bind_rows(parsed)
-  #
-  # }
+
+  url_req = 'http://www.cbr.washington.edu/dart/cs/data/GRAtrap'
 
   trap_rate_dart = NULL
   for(yr in sort(unique(lubridate::year(lubridate::int_start(week_strata))))) {
