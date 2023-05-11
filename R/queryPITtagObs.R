@@ -83,6 +83,7 @@ queryPITtagObs = function(site = 'GRA',
     queryList = c(queryList,
                   list(syear = yr - 1,
                        eyear = yr))
+    queryList[['year']] = yr - 1
   }
 
   # send query to DART
