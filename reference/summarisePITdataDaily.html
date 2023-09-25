@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,13 +60,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">summarisePITdataDaily</span><span class="op">(</span><span class="va">pit_data</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">summarisePITdataDaily</span><span class="op">(</span><span class="va">pit_data</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>pit_data</dt>
 <dd><p>data.frame containing PIT tag data to summarise, queried using <code>queryPITtagData</code></p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -75,7 +76,7 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">summarisePITdataDaily</span><span class="op">(</span><span class="va">pit_all</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">summarisePITdataDaily</span><span class="op">(</span><span class="va">pit_all</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in mutate(., Period = factor(Period, levels = c("D", "N")), ReAscent = if_else(!is.na(TagIdAscentCount) &amp;     TagIdAscentCount &gt; 1, T, F), SpawnYear = if_else(Species ==     "Chinook", Year, if_else(Species == "Steelhead" &amp; Date &gt;=     ymd(paste0(Year, "0701")), Year + 1, Year))):</span> object 'pit_all' not found</span>
 </code></pre></div>
     </div>
@@ -91,7 +92,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

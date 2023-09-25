@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,21 +60,26 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">addTrapRate</span><span class="op">(</span>
-  lgr_weekly <span class="op">=</span> <span class="cn">NULL</span>,
-  trap_rate <span class="op">=</span> <span class="cn">NULL</span>,
-  trap_rate_dist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="st">"logit"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">addTrapRate</span><span class="op">(</span></span>
+<span>  lgr_weekly <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  trap_rate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  trap_rate_dist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"beta"</span>, <span class="st">"logit"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>lgr_weekly</dt>
 <dd><p>dataframe containing weekly summaries of window counts and trap data. Part of what is returned by <code>summariseLGRweekly</code>.</p></dd>
+
+
 <dt>trap_rate</dt>
 <dd><p>dataframe containing estimates of trap rate</p></dd>
+
+
 <dt>trap_rate_dist</dt>
 <dd><p>distributional form for trap rate prior. <code>beta</code> returns alpha and beta parameters for beta distribution. <code>logit</code> returns mean and standard deviation in logit space. Default is <code>beta</code>. Support for logit distribution is coming in future versions of STADEM.</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -93,7 +98,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

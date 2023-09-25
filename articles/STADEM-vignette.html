@@ -50,7 +50,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -85,7 +85,7 @@
       <h1 data-toc-skip>STADEM</h1>
                         <h4 data-toc-skip class="author">Kevin E. See</h4>
             
-            <h4 data-toc-skip class="date">2022-02-03</h4>
+            <h4 data-toc-skip class="date">2023-09-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/STADEM/blob/HEAD/vignettes/STADEM-vignette.Rmd" class="external-link"><code>vignettes/STADEM-vignette.Rmd</code></a></small>
       <div class="hidden name"><code>STADEM-vignette.Rmd</code></div>
@@ -148,10 +148,10 @@ Figure 4.1: Schematic of how the STADEM model works. Panel A shows the posterior
 </h2>
 <p>The STADEM package relies on many functions from two other packages, <code>tidyverse</code> for many data manipulation functions and <code>lubridate</code> for dates and intervals. It also depends upon the <code>jagsUI</code> package to run the JAGS program from within R.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KevinSee/STADEM" class="external-link">STADEM</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org" class="external-link">lubridate</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KevinSee/STADEM" class="external-link">STADEM</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/kenkellner/jagsUI" class="external-link">jagsUI</a></span><span class="op">)</span></span></code></pre></div>
 <p>The STADEM package makes it easy to compile all the necessary data in one convenient function, <code>compileGRAdata</code>. The user provides the spawn year and species (either “Chinook” or “Steelhead”) they are interested in. STADEM operates on a weekly time-step, and the user has the option to determine the day of the week that most strata will begin on, using the <code>strata_beg</code> argument. There are periodic messages describing what is being done within <code>compileGRAdata</code>. Within <code>compileGRAdata</code>, several internal functions are being called, which may be utilized with the STADEM package for other purposes. They include:</p>
 <ul>
 <li>
@@ -168,18 +168,18 @@ Figure 4.1: Schematic of how the STADEM model works. Panel A shows the posterior
 <code>queryTrapRate</code>: query DART for intended and realized trap rates, based on time the trap is open</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># what spawning year? (2010 - 2016)</span>
-<span class="va">yr</span> <span class="op">=</span> <span class="fl">2014</span>
-
-<span class="co"># what species?</span>
-<span class="va">spp</span> <span class="op">=</span> <span class="st">'Chinook'</span>
-
-<span class="co"># pull together all data</span>
-<span class="va">stadem_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/compileGRAdata.html">compileGRAdata</a></span><span class="op">(</span>spp <span class="op">=</span> <span class="va">spp</span>,
-                             start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">yr</span>, <span class="st">'0301'</span><span class="op">)</span>,
-                             end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">yr</span>, <span class="st">'0817'</span><span class="op">)</span>,
-                             strata_beg <span class="op">=</span> <span class="st">'Mon'</span>,
-                             trap_dbase <span class="op">=</span> <span class="fu"><a href="../reference/readLGRtrapDB.html">readLGRtrapDB</a></span><span class="op">(</span><span class="st">'../inst/extdata/Chnk2014_TrapDatabase.csv'</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># what spawning year? (2010 - 2016)</span></span>
+<span><span class="va">yr</span> <span class="op">=</span> <span class="fl">2014</span></span>
+<span></span>
+<span><span class="co"># what species?</span></span>
+<span><span class="va">spp</span> <span class="op">=</span> <span class="st">'Chinook'</span></span>
+<span></span>
+<span><span class="co"># pull together all data</span></span>
+<span><span class="va">stadem_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/compileGRAdata.html">compileGRAdata</a></span><span class="op">(</span>spp <span class="op">=</span> <span class="va">spp</span>,</span>
+<span>                             start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">yr</span>, <span class="st">'0301'</span><span class="op">)</span>,</span>
+<span>                             end_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">yr</span>, <span class="st">'0817'</span><span class="op">)</span>,</span>
+<span>                             strata_beg <span class="op">=</span> <span class="st">'Mon'</span>,</span>
+<span>                             trap_dbase <span class="op">=</span> <span class="fu"><a href="../reference/readLGRtrapDB.html">readLGRtrapDB</a></span><span class="op">(</span><span class="st">'../inst/extdata/Chnk2014_TrapDatabase.csv'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The <code><a href="../reference/compileGRAdata.html">compileGRAdata()</a></code> function returns several pieces of information, consolidated into a named list we have called <code>stadem_list</code>:</p>
 <ul>
 <li>
@@ -193,9 +193,9 @@ Figure 4.1: Schematic of how the STADEM model works. Panel A shows the posterior
 </ul>
 <p>To run STADEM, only <code>weeklyData</code> is needed. STADEM also includes a function to transform all relevant data from the weekly summary to a list ready to be passed to JAGS.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># compile everything into a list to pass to JAGS</span>
-<span class="va">jags_data_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/prepJAGS.html">prepJAGS</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Prepping JAGS data</span></code></pre>
+<code class="sourceCode R"><span><span class="co"># compile everything into a list to pass to JAGS</span></span>
+<span><span class="va">jags_data_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/prepJAGS.html">prepJAGS</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Prepping JAGS data</span></span></code></pre>
 </div>
 <div class="section level2" number="6">
 <h2 id="run-stadem">
@@ -242,26 +242,26 @@ Figure 4.1: Schematic of how the STADEM model works. Panel A shows the posterior
 <p>This provides a sample of 4,000 draws from the posterior distribution. Through trial and error, we have also determined the appropriate burn-in length and thinning interval to meet MCMC posterior checks.</p>
 <p>We also recommend using the negative binomial distribution (<code>win_model = neg_bin</code>) to model the window counts. In our experience, all options other than the Poisson distribution provide similar estimates, with similar estimates of uncertainty. The Poisson distribution does not allow for the possibility of overdispersion in the window count data, leading to smaller uncertainty estimates which may not be appropriate. However, we encourage investigation of how different distribution choices may affect estimates for particular datasets, and for users to critically consider the appropriate modeling choice.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># name of JAGS model to write</span>
-<span class="va">model_file_nm</span> <span class="op">=</span> <span class="st">'STADEM_JAGS_model.txt'</span>
-
-<span class="co"># what distribution to use for window counts?</span>
-<span class="va">win_model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'pois'</span>, <span class="st">'neg_bin'</span>, <span class="st">'neg_bin2'</span>, <span class="st">'quasi_pois'</span>, <span class="st">'log_space'</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
-
-<span class="co">#-----------------------------------------------------------------</span>
-<span class="co"># run STADEM model</span>
-<span class="co">#-----------------------------------------------------------------</span>
-<span class="va">mod</span> <span class="op">=</span> <span class="fu"><a href="../reference/runSTADEMmodel.html">runSTADEMmodel</a></span><span class="op">(</span>file_name <span class="op">=</span> <span class="va">model_file_nm</span>,
-                     mcmc_chainLength <span class="op">=</span> <span class="fl">40000</span>,
-                     mcmc_burn <span class="op">=</span> <span class="fl">10000</span>,
-                     mcmc_thin <span class="op">=</span> <span class="fl">30</span>,
-                     mcmc_chains <span class="op">=</span> <span class="fl">4</span>,
-                     jags_data <span class="op">=</span> <span class="va">jags_data_list</span>,
-                     seed <span class="op">=</span> <span class="fl">5</span>,
-                     weekly_params <span class="op">=</span> <span class="cn">T</span>,
-                     win_model <span class="op">=</span> <span class="va">win_model</span>,
-                     trap_est <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## Running JAGS model</span></code></pre>
+<code class="sourceCode R"><span><span class="co"># name of JAGS model to write</span></span>
+<span><span class="va">model_file_nm</span> <span class="op">=</span> <span class="st">'STADEM_JAGS_model.txt'</span></span>
+<span></span>
+<span><span class="co"># what distribution to use for window counts?</span></span>
+<span><span class="va">win_model</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'pois'</span>, <span class="st">'neg_bin'</span>, <span class="st">'neg_bin2'</span>, <span class="st">'quasi_pois'</span>, <span class="st">'log_space'</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co">#-----------------------------------------------------------------</span></span>
+<span><span class="co"># run STADEM model</span></span>
+<span><span class="co">#-----------------------------------------------------------------</span></span>
+<span><span class="va">mod</span> <span class="op">=</span> <span class="fu"><a href="../reference/runSTADEMmodel.html">runSTADEMmodel</a></span><span class="op">(</span>file_name <span class="op">=</span> <span class="va">model_file_nm</span>,</span>
+<span>                     mcmc_chainLength <span class="op">=</span> <span class="fl">40000</span>,</span>
+<span>                     mcmc_burn <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>                     mcmc_thin <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>                     mcmc_chains <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>                     jags_data <span class="op">=</span> <span class="va">jags_data_list</span>,</span>
+<span>                     seed <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>                     weekly_params <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>                     win_model <span class="op">=</span> <span class="va">win_model</span>,</span>
+<span>                     trap_est <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Running JAGS model</span></span></code></pre>
 </div>
 </div>
 <div class="section level2" number="7">
@@ -270,12 +270,12 @@ Figure 4.1: Schematic of how the STADEM model works. Panel A shows the posterior
 </h2>
 <p>The JAGS object returned by <code>runSTADEMmodel</code> contains many parameter estimates. Some of the most important are the total escapement of various fish (Table <a href="#tab:summary-total-escapement">7.1</a>).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">'X.tot'</span>, <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">kbl</span><span class="op">(</span>booktabs <span class="op">=</span> <span class="cn">T</span>,
-      linesep <span class="op">=</span> <span class="st">""</span>,
-      caption <span class="op">=</span> <span class="st">"Estimates of escapement."</span>,
-      format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">kable_styling</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">'X.tot'</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kbl</span><span class="op">(</span>booktabs <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>      linesep <span class="op">=</span> <span class="st">""</span>,</span>
+<span>      caption <span class="op">=</span> <span class="st">"Estimates of escapement."</span>,</span>
+<span>      format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kable_styling</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:summary-total-escapement">Table 7.1: </span>Estimates of escapement.
@@ -323,31 +323,31 @@ f
 X.tot.all
 </td>
 <td style="text-align:right;">
-116,740.421
+116,731.808
 </td>
 <td style="text-align:right;">
-4,390.2857
+4,515.1050
 </td>
 <td style="text-align:right;">
-108,186.350
+107,622.500
 </td>
 <td style="text-align:right;">
-113,775.750
+113,716.000
 </td>
 <td style="text-align:right;">
-116,914.50
+116,843.000
 </td>
 <td style="text-align:right;">
-119,930.750
+119,921.250
 </td>
 <td style="text-align:right;">
-124,918.050
+124,767.150
 </td>
 <td style="text-align:right;">
-1.003416
+1.007000
 </td>
 <td style="text-align:right;">
-684
+410
 </td>
 <td style="text-align:right;">
 0
@@ -361,31 +361,31 @@ X.tot.all
 X.tot.day
 </td>
 <td style="text-align:right;">
-108,721.047
+108,702.758
 </td>
 <td style="text-align:right;">
-4,081.2787
+4,187.5919
 </td>
 <td style="text-align:right;">
-100,637.000
+100,152.925
 </td>
 <td style="text-align:right;">
-105,936.500
+105,909.000
 </td>
 <td style="text-align:right;">
-108,914.50
+108,816.000
 </td>
 <td style="text-align:right;">
-111,680.500
+111,700.500
 </td>
 <td style="text-align:right;">
-116,294.200
+115,974.275
 </td>
 <td style="text-align:right;">
-1.003880
+1.006828
 </td>
 <td style="text-align:right;">
-609
+408
 </td>
 <td style="text-align:right;">
 0
@@ -399,31 +399,31 @@ X.tot.day
 X.tot.night
 </td>
 <td style="text-align:right;">
-8,019.374
+8,029.051
 </td>
 <td style="text-align:right;">
-651.0527
+648.5121
 </td>
 <td style="text-align:right;">
-6,846.800
+6,858.000
 </td>
 <td style="text-align:right;">
-7,576.000
+7,586.750
 </td>
 <td style="text-align:right;">
-7,983.50
+8,008.000
 </td>
 <td style="text-align:right;">
-8,440.000
+8,450.250
 </td>
 <td style="text-align:right;">
-9,390.075
+9,384.125
 </td>
 <td style="text-align:right;">
-1.000537
+1.003931
 </td>
 <td style="text-align:right;">
-4,000
+788
 </td>
 <td style="text-align:right;">
 0
@@ -437,31 +437,31 @@ X.tot.night
 X.tot.reasc
 </td>
 <td style="text-align:right;">
-7,758.939
+7,747.814
 </td>
 <td style="text-align:right;">
-637.4635
+649.9313
 </td>
 <td style="text-align:right;">
-6,587.950
+6,549.900
 </td>
 <td style="text-align:right;">
-7,323.000
+7,307.000
 </td>
 <td style="text-align:right;">
-7,732.00
+7,703.500
 </td>
 <td style="text-align:right;">
-8,179.250
+8,149.000
 </td>
 <td style="text-align:right;">
-9,060.400
+9,121.075
 </td>
 <td style="text-align:right;">
-1.000468
+1.001215
 </td>
 <td style="text-align:right;">
-2,751
+1,893
 </td>
 <td style="text-align:right;">
 0
@@ -475,31 +475,31 @@ X.tot.reasc
 X.tot.new.all
 </td>
 <td style="text-align:right;">
-108,981.482
+108,983.995
 </td>
 <td style="text-align:right;">
-4,136.4647
+4,243.7030
 </td>
 <td style="text-align:right;">
-100,812.625
+100,449.000
 </td>
 <td style="text-align:right;">
-106,191.500
+106,136.000
 </td>
 <td style="text-align:right;">
-109,129.00
+109,105.500
 </td>
 <td style="text-align:right;">
-111,989.500
+111,973.500
 </td>
 <td style="text-align:right;">
-116,650.025
+116,421.075
 </td>
 <td style="text-align:right;">
-1.003529
+1.006985
 </td>
 <td style="text-align:right;">
-661
+411
 </td>
 <td style="text-align:right;">
 0
@@ -513,31 +513,31 @@ X.tot.new.all
 X.tot.new.wild
 </td>
 <td style="text-align:right;">
-29,342.726
+29,339.943
 </td>
 <td style="text-align:right;">
-1,157.6256
+1,150.2509
 </td>
 <td style="text-align:right;">
-27,079.975
+26,948.975
 </td>
 <td style="text-align:right;">
-28,538.750
+28,585.250
 </td>
 <td style="text-align:right;">
-29,353.50
+29,393.000
 </td>
 <td style="text-align:right;">
-30,150.000
+30,098.250
 </td>
 <td style="text-align:right;">
-31,566.275
+31,496.400
 </td>
 <td style="text-align:right;">
-1.002299
+1.004158
 </td>
 <td style="text-align:right;">
-940
+574
 </td>
 <td style="text-align:right;">
 0
@@ -551,31 +551,31 @@ X.tot.new.wild
 X.tot.new.hatch
 </td>
 <td style="text-align:right;">
-70,087.104
+70,075.800
 </td>
 <td style="text-align:right;">
-3,002.2600
+3,097.7585
 </td>
 <td style="text-align:right;">
-64,215.500
+63,959.775
 </td>
 <td style="text-align:right;">
-68,040.000
+67,924.750
 </td>
 <td style="text-align:right;">
-70,191.50
+70,094.000
 </td>
 <td style="text-align:right;">
-72,192.750
+72,262.000
 </td>
 <td style="text-align:right;">
-75,669.275
+75,669.050
 </td>
 <td style="text-align:right;">
-1.003502
+1.007638
 </td>
 <td style="text-align:right;">
-681
+385
 </td>
 <td style="text-align:right;">
 0
@@ -589,31 +589,31 @@ X.tot.new.hatch
 X.tot.new.hnc
 </td>
 <td style="text-align:right;">
-9,551.066
+9,567.573
 </td>
 <td style="text-align:right;">
-480.4102
+503.0871
 </td>
 <td style="text-align:right;">
-8,619.000
+8,617.875
 </td>
 <td style="text-align:right;">
-9,234.000
+9,228.750
 </td>
 <td style="text-align:right;">
-9,535.00
+9,562.000
 </td>
 <td style="text-align:right;">
-9,869.000
+9,889.000
 </td>
 <td style="text-align:right;">
-10,500.050
+10,599.175
 </td>
 <td style="text-align:right;">
-1.001279
+1.001042
 </td>
 <td style="text-align:right;">
-1,521
+1,748
 </td>
 <td style="text-align:right;">
 0
@@ -627,31 +627,31 @@ X.tot.new.hnc
 X.tot.night.wild
 </td>
 <td style="text-align:right;">
-1,997.467
+2,002.035
 </td>
 <td style="text-align:right;">
-181.0912
+176.9923
 </td>
 <td style="text-align:right;">
-1,684.876
+1,690.630
 </td>
 <td style="text-align:right;">
-1,873.197
+1,881.606
 </td>
 <td style="text-align:right;">
-1,983.97
+1,992.799
 </td>
 <td style="text-align:right;">
-2,104.176
+2,108.074
 </td>
 <td style="text-align:right;">
-2,388.555
+2,387.394
 </td>
 <td style="text-align:right;">
-1.002533
+1.004405
 </td>
 <td style="text-align:right;">
-2,454
+732
 </td>
 <td style="text-align:right;">
 0
@@ -665,31 +665,31 @@ X.tot.night.wild
 X.tot.reasc.wild
 </td>
 <td style="text-align:right;">
-2,131.777
+2,130.552
 </td>
 <td style="text-align:right;">
-192.8102
+196.2793
 </td>
 <td style="text-align:right;">
-1,796.925
+1,783.975
 </td>
 <td style="text-align:right;">
-1,998.000
+1,996.000
 </td>
 <td style="text-align:right;">
-2,119.00
+2,117.000
 </td>
 <td style="text-align:right;">
-2,251.000
+2,246.000
 </td>
 <td style="text-align:right;">
-2,548.050
+2,550.075
 </td>
 <td style="text-align:right;">
-1.000417
+1.001473
 </td>
 <td style="text-align:right;">
-4,000
+1,694
 </td>
 <td style="text-align:right;">
 0
@@ -702,60 +702,60 @@ X.tot.reasc.wild
 </table>
 <p>Another table that summarizes some of the output by week can be found by using the code below (Table <a href="#tab:week-est-tab">7.2</a>).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">week_df</span> <span class="op">=</span> <span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^X.all\\['</span>, <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span>
-                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^X.day\\['</span>, <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span>
-                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^X.night\\['</span>, <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span>
-                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^X.reasc\\['</span>, <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span>
-                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'X.new.tot\\['</span>, <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>var <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,
-         week <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[0-9]+"</span><span class="op">)</span><span class="op">)</span>,
-         param <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract_all</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[:alpha:]+"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tbl_df</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>param <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html" class="external-link">recode</a></span><span class="op">(</span><span class="va">param</span>,
-                        <span class="st">'all'</span> <span class="op">=</span> <span class="st">'Total'</span>,
-                        <span class="st">'day'</span> <span class="op">=</span> <span class="st">'Day'</span>,
-                        <span class="st">'night'</span> <span class="op">=</span> <span class="st">'Night'</span>,
-                        <span class="st">'reasc'</span> <span class="op">=</span> <span class="st">'Reascension'</span>,
-                        <span class="st">'new'</span> <span class="op">=</span> <span class="st">'Unique'</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">param</span>, <span class="va">week</span>, <span class="va">mean</span>, <span class="va">sd</span><span class="op">)</span>
-
-<span class="co"># table with point estimates only</span>
-<span class="va">pt_est_tab</span> <span class="op">=</span> <span class="va">week_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">sd</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/spread.html" class="external-link">spread</a></span><span class="op">(</span><span class="va">param</span>, <span class="va">mean</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>week <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>Week <span class="op">=</span> <span class="va">week</span>,
-         Win.Cnt <span class="op">=</span> <span class="va">win_cnt</span>,
-         <span class="va">Total</span>,
-         <span class="va">Day</span>,
-         <span class="va">Night</span>,
-         <span class="va">Reascension</span>,
-         <span class="va">Unique</span><span class="op">)</span>
-
-<span class="co"># table with point estimates and standard errors</span>
-<span class="va">est_tab</span> <span class="op">=</span> <span class="va">week_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>prnt_val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">prettyNum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span>, big.mark <span class="op">=</span> <span class="st">","</span><span class="op">)</span>, <span class="st">' ('</span>, <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">prettyNum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">sd</span>, <span class="fl">1</span><span class="op">)</span>, big.mark <span class="op">=</span> <span class="st">","</span><span class="op">)</span>, <span class="st">')'</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">sd</span>, <span class="op">-</span><span class="va">mean</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/spread.html" class="external-link">spread</a></span><span class="op">(</span><span class="va">param</span>, <span class="va">prnt_val</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>week <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>Week <span class="op">=</span> <span class="va">week</span>,
-         Win.Cnt <span class="op">=</span> <span class="va">win_cnt</span>,
-         <span class="va">Total</span>,
-         <span class="va">Day</span>,
-         <span class="va">Night</span>,
-         <span class="va">Reascension</span>,
-         <span class="va">Unique</span><span class="op">)</span>
-  
-<span class="va">est_tab</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">kbl</span><span class="op">(</span>booktabs <span class="op">=</span> <span class="cn">T</span>,
-      linesep <span class="op">=</span> <span class="st">""</span>,
-      caption <span class="op">=</span> <span class="st">"Estimates by week."</span>,
-      format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu">kable_styling</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">week_df</span> <span class="op">=</span> <span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^X.all\\['</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span></span>
+<span>                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^X.day\\['</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span></span>
+<span>                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^X.night\\['</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span></span>
+<span>                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^X.reasc\\['</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span></span>
+<span>                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'X.new.tot\\['</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,</span>
+<span>         week <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[0-9]+"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>         param <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract_all</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[:alpha:]+"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl_df.html" class="external-link">tbl_df</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>param <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html" class="external-link">recode</a></span><span class="op">(</span><span class="va">param</span>,</span>
+<span>                        <span class="st">'all'</span> <span class="op">=</span> <span class="st">'Total'</span>,</span>
+<span>                        <span class="st">'day'</span> <span class="op">=</span> <span class="st">'Day'</span>,</span>
+<span>                        <span class="st">'night'</span> <span class="op">=</span> <span class="st">'Night'</span>,</span>
+<span>                        <span class="st">'reasc'</span> <span class="op">=</span> <span class="st">'Reascension'</span>,</span>
+<span>                        <span class="st">'new'</span> <span class="op">=</span> <span class="st">'Unique'</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">param</span>, <span class="va">week</span>, <span class="va">mean</span>, <span class="va">sd</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># table with point estimates only</span></span>
+<span><span class="va">pt_est_tab</span> <span class="op">=</span> <span class="va">week_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">sd</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/spread.html" class="external-link">spread</a></span><span class="op">(</span><span class="va">param</span>, <span class="va">mean</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>week <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>Week <span class="op">=</span> <span class="va">week</span>,</span>
+<span>         Win.Cnt <span class="op">=</span> <span class="va">win_cnt</span>,</span>
+<span>         <span class="va">Total</span>,</span>
+<span>         <span class="va">Day</span>,</span>
+<span>         <span class="va">Night</span>,</span>
+<span>         <span class="va">Reascension</span>,</span>
+<span>         <span class="va">Unique</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># table with point estimates and standard errors</span></span>
+<span><span class="va">est_tab</span> <span class="op">=</span> <span class="va">week_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>prnt_val <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">prettyNum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">mean</span><span class="op">)</span>, big.mark <span class="op">=</span> <span class="st">","</span><span class="op">)</span>, <span class="st">' ('</span>, <span class="fu"><a href="https://rdrr.io/r/base/formatc.html" class="external-link">prettyNum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">sd</span>, <span class="fl">1</span><span class="op">)</span>, big.mark <span class="op">=</span> <span class="st">","</span><span class="op">)</span>, <span class="st">')'</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">sd</span>, <span class="op">-</span><span class="va">mean</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/spread.html" class="external-link">spread</a></span><span class="op">(</span><span class="va">param</span>, <span class="va">prnt_val</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>week <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span>Week <span class="op">=</span> <span class="va">week</span>,</span>
+<span>         Win.Cnt <span class="op">=</span> <span class="va">win_cnt</span>,</span>
+<span>         <span class="va">Total</span>,</span>
+<span>         <span class="va">Day</span>,</span>
+<span>         <span class="va">Night</span>,</span>
+<span>         <span class="va">Reascension</span>,</span>
+<span>         <span class="va">Unique</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="va">est_tab</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kbl</span><span class="op">(</span>booktabs <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>      linesep <span class="op">=</span> <span class="st">""</span>,</span>
+<span>      caption <span class="op">=</span> <span class="st">"Estimates by week."</span>,</span>
+<span>      format.args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>big.mark <span class="op">=</span> <span class="st">','</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu">kable_styling</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:week-est-tab">Table 7.2: </span>Estimates by week.
@@ -815,7 +815,7 @@ Unique
 0
 </td>
 <td style="text-align:left;">
-2 (2.4)
+2 (2.5)
 </td>
 <td style="text-align:left;">
 2 (2.2)
@@ -824,10 +824,10 @@ Unique
 0 (0.5)
 </td>
 <td style="text-align:left;">
-0 (0.7)
+0 (0.8)
 </td>
 <td style="text-align:left;">
-2 (2.1)
+2 (2.2)
 </td>
 </tr>
 <tr>
@@ -861,10 +861,10 @@ Unique
 0
 </td>
 <td style="text-align:left;">
-2 (1.7)
+2 (1.6)
 </td>
 <td style="text-align:left;">
-1 (1.6)
+1 (1.5)
 </td>
 <td style="text-align:left;">
 0 (0.3)
@@ -884,19 +884,19 @@ Unique
 1
 </td>
 <td style="text-align:left;">
-2 (1.2)
+2 (1.1)
 </td>
 <td style="text-align:left;">
 2 (1.1)
 </td>
 <td style="text-align:left;">
-0 (0.3)
+0 (0.2)
 </td>
 <td style="text-align:left;">
 0 (0.3)
 </td>
 <td style="text-align:left;">
-2 (1.1)
+2 (1)
 </td>
 </tr>
 <tr>
@@ -930,19 +930,19 @@ Unique
 94
 </td>
 <td style="text-align:left;">
-96 (17.5)
+96 (17.3)
 </td>
 <td style="text-align:left;">
-90 (16)
+90 (15.9)
 </td>
 <td style="text-align:left;">
-6 (3.8)
+6 (3.6)
 </td>
 <td style="text-align:left;">
-8 (5.9)
+8 (5.6)
 </td>
 <td style="text-align:left;">
-88 (17)
+88 (16.6)
 </td>
 </tr>
 <tr>
@@ -953,19 +953,19 @@ Unique
 428
 </td>
 <td style="text-align:left;">
-446 (68.6)
+444 (67.6)
 </td>
 <td style="text-align:left;">
-421 (64.2)
+418 (62.9)
 </td>
 <td style="text-align:left;">
-25 (11.2)
+25 (11.3)
 </td>
 <td style="text-align:left;">
-31 (17.5)
+31 (16.5)
 </td>
 <td style="text-align:left;">
-415 (65.7)
+412 (64.9)
 </td>
 </tr>
 <tr>
@@ -976,19 +976,19 @@ Unique
 2,411
 </td>
 <td style="text-align:left;">
-2,616 (413.6)
+2,623 (425.3)
 </td>
 <td style="text-align:left;">
-2,470 (388.1)
+2,477 (399.3)
 </td>
 <td style="text-align:left;">
-146 (48.9)
+147 (49)
 </td>
 <td style="text-align:left;">
-150 (56.6)
+151 (55.4)
 </td>
 <td style="text-align:left;">
-2,466 (392.1)
+2,472 (403.4)
 </td>
 </tr>
 <tr>
@@ -999,19 +999,19 @@ Unique
 19,747
 </td>
 <td style="text-align:left;">
-18,119 (1,884.6)
+18,139 (1,892.2)
 </td>
 <td style="text-align:left;">
-17,090 (1,779.3)
+17,107 (1,792.1)
 </td>
 <td style="text-align:left;">
-1,029 (191.2)
+1,032 (187.3)
 </td>
 <td style="text-align:left;">
-1,284 (227.8)
+1,276 (225.9)
 </td>
 <td style="text-align:left;">
-16,835 (1,759.6)
+16,863 (1,766.5)
 </td>
 </tr>
 <tr>
@@ -1022,19 +1022,19 @@ Unique
 28,800
 </td>
 <td style="text-align:left;">
-27,885 (2,436.2)
+27,913 (2,452.2)
 </td>
 <td style="text-align:left;">
-25,818 (2,266)
+25,849 (2,277.4)
 </td>
 <td style="text-align:left;">
-2,068 (301.4)
+2,064 (299.3)
 </td>
 <td style="text-align:left;">
-1,084 (231.2)
+1,082 (228.1)
 </td>
 <td style="text-align:left;">
-26,802 (2,349.9)
+26,831 (2,361.5)
 </td>
 </tr>
 <tr>
@@ -1045,19 +1045,19 @@ Unique
 16,565
 </td>
 <td style="text-align:left;">
-16,767 (1,480.4)
+16,719 (1,506.6)
 </td>
 <td style="text-align:left;">
-15,607 (1,373.4)
+15,563 (1,402)
 </td>
 <td style="text-align:left;">
-1,160 (191.3)
+1,156 (187.3)
 </td>
 <td style="text-align:left;">
-1,468 (230.2)
+1,469 (234.9)
 </td>
 <td style="text-align:left;">
-15,299 (1,366.2)
+15,250 (1,389.6)
 </td>
 </tr>
 <tr>
@@ -1068,19 +1068,19 @@ Unique
 8,634
 </td>
 <td style="text-align:left;">
-9,795 (1,602.5)
+9,752 (1,528.2)
 </td>
 <td style="text-align:left;">
-8,891 (1,446.3)
+8,857 (1,378.6)
 </td>
 <td style="text-align:left;">
-904 (207.7)
+895 (201.1)
 </td>
 <td style="text-align:left;">
-1,059 (225.9)
+1,052 (215.2)
 </td>
 <td style="text-align:left;">
-8,736 (1,434.5)
+8,700 (1,375)
 </td>
 </tr>
 <tr>
@@ -1091,19 +1091,19 @@ Unique
 7,398
 </td>
 <td style="text-align:left;">
-7,411 (776.2)
+7,408 (782.9)
 </td>
 <td style="text-align:left;">
-6,732 (708.5)
+6,732 (710.9)
 </td>
 <td style="text-align:left;">
-678 (126.2)
+677 (125.1)
 </td>
 <td style="text-align:left;">
-686 (124)
+685 (125.2)
 </td>
 <td style="text-align:left;">
-6,725 (710)
+6,723 (715.6)
 </td>
 </tr>
 <tr>
@@ -1114,19 +1114,19 @@ Unique
 6,641
 </td>
 <td style="text-align:left;">
-7,027 (685.6)
+7,037 (683.6)
 </td>
 <td style="text-align:left;">
-6,544 (640)
+6,553 (636.5)
 </td>
 <td style="text-align:left;">
-482 (88.7)
+484 (89.7)
 </td>
 <td style="text-align:left;">
-487 (96.4)
+489 (95.9)
 </td>
 <td style="text-align:left;">
-6,539 (643.2)
+6,549 (641.8)
 </td>
 </tr>
 <tr>
@@ -1137,19 +1137,19 @@ Unique
 5,768
 </td>
 <td style="text-align:left;">
-6,553 (757.9)
+6,554 (776.7)
 </td>
 <td style="text-align:left;">
-6,209 (718.1)
+6,207 (734.8)
 </td>
 <td style="text-align:left;">
-344 (80.5)
+347 (80.5)
 </td>
 <td style="text-align:left;">
-355 (82.8)
+356 (85.8)
 </td>
 <td style="text-align:left;">
-6,198 (720)
+6,197 (737.2)
 </td>
 </tr>
 <tr>
@@ -1160,19 +1160,19 @@ Unique
 4,811
 </td>
 <td style="text-align:left;">
-5,668 (740.6)
+5,691 (738.7)
 </td>
 <td style="text-align:left;">
-5,386 (705.9)
+5,404 (701.7)
 </td>
 <td style="text-align:left;">
-283 (70.8)
+286 (71.2)
 </td>
 <td style="text-align:left;">
-323 (79.7)
+324 (77.9)
 </td>
 <td style="text-align:left;">
-5,345 (702.5)
+5,367 (700.2)
 </td>
 </tr>
 <tr>
@@ -1183,19 +1183,19 @@ Unique
 4,081
 </td>
 <td style="text-align:left;">
-4,233 (471.6)
+4,224 (457.7)
 </td>
 <td style="text-align:left;">
-3,968 (439.3)
+3,958 (427.3)
 </td>
 <td style="text-align:left;">
-264 (67)
+266 (65.9)
 </td>
 <td style="text-align:left;">
-261 (68.9)
+260 (66.1)
 </td>
 <td style="text-align:left;">
-3,972 (446.4)
+3,964 (435.7)
 </td>
 </tr>
 <tr>
@@ -1206,19 +1206,19 @@ Unique
 4,197
 </td>
 <td style="text-align:left;">
-4,524 (696.8)
+4,536 (713)
 </td>
 <td style="text-align:left;">
-4,254 (646.4)
+4,260 (664)
 </td>
 <td style="text-align:left;">
-269 (120.9)
+276 (117)
 </td>
 <td style="text-align:left;">
-246 (136.7)
+249 (139.5)
 </td>
 <td style="text-align:left;">
-4,277 (669.5)
+4,288 (688.6)
 </td>
 </tr>
 <tr>
@@ -1229,19 +1229,19 @@ Unique
 2,698
 </td>
 <td style="text-align:left;">
-2,925 (461)
+2,919 (477.5)
 </td>
 <td style="text-align:left;">
-2,744 (422.9)
+2,734 (438.8)
 </td>
 <td style="text-align:left;">
-181 (109.6)
+185 (110)
 </td>
 <td style="text-align:left;">
-165 (131.1)
+165 (124.2)
 </td>
 <td style="text-align:left;">
-2,760 (456.6)
+2,754 (464.9)
 </td>
 </tr>
 <tr>
@@ -1252,19 +1252,19 @@ Unique
 1,265
 </td>
 <td style="text-align:left;">
-1,372 (219.2)
+1,374 (240.2)
 </td>
 <td style="text-align:left;">
-1,284 (197.2)
+1,283 (212.8)
 </td>
 <td style="text-align:left;">
-88 (65.2)
+91 (69.7)
 </td>
 <td style="text-align:left;">
-79 (73.1)
+78 (68.4)
 </td>
 <td style="text-align:left;">
-1,293 (218.3)
+1,296 (236.6)
 </td>
 </tr>
 <tr>
@@ -1275,19 +1275,19 @@ Unique
 382
 </td>
 <td style="text-align:left;">
-435 (83.4)
+431 (77.3)
 </td>
 <td style="text-align:left;">
-405 (73.3)
+401 (67.3)
 </td>
 <td style="text-align:left;">
-30 (27.8)
+30 (28.3)
 </td>
 <td style="text-align:left;">
-25 (24.7)
+24 (24.7)
 </td>
 <td style="text-align:left;">
-410 (82.3)
+406 (76.1)
 </td>
 </tr>
 <tr>
@@ -1298,19 +1298,19 @@ Unique
 430
 </td>
 <td style="text-align:left;">
-495 (86)
+497 (87.5)
 </td>
 <td style="text-align:left;">
-460 (75.7)
+462 (76.8)
 </td>
 <td style="text-align:left;">
-34 (32.3)
+35 (33.1)
 </td>
 <td style="text-align:left;">
-28 (28.9)
+27 (28.8)
 </td>
 <td style="text-align:left;">
-467 (85.1)
+469 (88)
 </td>
 </tr>
 <tr>
@@ -1321,68 +1321,68 @@ Unique
 318
 </td>
 <td style="text-align:left;">
-362 (60.6)
+362 (60.1)
 </td>
 <td style="text-align:left;">
-337 (53.3)
+337 (52.5)
 </td>
 <td style="text-align:left;">
-25 (24.4)
+25 (23.3)
 </td>
 <td style="text-align:left;">
-19 (19.9)
+19 (20.9)
 </td>
 <td style="text-align:left;">
-343 (60.6)
+342 (59.8)
 </td>
 </tr>
 </tbody>
 </table>
 <p>A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates (Figure <a href="#fig:time-series-plot">7.1</a>).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">week_est</span> <span class="op">=</span> <span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">'^X.all'</span>, <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>var <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,
-         week <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[0-9]+"</span><span class="op">)</span><span class="op">)</span>,
-         param <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract_all</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[:alpha:]+"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span>,
-         param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">param</span> <span class="op">==</span> <span class="st">''</span>, <span class="st">'all'</span>, <span class="va">param</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tbl_df</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">var</span>, <span class="va">param</span>, <span class="va">week</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span>,
-            by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'week'</span> <span class="op">=</span> <span class="st">'week_num'</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">week_est</span> <span class="op">=</span> <span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">'^X.all'</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,</span>
+<span>         week <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[0-9]+"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>         param <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract_all</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[:alpha:]+"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">[</span>,<span class="fl">3</span><span class="op">]</span>,</span>
+<span>         param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">param</span> <span class="op">==</span> <span class="st">''</span>, <span class="st">'all'</span>, <span class="va">param</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl_df.html" class="external-link">tbl_df</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">var</span>, <span class="va">param</span>, <span class="va">week</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>            by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'week'</span> <span class="op">=</span> <span class="st">'week_num'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># plot time-series of model estimates, window counts and trap estimates</span>
-<span class="va">week_est</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">param</span> <span class="op">==</span> <span class="st">'all'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Start_Date</span>,
-             y <span class="op">=</span> <span class="va">`50%`</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_ribbon</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">`2.5%`</span>,
-                  ymax <span class="op">=</span> <span class="va">`97.5%`</span><span class="op">)</span>,
-              alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">win_cnt</span> <span class="op">/</span> <span class="op">(</span><span class="va">day_tags</span> <span class="op">/</span> <span class="va">tot_tags</span><span class="op">)</span>,
-                color <span class="op">=</span> <span class="st">'Window (adj)'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">win_cnt</span> <span class="op">/</span> <span class="op">(</span><span class="va">day_tags</span> <span class="op">/</span> <span class="va">tot_tags</span><span class="op">)</span>,
-                 color <span class="op">=</span> <span class="st">'Window (adj)'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">win_cnt</span>,
-                color <span class="op">=</span> <span class="st">'Window (raw)'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">win_cnt</span>,
-                 color <span class="op">=</span> <span class="st">'Window (raw)'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">trap_est</span>,
-                color <span class="op">=</span> <span class="st">'Trap'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">trap_est</span>,
-                 color <span class="op">=</span> <span class="st">'Trap'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">'Model'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">'Model'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Model'</span> <span class="op">=</span> <span class="st">'black'</span>,
-                                <span class="st">'Window (raw)'</span> <span class="op">=</span> <span class="st">'lightblue'</span>,
-                                <span class="st">'Window (adj)'</span> <span class="op">=</span> <span class="st">'blue'</span>,
-                                <span class="st">'Trap'</span> <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">'bottom'</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">'Date'</span>,
-       y <span class="op">=</span> <span class="st">'Estimate'</span>,
-       color <span class="op">=</span> <span class="st">'Source'</span>,
-       title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'All'</span>, <span class="va">spp</span>, <span class="st">'in'</span>, <span class="va">yr</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># plot time-series of model estimates, window counts and trap estimates</span></span>
+<span><span class="va">week_est</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">param</span> <span class="op">==</span> <span class="st">'all'</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Start_Date</span>,</span>
+<span>             y <span class="op">=</span> <span class="va">`50%`</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_ribbon</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">`2.5%`</span>,</span>
+<span>                  ymax <span class="op">=</span> <span class="va">`97.5%`</span><span class="op">)</span>,</span>
+<span>              alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">win_cnt</span> <span class="op">/</span> <span class="op">(</span><span class="va">day_tags</span> <span class="op">/</span> <span class="va">tot_tags</span><span class="op">)</span>,</span>
+<span>                color <span class="op">=</span> <span class="st">'Window (adj)'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">win_cnt</span> <span class="op">/</span> <span class="op">(</span><span class="va">day_tags</span> <span class="op">/</span> <span class="va">tot_tags</span><span class="op">)</span>,</span>
+<span>                 color <span class="op">=</span> <span class="st">'Window (adj)'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">win_cnt</span>,</span>
+<span>                color <span class="op">=</span> <span class="st">'Window (raw)'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">win_cnt</span>,</span>
+<span>                 color <span class="op">=</span> <span class="st">'Window (raw)'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">trap_est</span>,</span>
+<span>                color <span class="op">=</span> <span class="st">'Trap'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">trap_est</span>,</span>
+<span>                 color <span class="op">=</span> <span class="st">'Trap'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">'Model'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">'Model'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'Model'</span> <span class="op">=</span> <span class="st">'black'</span>,</span>
+<span>                                <span class="st">'Window (raw)'</span> <span class="op">=</span> <span class="st">'lightblue'</span>,</span>
+<span>                                <span class="st">'Window (adj)'</span> <span class="op">=</span> <span class="st">'blue'</span>,</span>
+<span>                                <span class="st">'Trap'</span> <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">'bottom'</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">'Date'</span>,</span>
+<span>       y <span class="op">=</span> <span class="st">'Estimate'</span>,</span>
+<span>       color <span class="op">=</span> <span class="st">'Source'</span>,</span>
+<span>       title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">'All'</span>, <span class="va">spp</span>, <span class="st">'in'</span>, <span class="va">yr</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <span style="display:block;" id="fig:time-series-plot"></span>
 <img src="STADEM-vignette_files/figure-html/time-series-plot-1.png" alt="Time-series plot showing estimates of total escapement for Chinook in 2014, including raw window counts, window counts adjusted for nighttime passage, trap estimates and STADEM estimates."><p class="caption">
@@ -1391,41 +1391,41 @@ Figure 7.1: Time-series plot showing estimates of total escapement for Chinook i
 </div>
 <p>It’s also possible to examine estimates of night-time passage or re-ascension rates. Figure <a href="#fig:rate-figure">7.2</a> shows the observed values as points, the estimated rates as lines, with 95% credible intervals around them.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rate_est</span> <span class="op">=</span> <span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^day.true'</span>, <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span> 
-                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^reasc.true'</span>, <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>var <span class="op">=</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,
-         week <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[0-9]+"</span><span class="op">)</span><span class="op">)</span>,
-         param <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract_all</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[:alpha:]+"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tbl_df-class.html" class="external-link">tbl_df</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">var</span>, <span class="va">param</span>, <span class="va">week</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span>,
-            by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'week'</span> <span class="op">=</span> <span class="st">'week_num'</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">rate_est</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Start_Date</span>,
-             y <span class="op">=</span> <span class="va">`50%`</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_ribbon</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">`2.5%`</span>,
-                  ymax <span class="op">=</span> <span class="va">`97.5%`</span>,
-                  fill <span class="op">=</span> <span class="va">param</span><span class="op">)</span>,
-              alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">param</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">day_tags</span> <span class="op">/</span> <span class="va">tot_tags</span>,
-                 color <span class="op">=</span> <span class="st">'day'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">reascent_tags</span> <span class="op">/</span> <span class="va">tot_tags</span>,
-                 color <span class="op">=</span> <span class="st">'reasc'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">'Set1'</span>,
-                     name <span class="op">=</span> <span class="st">'Rate'</span>,
-                     labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'day'</span> <span class="op">=</span> <span class="st">'Daytime Passage'</span>,
-                                <span class="st">'reasc'</span> <span class="op">=</span> <span class="st">'Reascension'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">'Set1'</span>,
-                    name <span class="op">=</span> <span class="st">'Rate'</span>,
-                    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'day'</span> <span class="op">=</span> <span class="st">'Daytime Passage'</span>,
-                               <span class="st">'reasc'</span> <span class="op">=</span> <span class="st">'Reascension'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">'Estimate'</span>,
-       x <span class="op">=</span> <span class="st">'Date'</span>,
-       title <span class="op">=</span> <span class="st">'Estimated Rates'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rate_est</span> <span class="op">=</span> <span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^day.true'</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span> </span>
+<span>                         <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">'^reasc.true'</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">mod</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span><span class="op">)</span>,<span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span>,</span>
+<span>         week <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[0-9]+"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>         param <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html" class="external-link">str_extract_all</a></span><span class="op">(</span><span class="va">var</span>, <span class="st">"[:alpha:]+"</span>, simplify <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl_df.html" class="external-link">tbl_df</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">var</span>, <span class="va">param</span>, <span class="va">week</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>            by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'week'</span> <span class="op">=</span> <span class="st">'week_num'</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">rate_est</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Start_Date</span>,</span>
+<span>             y <span class="op">=</span> <span class="va">`50%`</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html" class="external-link">geom_ribbon</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">`2.5%`</span>,</span>
+<span>                  ymax <span class="op">=</span> <span class="va">`97.5%`</span>,</span>
+<span>                  fill <span class="op">=</span> <span class="va">param</span><span class="op">)</span>,</span>
+<span>              alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">param</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">day_tags</span> <span class="op">/</span> <span class="va">tot_tags</span>,</span>
+<span>                 color <span class="op">=</span> <span class="st">'day'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">reascent_tags</span> <span class="op">/</span> <span class="va">tot_tags</span>,</span>
+<span>                 color <span class="op">=</span> <span class="st">'reasc'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">'Set1'</span>,</span>
+<span>                     name <span class="op">=</span> <span class="st">'Rate'</span>,</span>
+<span>                     labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'day'</span> <span class="op">=</span> <span class="st">'Daytime Passage'</span>,</span>
+<span>                                <span class="st">'reasc'</span> <span class="op">=</span> <span class="st">'Reascension'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">'Set1'</span>,</span>
+<span>                    name <span class="op">=</span> <span class="st">'Rate'</span>,</span>
+<span>                    labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'day'</span> <span class="op">=</span> <span class="st">'Daytime Passage'</span>,</span>
+<span>                               <span class="st">'reasc'</span> <span class="op">=</span> <span class="st">'Reascension'</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">'Estimate'</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">'Date'</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">'Estimated Rates'</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <span style="display:block;" id="fig:rate-figure"></span>
 <img src="STADEM-vignette_files/figure-html/rate-figure-1.png" alt="Time-series of estimated day-time passage (red) and re-ascension (blue) rates, with points representing the observed data and shaded polygons represeneting the 95% credible intervals."><p class="caption">
@@ -1440,19 +1440,19 @@ Figure 7.2: Time-series of estimated day-time passage (red) and re-ascension (bl
 <p>The user does have the option to not use fish caught in the trap as a secondary estimate of escapement. To turn this feature off, set the argument <code>trap_est</code> equal to <code>FALSE</code> in the <code>runSTADEMmodel</code> function. This will constrain the statistical distribution used to model the window counts as Poisson, because there is no other way to estimate the variance in those counts.</p>
 <p>If the user would like to summarize STADEM estimates of total unique escapement, by week, (e.g. as an input to the <a href="https://github.com/mackerman44/SCOBI" class="external-link"><code>SCOBI</code> package</a>), there is a function to do that, <code>STADEMtoSCOBI</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scobi_input</span> <span class="op">=</span> <span class="fu"><a href="../reference/STADEMtoSCBOI.html">STADEMtoSCBOI</a></span><span class="op">(</span>stadem_mod <span class="op">=</span> <span class="va">mod</span>,
-                            lgr_weekly <span class="op">=</span> <span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">scobi_input</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## <span style="color: #949494;"># A tibble: 6 x 6</span></span>
-<span class="co">##   model_week StartDate  Strata Estimate    SE Collapse</span>
-<span class="co">##        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span>
-<span class="co">## <span style="color: #BCBCBC;">1</span>          1 2014-03-01      9        0  0    <span style="color: #BB0000;">NA</span>      </span>
-<span class="co">## <span style="color: #BCBCBC;">2</span>          2 2014-03-10     10        2  2.07 <span style="color: #BB0000;">NA</span>      </span>
-<span class="co">## <span style="color: #BCBCBC;">3</span>          3 2014-03-17     11        1  1.64 <span style="color: #BB0000;">NA</span>      </span>
-<span class="co">## <span style="color: #BCBCBC;">4</span>          4 2014-03-24     12        1  1.51 <span style="color: #BB0000;">NA</span>      </span>
-<span class="co">## <span style="color: #BCBCBC;">5</span>          5 2014-03-31     13        2  1.08 <span style="color: #BB0000;">NA</span>      </span>
-<span class="co">## <span style="color: #BCBCBC;">6</span>          6 2014-04-07     14        5  1.91 <span style="color: #BB0000;">NA</span></span></code></pre>
+<code class="sourceCode R"><span><span class="va">scobi_input</span> <span class="op">=</span> <span class="fu"><a href="../reference/STADEMtoSCBOI.html">STADEMtoSCBOI</a></span><span class="op">(</span>stadem_mod <span class="op">=</span> <span class="va">mod</span>,</span>
+<span>                            lgr_weekly <span class="op">=</span> <span class="va">stadem_list</span><span class="op">[[</span><span class="st">'weeklyData'</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">scobi_input</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 6 x 6</span></span></span>
+<span><span class="co">##   model_week StartDate  Strata Estimate    SE Collapse</span></span>
+<span><span class="co">##        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>          1 2014-03-01      9        0  0    <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>          2 2014-03-10     10        2  2.15 <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>          3 2014-03-17     11        1  1.65 <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>          4 2014-03-24     12        1  1.47 <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">5</span>          5 2014-03-31     13        2  1.04 <span style="color: #BB0000;">NA</span>      </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">6</span>          6 2014-04-07     14        5  1.95 <span style="color: #BB0000;">NA</span></span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1480,7 +1480,7 @@ Lindén, Andreas, and Samu Mäntyniemi. 2011. <span>“Using the Negative Binomi
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

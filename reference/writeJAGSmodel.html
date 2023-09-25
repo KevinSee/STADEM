@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,21 +60,26 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">writeJAGSmodel</span><span class="op">(</span>
-  file_name <span class="op">=</span> <span class="cn">NULL</span>,
-  win_model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"neg_bin"</span>, <span class="st">"neg_bin2"</span>, <span class="st">"pois"</span>, <span class="st">"quasi_pois"</span>, <span class="st">"log_space"</span><span class="op">)</span>,
-  trap_est <span class="op">=</span> <span class="cn">T</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">writeJAGSmodel</span><span class="op">(</span></span>
+<span>  file_name <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  win_model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"neg_bin"</span>, <span class="st">"neg_bin2"</span>, <span class="st">"pois"</span>, <span class="st">"quasi_pois"</span>, <span class="st">"log_space"</span><span class="op">)</span>,</span>
+<span>  trap_est <span class="op">=</span> <span class="cn">T</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>file_name</dt>
 <dd><p>name (with file path) to save the model as</p></dd>
+
+
 <dt>win_model</dt>
 <dd><p>what type of distribution should be used when modeling the window counts. <code>neg_bin</code> is a standard negative binomial distribution. <code>neg_bin2</code> is a more flexible version of a negative binomial, allowing the mean-variance relationship to take different forms. <code>pois</code> is a Poisson distribution. <code>quasi_pois</code> is the quasi-Poisson distribution. <code>log_space</code> assumes that the window counts have normal errors in log-space.</p></dd>
+
+
 <dt>trap_est</dt>
 <dd><p>should an estimate of escapement based on the adult fish trap rate be used as a second observation of true total escapement, together with the window counts? Default is <code>TRUE</code>. If <code>FALSE</code>, <code>win_model</code> is automatically set to <code>pois</code>.</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -83,8 +88,8 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">writeJAGSmodel</span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">writeJAGSmodel</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -99,7 +104,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

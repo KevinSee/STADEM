@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,14 +60,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">queryWindowCnts</span><span class="op">(</span>
-  dam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LWG"</span>, <span class="st">"WFF"</span>, <span class="st">"BON"</span>, <span class="st">"TDA"</span>, <span class="st">"JDA"</span>, <span class="st">"MCN"</span>, <span class="st">"IHR"</span>, <span class="st">"LMN"</span>, <span class="st">"LGS"</span>, <span class="st">"PRO"</span>, <span class="st">"ROZ"</span>,
-    <span class="st">"PRD"</span>, <span class="st">"WAN"</span>, <span class="st">"RIS"</span>, <span class="st">"TUM"</span>, <span class="st">"RRH"</span>, <span class="st">"WEL"</span>, <span class="st">"ZOS"</span><span class="op">)</span>,
-  spp_code <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fc"</span>, <span class="st">"fk"</span>, <span class="st">"fb"</span>, <span class="st">"fs"</span>, <span class="st">"fsw"</span>, <span class="st">"fa"</span>, <span class="st">"fcj"</span>, <span class="st">"fkj"</span>, <span class="st">"fbj"</span>, <span class="st">"fsj"</span>, <span class="st">"fl"</span>,
-    <span class="st">"ft"</span><span class="op">)</span>,
-  start_date <span class="op">=</span> <span class="cn">NULL</span>,
-  end_date <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">queryWindowCnts</span><span class="op">(</span></span>
+<span>  dam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LWG"</span>, <span class="st">"WFF"</span>, <span class="st">"BON"</span>, <span class="st">"TDA"</span>, <span class="st">"JDA"</span>, <span class="st">"MCN"</span>, <span class="st">"IHR"</span>, <span class="st">"LMN"</span>, <span class="st">"LGS"</span>, <span class="st">"PRO"</span>, <span class="st">"ROZ"</span>,</span>
+<span>    <span class="st">"PRD"</span>, <span class="st">"WAN"</span>, <span class="st">"RIS"</span>, <span class="st">"TUM"</span>, <span class="st">"RRH"</span>, <span class="st">"WEL"</span>, <span class="st">"ZOS"</span><span class="op">)</span>,</span>
+<span>  spp_code <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fc"</span>, <span class="st">"fk"</span>, <span class="st">"fb"</span>, <span class="st">"fs"</span>, <span class="st">"fsw"</span>, <span class="st">"fa"</span>, <span class="st">"fcj"</span>, <span class="st">"fkj"</span>, <span class="st">"fbj"</span>, <span class="st">"fsj"</span>, <span class="st">"fl"</span>,</span>
+<span>    <span class="st">"ft"</span><span class="op">)</span>,</span>
+<span>  start_date <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  end_date <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -78,12 +78,19 @@
     <h2>Arguments</h2>
     <dl><dt>dam</dt>
 <dd><p>the dam code for the dam you wish to query for window counts. Possible codes are: WFF (Willamette Falls), BON (Bonneville), TDA (The Dalles), JDA (John Day), MCN (McNary), IHR (Ice Harbor), LMN (Lower Monumental), LGS (Little Goose), LWG (Lower Granite), PRO (Prosser), ROZ (Roza), PRD (Priest Rapids), WAN (Wanapum), RIS (Rock Island), TUM (Tumwater), RRH (Rocky Reach), WEL (Wells), ZOS (Zosel)</p></dd>
+
+
 <dt>spp_code</dt>
 <dd><p>species code(s) to query window counts for. Possible codes are: fc (Chinook), fk (Coho), fb (Sockeye), fs (Steelhead), fsw (Wild Steelhead), fa (Shad), fcj (Jack Chinook), fkj (Jack Coho), fbj (Jack Sockeye), fsj (Jack Steelhead), fl (Lamprey), ft (Bull Trout</p></dd>
+
+
 <dt>start_date</dt>
 <dd><p>character vector of date (<code>YYYYMMDD</code>) when query should start</p></dd>
+
+
 <dt>end_date</dt>
 <dd><p>character vector of date (<code>YYYYMMDD</code>) when query should end</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -92,7 +99,7 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">queryWindowCnts</span><span class="op">(</span>spawn_yr <span class="op">=</span> <span class="fl">2015</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">queryWindowCnts</span><span class="op">(</span>spawn_yr <span class="op">=</span> <span class="fl">2015</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in queryWindowCnts(spawn_yr = 2015):</span> unused argument (spawn_yr = 2015)</span>
 </code></pre></div>
     </div>
@@ -108,7 +115,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

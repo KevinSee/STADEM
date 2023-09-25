@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,28 +60,37 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">summariseLGRweekly</span><span class="op">(</span>
-  wind_data <span class="op">=</span> <span class="cn">NULL</span>,
-  pit_all <span class="op">=</span> <span class="cn">NULL</span>,
-  trap_df <span class="op">=</span> <span class="cn">NULL</span>,
-  incl_clip_sthd <span class="op">=</span> <span class="cn">FALSE</span>,
-  sthd_B_run <span class="op">=</span> <span class="cn">FALSE</span>,
-  incl_chnk_jacks <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">summariseLGRweekly</span><span class="op">(</span></span>
+<span>  wind_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pit_all <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  trap_df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  incl_clip_sthd <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sthd_B_run <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  incl_chnk_jacks <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>wind_data</dt>
 <dd><p>data.frame containing window count data to summarise, queried using <code>queryWindCnts</code>, and potentially combined across calendar years</p></dd>
+
+
 <dt>pit_all</dt>
 <dd><p>data.frame containing data about individual PIT tags detected at Lower Granite Dam, produced using <code>queryPITtagData</code></p></dd>
+
+
 <dt>trap_df</dt>
 <dd><p>data.frame as created by <code>readLGRtrapDB</code>.</p></dd>
+
+
 <dt>incl_clip_sthd</dt>
 <dd><p>should clipped steelhead in the trap be included in this summary? Should match with the window counts. Default is <code>FALSE</code>.</p></dd>
+
+
 <dt>incl_chnk_jacks</dt>
 <dd><p>should window counts of Chinook jacks be included with adult counts? Default is <code>TRUE</code></p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -100,7 +109,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

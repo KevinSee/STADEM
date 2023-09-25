@@ -50,7 +50,7 @@
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -82,10 +82,10 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="stadem-">STADEM <a href="https://github.com/KevinSee/STADEM" class="external-link"><img src="reference/figures/logo.png" align="right" height="139"></a>
+<div class="page-header"><h1 id="stadem-">STADEM <a href="https://github.com/KevinSee/STADEM" class="external-link"><img src="reference/figures/logo.png" align="right" width="110"></a>
 <a class="anchor" aria-label="anchor" href="#stadem-"></a>
 </h1></div>
-
+<p><a href="https://mybinder.org/v2/gh/KevinSee/STADEM/master?urlpath=rstudio" class="external-link"><img src="https://mybinder.org/badge_logo.svg" alt="Binder"></a></p>
 <p><strong>ST</strong>ate space <strong>A</strong>dult <strong>D</strong>am <strong>E</strong>scapement <strong>M</strong>odel</p>
 <div class="section level2">
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
@@ -94,27 +94,25 @@
 <p>This package contains functions to query and summarise the necessary data to fit a STADEM model, as well as write the JAGS model and run it using the jagsUI package in R. Some of the functions can be applied to other dams, and we are actively working to be able to run STADEM at locations other than Lower Granite Dam.</p>
 <p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/STADEM/" class="external-link">package website</a>.</p>
 <p>Further details about STADEM can be found in our published paper:</p>
-<blockquote>
-<p>See, K.E., R.N. Kinzer and M.W. Ackerman (2021). <em>State-Space Model to Estimate Salmon Escapement Using Multiple Data Sources</em>. North American Journal of Fisheries Management <a href="https://doi.org/10.1002/nafm.10649" class="external-link uri">https://doi.org/10.1002/nafm.10649</a></p>
-</blockquote>
+<blockquote><p>See, K.E., R.N. Kinzer and M.W. Ackerman (2021). <em>State-Space Model to Estimate Salmon Escapement Using Multiple Data Sources</em>. North American Journal of Fisheries Management <a href="https://doi.org/10.1002/nafm.10649" class="external-link uri">https://doi.org/10.1002/nafm.10649</a></p></blockquote>
 </div>
 <div class="section level2">
 <h2 id="installation-instructions">Installation instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
 </h2>
 <p><code>STADEM</code> requires several packages that are available through the <code>tidyverse</code> package. You can install all the necessary packages by using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, <span class="st">"rjags"</span>, <span class="st">"jagsUI"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"tidyverse"</span>, <span class="st">"rjags"</span>, <span class="st">"jagsUI"</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>STADEM</code> compendium can be downloaded as a zip from from this URL: <a href="https://github.com/KevinSee/STADEM/archive/master.zip" class="external-link uri">https://github.com/KevinSee/STADEM/archive/master.zip</a></p>
 <p>Or the user can install the compendium as an R package from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install and load remotes, if necessary</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/STADEM"</span>, 
-                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install and load remotes, if necessary</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/STADEM"</span>, </span>
+<span>                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</p>
 <p>For the latest development version:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/STADEM@develop"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/STADEM@develop"</span><span class="op">)</span></span></code></pre></div>
 <p>STADEM requires the JAGS software (<strong>J</strong>ust <strong>A</strong>nother <strong>G</strong>ibbs <strong>S</strong>ampler). This can be downloaded here:</p>
 <p><a href="https://sourceforge.net/projects/mcmc-jags/files/" class="external-link uri">https://sourceforge.net/projects/mcmc-jags/files/</a></p>
 <p>Please download version &gt;= 4.0.0</p>
@@ -184,12 +182,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://mybinder.org/v2/gh/KevinSee/STADEM/master?urlpath=rstudio" class="external-link"><img src="https://mybinder.org/badge_logo.svg" alt="Binder"></a></li>
-</ul>
-</div>
+
 
   </div>
 </div>
@@ -202,7 +195,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,11 +60,11 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">queryTrapRate</span><span class="op">(</span>
-  week_strata <span class="op">=</span> <span class="cn">NULL</span>,
-  spp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Steelhead"</span>, <span class="st">"Chinook"</span><span class="op">)</span>,
-  return_weekly <span class="op">=</span> <span class="cn">T</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">queryTrapRate</span><span class="op">(</span></span>
+<span>  week_strata <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  spp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Steelhead"</span>, <span class="st">"Chinook"</span><span class="op">)</span>,</span>
+<span>  return_weekly <span class="op">=</span> <span class="cn">T</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -75,10 +75,15 @@
     <h2>Arguments</h2>
     <dl><dt>week_strata</dt>
 <dd><p>vector of intervals delimiting the weekly strata to summarize mark-recapture data over, as returned by <code><a href="weeklyStrata.html">weeklyStrata()</a></code>.</p></dd>
+
+
 <dt>spp</dt>
 <dd><p>species to query trap rate for. Possible choices are: <code>Chinook</code> or <code>Steelhead</code></p></dd>
+
+
 <dt>return_weekly</dt>
 <dd><p>Should the results be summarised on weekly basis? Default is <code>TRUE</code>.</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -97,7 +102,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -60,12 +60,12 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">queryPITtagData</span><span class="op">(</span>
-  damPIT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GRA"</span>, <span class="st">"PRA"</span><span class="op">)</span>,
-  spp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Chinook"</span>, <span class="st">"Coho"</span>, <span class="st">"Steelhead"</span>, <span class="st">"Sockeye"</span><span class="op">)</span>,
-  start_date <span class="op">=</span> <span class="cn">NULL</span>,
-  end_date <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">queryPITtagData</span><span class="op">(</span></span>
+<span>  damPIT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GRA"</span>, <span class="st">"PRA"</span>, <span class="st">"RIA"</span>, <span class="st">"RRF"</span><span class="op">)</span>,</span>
+<span>  spp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Chinook"</span>, <span class="st">"Coho"</span>, <span class="st">"Steelhead"</span>, <span class="st">"Sockeye"</span><span class="op">)</span>,</span>
+<span>  start_date <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  end_date <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
@@ -75,13 +75,20 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>damPIT</dt>
-<dd><p>the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA) and Priest Rapids (PRA).</p></dd>
+<dd><p>the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA), Priest Rapids (PRA), Rock Island (RIA) and Rocky Reach (RRF).</p></dd>
+
+
 <dt>spp</dt>
 <dd><p>species to query PIT tag data for. Possible choices are: Chinook, Coho, Steelhead, Sockeye</p></dd>
+
+
 <dt>start_date</dt>
 <dd><p>character vector of date (<code>YYYYMMDD</code>) when query should start</p></dd>
+
+
 <dt>end_date</dt>
 <dd><p>character vector of date (<code>YYYYMMDD</code>) when query should end</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -90,7 +97,7 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">queryPITtagData</span><span class="op">(</span>start_date <span class="op">=</span> <span class="st">'20150701'</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">queryPITtagData</span><span class="op">(</span>start_date <span class="op">=</span> <span class="st">'20150701'</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">53381</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">23</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">--</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">--------------------------------------------------------</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Delimiter:</span> ","</span>
@@ -98,28 +105,27 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">dbl</span>   (7): Species, WindowDetectionFlag, TravelTime, TagID Ascent Count, Rel...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #0000BB;">dttm</span>  (2): Detection DateTime, Release DateTime</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">i</span> Use <span style="color: #262626; background-color: #DADADA;">`spec()`</span> to retrieve the full column specification for this data.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">i</span> Specify the column types or set <span style="color: #262626; background-color: #DADADA;">`show_col_types = FALSE`</span> to quiet this message.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>One or more parsing issues, see `problems()` for details</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">i</span> Use `spec()` to retrieve the full column specification for this data.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">i</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 53,370 x 25</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    Ladder  Year Species SpCode TagId      WindowDetectionF~ ClockHour Date      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Ladder  Year Species SpCode TagId    WindowDetectionFlag ClockHour Date      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B239~                 1 0900      2015-07-13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B239~                 0 0900      2015-07-13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B239~                 0 0900      2015-07-13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B239~                 0 0900      2015-07-13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B23A~                 1 0700      2015-07-14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B23A~                 0 0700      2015-07-14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B23A~                 0 0700      2015-07-14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B23A~                 0 0700      2015-07-14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B239~                 1 0900      2015-07-15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B239~                 0 0900      2015-07-15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ... with 53,360 more rows, and 17 more variables: WindowCountHours &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Period &lt;chr&gt;, RearType &lt;chr&gt;, TagStage &lt;chr&gt;, Coil &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   DetectionDateTime &lt;dttm&gt;, TravelTime &lt;dbl&gt;, TagIdAscentCount &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ReleaseYear &lt;dbl&gt;, ReleaseDateTime &lt;dttm&gt;, Run &lt;dbl&gt;, Length &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   CaptureMethod &lt;chr&gt;, FlagCodes &lt;chr&gt;, ReleaseSite &lt;chr&gt;, TagFile &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ReleaseRKM &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   1 0900      2015-07-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   0 0900      2015-07-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   0 0900      2015-07-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   0 0900      2015-07-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   1 0700      2015-07-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   0 0700      2015-07-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   0 0700      2015-07-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   0 0700      2015-07-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   1 0900      2015-07-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2~                   0 0900      2015-07-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 53,360 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 17 more variables: WindowCountHours &lt;chr&gt;, Period &lt;chr&gt;, RearType &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   TagStage &lt;chr&gt;, Coil &lt;chr&gt;, DetectionDateTime &lt;dttm&gt;, TravelTime &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   TagIdAscentCount &lt;dbl&gt;, ReleaseYear &lt;dbl&gt;, ReleaseDateTime &lt;dttm&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Run &lt;dbl&gt;, Length &lt;dbl&gt;, CaptureMethod &lt;chr&gt;, FlagCodes &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ReleaseSite &lt;chr&gt;, TagFile &lt;chr&gt;, ReleaseRKM &lt;chr&gt;</span></span>
 </code></pre></div>
     </div>
   </div>
@@ -134,7 +140,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
