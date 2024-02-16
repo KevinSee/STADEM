@@ -56,7 +56,7 @@ queryPITtagObs = function(site = 'GRA',
                      'yes', 'no')
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/BiomarkABS/STADEM')
+  ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pitall_obs_de.php?'
@@ -67,7 +67,8 @@ queryPITtagObs = function(site = 'GRA',
                    stage = 'A',
                    outputFormat = 'csv',
                    year = yr,
-                   proj = proj,
+                   # proj = proj,
+                   proj = site,
                    species = spp_code,
                    run = NULL,
                    rear_type = NULL,
@@ -102,8 +103,8 @@ queryPITtagObs = function(site = 'GRA',
                   encoding = 'ISO-8859-1') %>%
       readr::read_delim(delim = ',',
                         col_names = T) %>%
-      filter(!is.na(`Tag ID`)) %>%
-      mutate(Year = as.integer(Year))
+      dplyr::filter(!is.na(`Tag ID`)) %>%
+      dplyr::mutate(Year = as.integer(Year))
   ))
 
   if(class(parsed)[1] == 'try-error') stop(paste('DART returned no PIT tag observations for', spp, 'in', yr))

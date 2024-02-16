@@ -53,7 +53,7 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
     pull(Species)
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/BiomarkABS/STADEM')
+  ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/mg.php'
