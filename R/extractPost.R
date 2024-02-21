@@ -17,7 +17,7 @@ extractPost = function(stadem_mod = NULL,
 
   stopifnot(!is.null(stadem_mod))
 
-  # make sure dabom_mod is mcmc.list
+  # make sure stadem_mod is mcmc.list
   if(inherits(stadem_mod, "jagsUI")) {
     stadem_mod = stadem_mod$samples
   }
