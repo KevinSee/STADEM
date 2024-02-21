@@ -2,11 +2,14 @@
 title: "STADEM"
 author: "Kevin E. See"
 date: '`r Sys.Date()`'
-output:
-  bookdown::html_document2:
-    base_format: rmarkdown::html_vignette
-pkgdown:
-  as_is: true
+# output:
+#   bookdown::html_document2:
+#     base_format: rmarkdown::html_vignette
+# pkgdown:
+#   as_is: true
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 references:
 - author:
   - family: Lindén
@@ -205,7 +208,7 @@ The STADEM package makes it easy to compile all the necessary data in one conven
 * `queryTrapRate`: query DART for intended and realized trap rates, based on time the trap is open
 
 
-```{r compile-data, eval = T, cache = F, results = 'hide'}
+```{r compile-data, eval = F, results = 'hide'}
 # what spawning year? (2010 - 2016)
 yr = 2014
 
@@ -222,6 +225,22 @@ stadem_list = compileGRAdata(spp = spp,
                                                                     package = "STADEM",
                                                                     mustWork = TRUE)))
 ```
+
+```{r eval = F, echo = F}
+usethis::use_data(stadem_list)
+```
+
+```{r echo = F}
+# what spawning year? (2010 - 2016)
+yr = 2014
+
+# what species?
+spp = 'Chinook'
+
+# load compiled data
+data("stadem_list")
+```
+
 
 The `compileGRAdata()` function returns several pieces of information, consolidated into a named list we have called `stadem_list`:
 
