@@ -140,12 +140,12 @@ p4 = p3 +
 
 
 examp_p = ggarrange(p1, p2a, p3a, p4,
-                      labels = 'AUTO',
-                      ncol = 2,
-                      nrow = 2,
-                      align = 'v',
-                      common.legend = T,
-                      legend = 'bottom')
+                    labels = 'AUTO',
+                    ncol = 2,
+                    nrow = 2,
+                    align = 'v',
+                    common.legend = T,
+                    legend = 'bottom')
 
 ```
 
@@ -217,7 +217,10 @@ stadem_list = compileGRAdata(spp = spp,
                              start_date = paste0(yr, '0301'),
                              end_date = paste0(yr, '0817'),
                              strata_beg = 'Mon',
-                             trap_dbase = readLGRtrapDB('../inst/extdata/Chnk2014_TrapDatabase.csv'))
+                             trap_dbase = readLGRtrapDB(system.file("extdata", 
+                                                                    "Chnk2014_TrapDatabase.csv", 
+                                                                    package = "STADEM",
+                                                                    mustWork = TRUE)))
 ```
 
 The `compileGRAdata()` function returns several pieces of information, consolidated into a named list we have called `stadem_list`:
@@ -263,9 +266,9 @@ This provides a sample of 4,000 draws from the posterior distribution. Through t
 We also recommend using the negative binomial distribution (`win_model = neg_bin`) to model the window counts. In our experience, all options other than the Poisson distribution provide similar estimates, with similar estimates of uncertainty. The Poisson distribution does not allow for the possibility of overdispersion in the window count data, leading to smaller uncertainty estimates which may not be appropriate. However, we encourage investigation of how different distribution choices may affect estimates for particular datasets, and for users to critically consider the appropriate modeling choice.
 
 
-```{r run-JAGS-model, cache = F}
+```{r run-JAGS-model, eval = F}
 # name of JAGS model to write
-model_file_nm = 'STADEM_JAGS_model.txt'
+model_file_nm = tempfile('STADEM_JAGS_model', fileext = ".txt")
 
 # what distribution to use for window counts?
 win_model = c('pois', 'neg_bin', 'neg_bin2', 'quasi_pois', 'log_space')[2]
@@ -273,25 +276,34 @@ win_model = c('pois', 'neg_bin', 'neg_bin2', 'quasi_pois', 'log_space')[2]
 #-----------------------------------------------------------------
 # run STADEM model
 #-----------------------------------------------------------------
-mod = runSTADEMmodel(file_name = model_file_nm,
-                     mcmc_chainLength = 40000,
-                     mcmc_burn = 10000,
-                     mcmc_thin = 30,
-                     mcmc_chains = 4,
-                     jags_data = jags_data_list,
-                     seed = 5,
-                     weekly_params = T,
-                     win_model = win_model,
-                     trap_est = T)
+stadem_mod = runSTADEMmodel(file_name = model_file_nm,
+                            mcmc_chainLength = 40000,
+                            mcmc_burn = 10000,
+                            mcmc_thin = 30,
+                            mcmc_chains = 4,
+                            jags_data = jags_data_list,
+                            seed = 5,
+                            weekly_params = T,
+                            win_model = win_model,
+                            trap_est = T)
 
 ```
+
+```{r, eval = F, echo = F}
+usethis::use_data(stadem_mod)
+```
+
+```{r, echo = F}
+data("stadem_mod")
+```
+
 
 # STADEM output
 
 The JAGS object returned by `runSTADEMmodel` contains many parameter estimates. Some of the most important are the total escapement of various fish (Table \@ref(tab:summary-total-escapement)).
 
 ```{r summary-total-escapement}
-mod$summary[grep('X.tot', rownames(mod$summary)),] %>%
+stadem_mod$summary[grep('X.tot', rownames(stadem_mod$summary)),] %>%
   kbl(booktabs = T,
       linesep = "",
       caption = "Estimates of escapement.",
@@ -302,16 +314,18 @@ mod$summary[grep('X.tot', rownames(mod$summary)),] %>%
 Another table that summarizes some of the output by week can be found by using the code below (Table \@ref(tab:week-est-tab)).
 
 ```{r week-est-tab}
-week_df = mod$summary[grepl('^X.all\\[', rownames(mod$summary)) |
-                         grepl('^X.day\\[', rownames(mod$summary)) |
-                         grepl('^X.night\\[', rownames(mod$summary)) |
-                         grepl('^X.reasc\\[', rownames(mod$summary)) |
-                         grepl('X.new.tot\\[', rownames(mod$summary)),] %>%
-  as.data.frame() %>%
-  mutate(var = rownames(.),
-         week = as.integer(str_extract(var, "[0-9]+")),
+summ <- summary(stadem_mod)
+
+week_df <- summ$statistics |> 
+  as_tibble(rownames = "var") |> 
+  filter(grepl("^X.all\\[", var) |
+           grepl("^X.day\\[", var) |
+           grepl("^X.night\\[", var) |
+           grepl("^X.reasc\\[", var) |
+           grepl("^X.new.tot\\[", var)) |> 
+  clean_names() |> 
+  mutate(week = as.integer(str_extract(var, "[0-9]+")),
          param = str_extract_all(var, "[:alpha:]+", simplify = T)[,2]) %>%
-  tbl_df() %>%
   mutate(param = recode(param,
                         'all' = 'Total',
                         'day' = 'Day',
@@ -349,7 +363,7 @@ est_tab = week_df %>%
          Night,
          Reascension,
          Unique)
-  
+
 est_tab %>%
   kbl(booktabs = T,
       linesep = "",
@@ -362,16 +376,17 @@ est_tab %>%
 A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates (Figure \@ref(fig:time-series-plot)).
 
 ```{r compile-time-series-data}
-week_est = mod$summary[grep('^X.all', rownames(mod$summary)),] %>%
-  as.data.frame() %>%
-  mutate(var = rownames(.),
-         week = as.integer(str_extract(var, "[0-9]+")),
+week_est <- summ$quantiles |> 
+  as_tibble(rownames = "var") |> 
+  filter(grepl("^X.all", var)) |> 
+  mutate(week = as.integer(str_extract(var, "[0-9]+")),
          param = str_extract_all(var, "[:alpha:]+", simplify = T)[,3],
          param = ifelse(param == '', 'all', param)) %>%
-  tbl_df() %>%
   select(var, param, week, everything()) %>%
   left_join(stadem_list[['weeklyData']],
             by = c('week' = 'week_num'))
+  
+  
 ```
 
 ```{r time-series-plot, fig.height = 5, fig.width = 7, fig.cap = 'Time-series plot showing estimates of total escapement for Chinook in 2014, including raw window counts, window counts adjusted for nighttime passage, trap estimates and STADEM estimates.'}
@@ -413,13 +428,12 @@ week_est %>%
 It's also possible to examine estimates of night-time passage or re-ascension rates. Figure \@ref(fig:rate-figure) shows the observed values as points, the estimated rates as lines, with 95% credible intervals around them.
 
 ```{r rate-figure, fig.height = 5, fig.width = 7, fig.cap = 'Time-series of estimated day-time passage (red) and re-ascension (blue) rates, with points representing the observed data and shaded polygons represeneting the 95% credible intervals.'}
-rate_est = mod$summary[grepl('^day.true', rownames(mod$summary)) | 
-                         grepl('^reasc.true', rownames(mod$summary)),] %>%
-  as.data.frame() %>%
-  mutate(var = rownames(.),
-         week = as.integer(str_extract(var, "[0-9]+")),
+rate_est = summ$quantiles |> 
+  as_tibble(rownames = "var") |> 
+  filter(grepl('^day.true', var) | 
+           grepl('^reasc.true', var)) %>%
+  mutate(week = as.integer(str_extract(var, "[0-9]+")),
          param = str_extract_all(var, "[:alpha:]+", simplify = T)[,1]) %>%
-  tbl_df() %>%
   select(var, param, week, everything()) %>%
   left_join(stadem_list[['weeklyData']],
             by = c('week' = 'week_num'))
@@ -458,7 +472,7 @@ The user does have the option to not use fish caught in the trap as a secondary 
 If the user would like to summarize STADEM estimates of total unique escapement, by week, (e.g. as an input to the [`SCOBI` package](https://github.com/mackerman44/SCOBI)), there is a function to do that, `STADEMtoSCOBI`.
 
 ```{r}
-scobi_input = STADEMtoSCBOI(stadem_mod = mod,
+scobi_input = STADEMtoSCBOI(stadem_mod = stadem_mod,
                             lgr_weekly = stadem_list[['weeklyData']])
 
 head(scobi_input)
