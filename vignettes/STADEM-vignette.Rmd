@@ -323,7 +323,6 @@ week_df <- summ$statistics |>
            grepl("^X.night\\[", var) |
            grepl("^X.reasc\\[", var) |
            grepl("^X.new.tot\\[", var)) |> 
-  clean_names() |> 
   mutate(week = as.integer(str_extract(var, "[0-9]+")),
          param = str_extract_all(var, "[:alpha:]+", simplify = T)[,2]) %>%
   mutate(param = recode(param,
@@ -332,7 +331,8 @@ week_df <- summ$statistics |>
                         'night' = 'Night',
                         'reasc' = 'Reascension',
                         'new' = 'Unique')) %>%
-  select(param, week, mean, sd)
+  select(param, week, 
+         mean = Mean, sd = SD)
 
 # table with point estimates only
 pt_est_tab = week_df %>%
