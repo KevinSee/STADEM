@@ -4,10 +4,10 @@
 #'
 #' @author Kevin See
 #'
-#' @param stadem_mod jagsUI object returned from running \code{runSTADEMmodel}.
+#' @param stadem_mod `mcmc.list` or `jagsUI` object returned from running \code{runSTADEMmodel}.
 #' @param weeklyData weekly data compiled by \code{compileGRAdata}, with the name \code{weeklyData} in the resulting list.
 #'
-#' @import dplyr ggplot2
+#' @import rjags dplyr ggplot2
 #' @return NULL
 #' @export
 
@@ -17,9 +17,18 @@ plotTimeSeries = function(stadem_mod = NULL,
   stopifnot(!is.null(stadem_mod))
   stopifnot(!is.null(weeklyData))
 
+  # make sure stadem_mod is mcmc.list
+  if(inherits(stadem_mod, "jagsUI")) {
+    stadem_mod = stadem_mod$samples
+  }
 
-  plot_df = stadem_mod$summary[grep('^X.all', rownames(stadem_mod$summary)),] %>%
+  stopifnot(!is.null(stadem_mod),
+            inherits(stadem_mod, c('mcmc', 'mcmc.list')))
+
+
+  plot_df = summary(stadem_mod)$quantiles %>%
     as_tibble(rownames = 'var') %>%
+    filter(grepl('^X.all', var)) %>%
     mutate(week = as.integer(str_extract(var, "[0-9]+")),
            param = str_extract_all(var, "[:alpha:]+", simplify = T)[,3],
            param = ifelse(param == '', 'all', param)) %>%

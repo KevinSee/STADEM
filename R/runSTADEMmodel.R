@@ -15,10 +15,11 @@
 #' @param verbose passed to the \code{jags} function
 #' @param parallel passed to the \code{jags} function
 #' @param DIC passed to the \code{jags} function
+#' @param use_jagsUI should the `jagsUI` package be used to fit the model? Default is `FALSE`, meaning the `rjags` package is used instead.
 #'
-#' @import jagsUI
+#' @import rjags jagsUI
 #' @export
-#' @return NULL
+#' @return mcmc.list
 #' @examples #runSTADEMmodel()
 
 runSTADEMmodel = function(file_name = NULL,
@@ -33,7 +34,8 @@ runSTADEMmodel = function(file_name = NULL,
                           parallel = TRUE,
                           DIC = FALSE,
                           win_model = c('neg_bin', 'neg_bin2', 'pois', 'quasi_pois', 'log_space'),
-                          trap_est = TRUE) {
+                          trap_est = TRUE,
+                          use_jagsUI = FALSE) {
 
   # check if jagsUI is installed
   if( !requireNamespace('jagsUI', quietly = T)) {
@@ -47,9 +49,9 @@ runSTADEMmodel = function(file_name = NULL,
   win_model = match.arg(win_model)
 
   # write the JAGS model
-  writeJAGSmodel(file_name,
-                 win_model,
-                 trap_est)
+  STADEM::writeJAGSmodel(file_name,
+                         win_model,
+                         trap_est)
 
 
   # add log of window counts, if needed, to jags_data
@@ -72,17 +74,33 @@ runSTADEMmodel = function(file_name = NULL,
   for(i in 1:mcmc_chains) jags_inits[[i]] = jagsInits(jags_data)
 
   # ptm = proc.time()
-  jags_model = try(jagsUI::jags(data = jags_data,
-                                inits = jags_inits,
-                                parameters.to.save = jags_params,
-                                model.file = file_name,
-                                n.chains = mcmc_chains,
-                                n.burnin = mcmc_burn,
-                                n.thin = mcmc_thin,
-                                n.iter = mcmc_chainLength,
-                                parallel = parallel,
-                                DIC = DIC,
-                                verbose = verbose))
+  if(use_jagsUI) {
+    jags_model = try(jagsUI::jags(data = jags_data,
+                                  inits = jags_inits,
+                                  parameters.to.save = jags_params,
+                                  model.file = file_name,
+                                  n.chains = mcmc_chains,
+                                  n.burnin = mcmc_burn,
+                                  n.thin = mcmc_thin,
+                                  n.iter = mcmc_chainLength,
+                                  parallel = parallel,
+                                  DIC = DIC,
+                                  verbose = verbose))
+  } else {
+
+    adapt_mod <-
+      rjags::jags.model(file = file_name,
+                        data = jags_data,
+                        inits = jags_inits,
+                        n.chains = mcmc_chains,
+                        n.adapt = mcmc_burn)
+
+    jags_model <-
+      rjags::coda.samples(model = adapt_mod,
+                          variable.names = jags_params,
+                          n.iter = mcmc_chainLength,
+                          thin = mcmc_thin)
+  }
   # proc.time() - ptm # returns the CPU time used
 
   return(jags_model)

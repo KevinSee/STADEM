@@ -2,6 +2,7 @@
 
 export(STADEMtoSCBOI)
 export(compileGRAdata)
+export(extractPost)
 export(getWindowCounts)
 export(jagsInits)
 export(plotTimeSeries)

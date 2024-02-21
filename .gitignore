@@ -3,8 +3,4 @@
 .RData
 .Ruserdata
 .DS_Store
-vignettes/STADEM-vignette_cache
-vignettes/STADEM-vignette_files
-vignettes/STADEM_JAGS_model.txt
-vignettes/STADEM-vignette.pdf
 docs
