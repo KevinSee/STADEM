@@ -164,7 +164,6 @@ STADEM relies on the following R packages which can be downloaded via [CRAN](htt
 
 * `dplyr`, `lubridate`, `httr`: can all be installed by installing the `tidyverse` package
 * `rjags`
-* `jagsUI`
 * `boot`
 
 In addition, STADEM requires the [JAGS software](https://sourceforge.net/projects/mcmc-jags/files/) (Just Another Gibbs Sampler). Please download version >= 4.0.0 via the former link.
@@ -189,13 +188,13 @@ plot(examp_p)
 
 # Compiling data
 
-The STADEM package relies on many functions from two other packages, `tidyverse` for many data manipulation functions and `lubridate` for dates and intervals. It also depends upon the `jagsUI` package to run the JAGS program from within R.
+The STADEM package relies on many functions from two other packages, `tidyverse` for many data manipulation functions and `lubridate` for dates and intervals. It also depends upon the `rjags` package to run the JAGS program from within R.
 
 ```{r load-packages}
 library(tidyverse)
 library(lubridate)
 library(STADEM)
-library(jagsUI)
+library(rjags)
 ```
 
 The STADEM package makes it easy to compile all the necessary data in one convenient function, `compileGRAdata`. The user provides the spawn year and species (either "Chinook" or "Steelhead") they are interested in. STADEM operates on a weekly time-step, and the user has the option to determine the day of the week that most strata will begin on, using the `strata_beg` argument. There are periodic messages describing what is being done within `compileGRAdata`. Within `compileGRAdata`, several internal functions are being called, which may be utilized with the STADEM package for other purposes. They include:
@@ -209,8 +208,8 @@ The STADEM package makes it easy to compile all the necessary data in one conven
 
 
 ```{r compile-data, eval = F, results = 'hide'}
-# what spawning year? (2010 - 2016)
-yr = 2014
+# what spawning year?
+yr = 2019
 
 # what species?
 spp = 'Chinook'
@@ -221,18 +220,19 @@ stadem_list = compileGRAdata(spp = spp,
                              end_date = paste0(yr, '0817'),
                              strata_beg = 'Mon',
                              trap_dbase = readLGRtrapDB(system.file("extdata", 
-                                                                    "Chnk2014_TrapDatabase.csv", 
+                                                                    "Chnk2019_TrapDatabase.csv", 
                                                                     package = "STADEM",
                                                                     mustWork = TRUE)))
 ```
 
 ```{r eval = F, echo = F}
-usethis::use_data(stadem_list)
+usethis::use_data(stadem_list, 
+                  overwrite = T)
 ```
 
 ```{r echo = F}
-# what spawning year? (2010 - 2016)
-yr = 2014
+# what spawning year? (2010 to present)
+yr = 2019
 
 # what species?
 spp = 'Chinook'
@@ -309,7 +309,8 @@ stadem_mod = runSTADEMmodel(file_name = model_file_nm,
 ```
 
 ```{r, eval = F, echo = F}
-usethis::use_data(stadem_mod)
+usethis::use_data(stadem_mod,
+                  overwrite = T)
 ```
 
 ```{r, echo = F}
@@ -322,9 +323,15 @@ data("stadem_mod")
 The JAGS object returned by `runSTADEMmodel` contains many parameter estimates. Some of the most important are the total escapement of various fish (Table \@ref(tab:summary-total-escapement)).
 
 ```{r summary-total-escapement}
-stadem_mod$summary[grep('X.tot', rownames(stadem_mod$summary)),] %>%
+summ <- summary(stadem_mod)
+
+summ$statistics |> 
+  as_tibble(rownames = "Parameter") |> 
+  filter(grepl('X.tot', Parameter)) |> 
+  select(1:3) |> 
   kbl(booktabs = T,
       linesep = "",
+      digits = c(0, 0, 1, 1),
       caption = "Estimates of escapement.",
       format.args = list(big.mark = ",")) %>%
   kable_styling()
@@ -333,8 +340,6 @@ stadem_mod$summary[grep('X.tot', rownames(stadem_mod$summary)),] %>%
 Another table that summarizes some of the output by week can be found by using the code below (Table \@ref(tab:week-est-tab)).
 
 ```{r week-est-tab}
-summ <- summary(stadem_mod)
-
 week_df <- summ$statistics |> 
   as_tibble(rownames = "var") |> 
   filter(grepl("^X.all\\[", var) |
@@ -392,56 +397,13 @@ est_tab %>%
 
 ```
 
-A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates (Figure \@ref(fig:time-series-plot)).
+A user might also like to make time-series plots of estimates, to compare with window counts and/or trap estimates (Figure \@ref(fig:time-series-plot)). `STADEM` contains a function to do that, `plotTimeSeries()`.
 
-```{r compile-time-series-data}
-week_est <- summ$quantiles |> 
-  as_tibble(rownames = "var") |> 
-  filter(grepl("^X.all", var)) |> 
-  mutate(week = as.integer(str_extract(var, "[0-9]+")),
-         param = str_extract_all(var, "[:alpha:]+", simplify = T)[,3],
-         param = ifelse(param == '', 'all', param)) %>%
-  select(var, param, week, everything()) %>%
-  left_join(stadem_list[['weeklyData']],
-            by = c('week' = 'week_num'))
-  
-  
-```
-
-```{r time-series-plot, fig.height = 5, fig.width = 7, fig.cap = 'Time-series plot showing estimates of total escapement for Chinook in 2014, including raw window counts, window counts adjusted for nighttime passage, trap estimates and STADEM estimates.'}
+```{r time-series-plot, fig.height = 5, fig.width = 7, fig.cap = 'Time-series plot showing estimates of total escapement for Chinook in 2019, including raw window counts, window counts adjusted for nighttime passage, trap estimates and STADEM estimates.'}
 # plot time-series of model estimates, window counts and trap estimates
-week_est %>%
-  filter(param == 'all') %>%
-  ggplot(aes(x = Start_Date,
-             y = `50%`)) +
-  geom_ribbon(aes(ymin = `2.5%`,
-                  ymax = `97.5%`),
-              alpha = 0.2) +
-  geom_line(aes(y = win_cnt / (day_tags / tot_tags),
-                color = 'Window (adj)')) +
-  geom_point(aes(y = win_cnt / (day_tags / tot_tags),
-                 color = 'Window (adj)')) +
-  geom_line(aes(y = win_cnt,
-                color = 'Window (raw)')) +
-  geom_point(aes(y = win_cnt,
-                 color = 'Window (raw)')) +
-  geom_line(aes(y = trap_est,
-                color = 'Trap')) +
-  geom_point(aes(y = trap_est,
-                 color = 'Trap')) +
-  geom_line(aes(color = 'Model')) +
-  geom_point(aes(color = 'Model')) +
-  scale_color_manual(values = c('Model' = 'black',
-                                'Window (raw)' = 'lightblue',
-                                'Window (adj)' = 'blue',
-                                'Trap' = 'red')) +
-  theme_bw() +
-  theme(legend.position = 'bottom') +
-  labs(x = 'Date',
-       y = 'Estimate',
-       color = 'Source',
-       title = paste('All', spp, 'in', yr))
-
+plotTimeSeries(stadem_mod,
+               stadem_list$weeklyData) +
+  theme_bw()
 ```
 
 It's also possible to examine estimates of night-time passage or re-ascension rates. Figure \@ref(fig:rate-figure) shows the observed values as points, the estimated rates as lines, with 95% credible intervals around them.
