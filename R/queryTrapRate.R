@@ -10,7 +10,7 @@
 #'
 #' @source \url{http://www.cbr.washington.edu/dart}
 #'
-#' @import lubridate dplyr
+#' @import lubridate dplyr readr
 #' @export
 #' @return NULL
 

@@ -10,7 +10,6 @@
 #' @param wild_tags Should only wild PIT tags be used to estimate daytime passage and re-ascension rates? Default is \code{FALSE}.
 #'
 #' @import dplyr
-#' @importFrom plyr dlply
 #' @export
 #' @return NULL
 #'
@@ -37,7 +36,7 @@ prepJAGS = function(lgr_weekly = NULL,
 
   # is ladder open? 1 if yes, 0 if no
   ladder = lgr_weekly %>%
-    transmute(open = if_else(window_open | trap_open,
+    mutate(open = if_else(window_open | trap_open,
                              1, 0)) %>%
     pull(open)
 
