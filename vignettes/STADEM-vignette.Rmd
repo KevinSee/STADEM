@@ -43,7 +43,7 @@ library(kableExtra)
 ```
 
 ```{r create-stadem-model-fig, echo = F}
-arrow_length = unit(0.15, 'inches')
+arrow_length = ggplot2::unit(0.15, 'inches')
 arrow_height = 1.05
 my_xlim = c(-4, 7.5)
 my_ylim = c(0.08, 1.2)
@@ -142,13 +142,15 @@ p4 = p3 +
   labs(title = '   Origin Proportion')
 
 
-examp_p = ggarrange(p1, p2a, p3a, p4,
-                    labels = 'AUTO',
-                    ncol = 2,
-                    nrow = 2,
-                    align = 'v',
-                    common.legend = T,
-                    legend = 'bottom')
+examp_p = ggpubr::ggarrange(
+  p1, p2a, p3a, p4,
+  labels = 'AUTO',
+  ncol = 2,
+  nrow = 2,
+  align = 'v',
+  common.legend = T,
+  legend.grob = get_legend(p4),
+  legend = 'bottom')
 
 ```
 
