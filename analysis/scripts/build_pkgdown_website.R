@@ -22,6 +22,9 @@ pkgdown::check_pkgdown()
 # Run to build the website
 pkgdown::build_site()
 
+# Hadley Wickham suggested running this if there are errors, to get a traceback in the current process
+pkgdown::build_site(new_process = FALSE)
+
 # to look at the site
 pkgdown::preview_site()
 
