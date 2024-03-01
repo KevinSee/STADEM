@@ -1,93 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/404.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/404.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/articles/index.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/articles/STADEM-vignette.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/articles/STADEM-vignette.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/authors.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/authors.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/CONDUCT.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/CONDUCT.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/CONTRIBUTING.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/CONTRIBUTING.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/index.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/index.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/LICENSE-text.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/LICENSE.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/addTrapRate.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/addTrapRate.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/compileGRAdata.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/compileGRAdata.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/getWindowCounts.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/extractPost.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/index.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/getWindowCounts.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/jagsInits.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/plotTimeSeries.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/jagsInits.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/prepJAGS.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/plotTimeSeries.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/queryLGRtrapDatabase.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/prepJAGS.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/queryPITtagData.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/queryLGRtrapDatabase.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/queryPITtagObs.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/queryPITtagData.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/queryTrapRate.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/queryPITtagObs.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/queryWindowCnts.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/queryTrapRate.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/readLGRtrapDB.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/queryWindowCnts.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/runSTADEMmodel.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/readLGRtrapDB.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/STADEMtoSCBOI.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/runSTADEMmodel.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/summariseLGRtrapDaily.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/STADEMtoSCBOI.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/summariseLGRweekly.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/summariseLGRtrapDaily.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/summarisePITdataDaily.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/summariseLGRweekly.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/tagTrapRate.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/summarisePITdataDaily.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/weeklyStrata.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/tagTrapRate.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/STADEM/index.html/reference/writeJAGSmodel.html</loc>
+    <loc>https://kevinsee.github.io/STADEM/reference/weeklyStrata.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/STADEM/reference/writeJAGSmodel.html</loc>
   </url>
 </urlset>

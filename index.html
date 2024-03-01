@@ -19,7 +19,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Estimate escapement past a dam with a window and trap facility">
 <meta property="og:description" content="Estimate wild, hatchery and hatchery no-clip escapement for Chinook or steelhead (focused on Lower Granite dam) in a given year, accounting for error in window counts, re-ascension and night-time passage rates and uncertain trap rates.">
-<meta property="og:image" content="https://kevinsee.github.io/STADEM/index.html/logo.png">
+<meta property="og:image" content="https://kevinsee.github.io/STADEM/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">STADEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -92,9 +92,11 @@
 </h2>
 <p>The primary goal of this project is to estimate total adult escapement of spring/summer Chinook salmon and steelhead that cross Lower Granite dam (LGD). In addition, to meet desired management and research objectives, total escapement has to include estimates of uncertainty and be parsed into weekly strata by three origin groups; wild, hatchery and hatchery no-clip. To reach this goal, we have developed the <strong>ST</strong>ate space <strong>A</strong>dult <strong>D</strong>am <strong>E</strong>scapement <strong>M</strong>odel (STADEM) model that incorporates fish ladder window counts, data from sampled fish at the LGD adult trap, and observations of previously PIT tagged fish at LGD adult detection sites.</p>
 <p>This package contains functions to query and summarise the necessary data to fit a STADEM model, as well as write the JAGS model and run it using the jagsUI package in R. Some of the functions can be applied to other dams, and we are actively working to be able to run STADEM at locations other than Lower Granite Dam.</p>
-<p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/STADEM/" class="external-link">package website</a>.</p>
+<p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/STADEM/">package website</a>.</p>
 <p>Further details about STADEM can be found in our published paper:</p>
-<blockquote><p>See, K.E., R.N. Kinzer and M.W. Ackerman (2021). <em>State-Space Model to Estimate Salmon Escapement Using Multiple Data Sources</em>. North American Journal of Fisheries Management <a href="https://doi.org/10.1002/nafm.10649" class="external-link uri">https://doi.org/10.1002/nafm.10649</a></p></blockquote>
+<blockquote>
+<p>See, K.E., R.N. Kinzer and M.W. Ackerman (2021). <em>State-Space Model to Estimate Salmon Escapement Using Multiple Data Sources</em>. North American Journal of Fisheries Management <a href="https://doi.org/10.1002/nafm.10649" class="external-link uri">https://doi.org/10.1002/nafm.10649</a></p>
+</blockquote>
 </div>
 <div class="section level2">
 <h2 id="installation-instructions">Installation instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
