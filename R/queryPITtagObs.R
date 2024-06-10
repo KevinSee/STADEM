@@ -52,14 +52,14 @@ queryPITtagObs = function(site = 'GRA',
   start_day = paste(lubridate::month(startDate), lubridate::day(startDate), sep = '/')
   end_day = paste(lubridate::month(endDate), lubridate::day(endDate), sep = '/')
 
-  span_yrs = if_else(lubridate::year(startDate) != lubridate::year(endDate),
-                     'yes', 'no')
+  span_yrs = dplyr::if_else(lubridate::year(startDate) != lubridate::year(endDate),
+                            'yes', 'no')
 
   # assign user agent to the GitHub repo for this package
   ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
-  url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pitall_obs_de.php?'
+  url_req = 'https://www.cbr.washington.edu/dart/cs/php/rpt/pitall_obs_de.php?'
 
   # build query for DART
   queryList = list(sc = 1,
@@ -100,10 +100,11 @@ queryPITtagObs = function(site = 'GRA',
   parsed = try(suppressWarnings(
     httr::content(web_req,
                   'text',
-                  encoding = 'ISO-8859-1') %>%
+                  encoding = 'ISO-8859-1') |>
       readr::read_delim(delim = ',',
-                        col_names = T) %>%
-      dplyr::filter(!is.na(`Tag ID`)) %>%
+                        col_names = T,
+                        show_col_types = FALSE) |>
+      dplyr::filter(!is.na(`Tag ID`)) |>
       dplyr::mutate(Year = as.integer(Year))
   ))
 
