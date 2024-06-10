@@ -51,9 +51,9 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA', "RIA", "RRF"),
   ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
-  if(damPIT == 'GRA') url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_window_new.php'
+  if(damPIT == 'GRA') url_req = 'https://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_window_new.php'
 
-  if(damPIT %in% c('PRA', "RIA", "RRF")) url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_ladder_upcol.php'
+  if(damPIT %in% c('PRA', "RIA", "RRF")) url_req = 'https://www.cbr.washington.edu/dart/cs/php/rpt/pit_adult_ladder_upcol.php'
 
   # build query for DART
   queryList = list(type = 'tagid',
