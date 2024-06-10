@@ -8,7 +8,7 @@
 #' @param spp species to query trap rate for. Possible choices are: \code{Chinook} or \code{Steelhead}
 #' @param return_weekly Should the results be summarised on weekly basis? Default is \code{TRUE}.
 #'
-#' @source \url{http://www.cbr.washington.edu/dart}
+#' @source \url{https://www.cbr.washington.edu/dart}
 #'
 #' @import lubridate dplyr readr
 #' @export
@@ -29,7 +29,7 @@ queryTrapRate = function(week_strata = NULL,
   # assign user agent to the GitHub repo for this package
   # ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
-  url_req = 'http://www.cbr.washington.edu/dart/cs/data/GRAtrap'
+  url_req = 'https://www.cbr.washington.edu/dart/cs/data/GRAtrap'
 
   trap_rate_dart = NULL
   for(yr in sort(unique(lubridate::year(lubridate::int_start(week_strata))))) {
