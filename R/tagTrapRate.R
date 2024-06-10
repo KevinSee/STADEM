@@ -29,6 +29,11 @@ tagTrapRate = function(trap_dataframe = NULL,
                                      start_date = lubridate::int_start(week_strata[1]) %>%
                                        format('%Y%m%d'),
                                      end_date = lubridate::int_end(week_strata[length(week_strata)]) %>%
+                                       format('%Y%m%d')),
+                      queryPITtagObs(spp = 'Coho',
+                                     start_date = lubridate::int_start(week_strata[1]) %>%
+                                       format('%Y%m%d'),
+                                     end_date = lubridate::int_end(week_strata[length(week_strata)]) %>%
                                        format('%Y%m%d'))) %>%
     arrange(ObsTime)
 
@@ -52,7 +57,9 @@ tagTrapRate = function(trap_dataframe = NULL,
     mutate(Species = ifelse(grepl('^1', SpRRT) | grepl('^1', SRR),
                             'Chinook',
                             ifelse(grepl('^3', SpRRT) | grepl('^3', SRR),
-                                   'Steelhead', NA))) %>%
+                                   'Steelhead',
+                                   ifelse(grepl('^2', SpRRT) | grepl('^2', SRR),
+                                          'Coho', NA)))) %>%
     mutate(ObsDate = lubridate::floor_date(ObsTime, unit = 'days'),
            diff = as.numeric(difftime(ObsDate, TrapDate, units = 'days'))) %>%
     mutate_at(vars(TrapDate, ObsDate),
