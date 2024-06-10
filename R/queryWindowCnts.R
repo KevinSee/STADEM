@@ -45,18 +45,19 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   spp_code = match.arg(spp_code, several.ok = T)
 
   # match up species code with species name
-  spp_name = tibble(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
-                        code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft')) %>%
-    filter(code %in% spp_code) %>%
-    mutate(code = factor(code, levels = spp_code)) %>%
-    arrange(code) %>%
-    pull(Species)
+  spp_name <-
+    dplyr::tibble(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
+                        code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft')) |>
+    dplyr::filter(code %in% spp_code) |>
+    dplyr::mutate(code = factor(code, levels = spp_code)) |>
+    dplyr::arrange(code) |>
+    dplyr::pull(Species)
 
   # assign user agent to the GitHub repo for this package
   ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
-  url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/mg.php'
+  url_req = 'https://www.cbr.washington.edu/dart/cs/php/rpt/mg.php'
 
   # build query list to send to DART
   queryList = list(sc = 1,
@@ -100,10 +101,11 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   parsed = suppressWarnings(
     httr::content(web_req,
                          'text',
-                         encoding = 'UTF-8') %>%
+                         encoding = 'UTF-8') |>
     readr::read_delim(delim = ',',
                       col_names = T,
-                      skip = 1)
+                      skip = 1,
+                      show_col_types = FALSE)
   )
 
   if(is.null(parsed) | ncol(parsed) == 1) {
@@ -124,30 +126,31 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   }
 
   # re-format
-  win_cnts = parsed %>%
-    mutate(year = as.integer(year)) %>%
-    suppressWarnings() %>%
-    filter(!is.na(year)) %>%
-    mutate(Date = lubridate::ymd(paste(year, `mm-dd`, sep = '-'))) %>%
-    suppressWarnings() %>%
-    mutate(Species = recode(parameter,
-                            'Chin' = 'Chinook',
-                            'JChin' = 'Jack_Chinook',
-                            'JCoho' = 'Jack_Coho',
-                            'JStlhd' = 'Jack_Steelhead',
-                            'Lmpry' = 'Lamprey',
-                            'Sock' = 'Sockeye',
-                            'Stlhd' = 'Steelhead',
-                            'WStlhd' = 'Wild_Steelhead')) %>%
-    select(Species,
-           Year = year,
-           Date,
-           win_cnt = value) %>%
+  win_cnts <-
+    parsed |>
+    dplyr::mutate(year = as.integer(year)) |>
+    suppressWarnings() |>
+    dplyr::filter(!is.na(year)) |>
+    dplyr::mutate(Date = lubridate::ymd(paste(year, `mm-dd`, sep = '-'))) |>
+    suppressWarnings() |>
+    dplyr::mutate(Species = dplyr::case_match(parameter,
+                                              'Chin' ~ 'Chinook',
+                                              'JChin' ~ 'Jack_Chinook',
+                                              'JCoho' ~ 'Jack_Coho',
+                                              'JStlhd' ~ 'Jack_Steelhead',
+                                              'Lmpry' ~ 'Lamprey',
+                                              'Sock' ~ 'Sockeye',
+                                              'Stlhd' ~ 'Steelhead',
+                                              'WStlhd' ~ 'Wild_Steelhead')) |>
+    dplyr::select(Species,
+                  Year = year,
+                  Date,
+                  win_cnt = value) |>
     tidyr::pivot_wider(names_from = "Species",
                        values_from = "win_cnt",
-                       values_fill = 0) %>%
-    filter(Date >= startDate,
-           Date <= endDate)
+                       values_fill = 0) |>
+    dplyr::filter(Date >= startDate,
+                  Date <= endDate)
 
   return(win_cnts)
 }
