@@ -104,7 +104,7 @@ compileGRAdata = function(yr,
                              strata_beg = strata_beg,
                              last_strata_min = last_strata_min)
 
-  # read in data for Chinook and steelhead
+  # read in data for Chinook, steelhead, and coho
   cat('Getting LGR trap data\n')
   trap_yr = trap_dbase %>%
     rename(Tag.ID = LGDNumPIT) %>%
