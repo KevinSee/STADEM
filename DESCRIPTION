@@ -1,7 +1,7 @@
 Package: STADEM
 Type: Package
 Title: Estimate escapement past a dam with a window and trap facility
-Version: 1.0.1
+Version: 1.0.2
 Author: Kevin See <Kevin.See@dfw.wa.gov>
 Maintainer: Kevin See <Kevin.See@dfw.wa.gov>
 URL: https://github.com/KevinSee/STADEM,
