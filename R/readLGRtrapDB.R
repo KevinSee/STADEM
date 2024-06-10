@@ -28,7 +28,7 @@ readLGRtrapDB = function(trap_path = NULL,
   if(grepl('accdb$', trap_path)) {
     # tableNms <- tibble(tableNames = Hmisc::mdb.get(trap_path, tables = TRUE))
     lgr_trap = Hmisc::mdb.get(trap_path,
-                              tables = 'tblLGDMasterCombineExportJodyW') %>%
+                              tables = 'tblLGDMasterCombineExport') %>%
       as_tibble
   }
 
@@ -45,7 +45,7 @@ readLGRtrapDB = function(trap_path = NULL,
            LGDNumPIT = ifelse(nchar(LGDNumPIT) < 3, NA, LGDNumPIT),
            # try to correct some incorrect species codes
            # SppCode = ifelse(LGDSpecies != PtagisSpecies & GenSpecies %in% c(1, 3), as.integer(as.character(GenSpecies)), SppCode),
-           Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', NA)))
+           Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', ifelse(SppCode == 2, 'Coho', NA))))
 
   if(is.null(date_range)) {
     date_range = range(lgr_trap$Date, na.rm = T)
@@ -53,7 +53,7 @@ readLGRtrapDB = function(trap_path = NULL,
 
   lgr_trap = lgr_trap %>%
     # drop data from other species, and other runs of Chinook
-    filter(Species %in% c('Chinook', 'Steelhead'),
+    filter(Species %in% c('Chinook', 'Steelhead', 'Coho'),
            # !(Species == 'Chinook' & Date > lubridate::ymd(paste0(lubridate::year(Date), '0817'))),
            # filter for date range
            Date >= date_range[1],
