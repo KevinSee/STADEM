@@ -4,7 +4,7 @@
 #'
 #' @author Kevin See
 #'
-#' @param wind_data data.frame containing window count data to summarise, queried using \code{queryWindCnts}, and potentially combined across calendar years
+#' @param wind_data data.frame containing window count data to summarise, queried using \code{queryWindowCnts}, and potentially combined across calendar years
 #' @param pit_all data.frame containing data about individual PIT tags detected at Lower Granite Dam, produced using \code{queryPITtagData}
 #' @param trap_df data.frame as created by \code{readLGRtrapDB}.
 #' @param incl_clip_sthd should clipped steelhead in the trap be included in this summary? Should match with the window counts. Default is \code{FALSE}.
