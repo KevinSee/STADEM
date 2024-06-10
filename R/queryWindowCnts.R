@@ -46,7 +46,7 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
 
   # match up species code with species name
   spp_name = tibble(Species = c('Chinook', 'Coho', 'Sockeye', 'Steelhead', 'Wild_Steelhead', 'Shad', 'Jack_Chinook', 'Jack_Coho', 'Jack_Sockeye', 'Jack_Steelhead', 'Lamprey', 'Bull_Trout'),
-                        code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft')) %>%
+                    code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft')) %>%
     filter(code %in% spp_code) %>%
     mutate(code = factor(code, levels = spp_code)) %>%
     arrange(code) %>%
@@ -56,7 +56,7 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
   ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
-  url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/mg.php'
+  url_req = 'https://www.cbr.washington.edu/dart/cs/php/rpt/mg.php'
 
   # build query list to send to DART
   queryList = list(sc = 1,
