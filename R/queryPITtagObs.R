@@ -9,7 +9,7 @@
 #' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
 #' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #'
-#' @source \url{http://www.cbr.washington.edu/dart}
+#' @source \url{https://www.cbr.washington.edu/dart}
 #'
 #' @import lubridate readr httr dplyr
 #' @export
@@ -59,7 +59,7 @@ queryPITtagObs = function(site = 'GRA',
   ua = httr::user_agent('https://github.com/KevinSee/STADEM')
 
   # compose url with query
-  url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pitall_obs_de.php?'
+  url_req = 'https://www.cbr.washington.edu/dart/cs/php/rpt/pitall_obs_de.php?'
 
   # build query for DART
   queryList = list(sc = 1,
