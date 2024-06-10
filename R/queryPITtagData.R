@@ -9,7 +9,7 @@
 #' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
 #' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #'
-#' @source \url{http://www.cbr.washington.edu/dart}
+#' @source \url{https://www.cbr.washington.edu/dart}
 #'
 #' @import lubridate httr dplyr readr janitor
 #' @export
