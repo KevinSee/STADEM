@@ -16,7 +16,7 @@
 #' @return NULL
 #' @examples queryPITtagData(start_date = '20150701')
 
-queryPITtagData = function(damPIT = c('GRA', 'PRA', "RIA", "RRF"),
+queryPITtagData = function(damPIT = c('GRA', 'PRA', 'RIA', 'RRF'),
                            spp = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
                            start_date = NULL,
                            end_date = NULL) {
