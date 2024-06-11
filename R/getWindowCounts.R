@@ -39,7 +39,6 @@ getWindowCounts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
                        code = c('fc', 'fk', 'fb', 'fs', 'fsw', 'fa', 'fcj', 'fkj', 'fbj', 'fsj', 'fl', 'ft'),
                        num_code = c(1,2,4,3, rep(NA, 8)))
 
-
   spp_code = spp_code_df$code[spp_code_df$Species == spp]
 
   win_cnts = queryWindowCnts(dam,

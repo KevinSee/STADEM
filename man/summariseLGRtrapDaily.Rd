@@ -6,7 +6,7 @@
 \usage{
 summariseLGRtrapDaily(
   trap_df,
-  spp = c("Chinook", "Steelhead"),
+  spp = c("Chinook", "Steelhead", "Coho"),
   incl_clip_sthd = TRUE,
   sthd_B_run = FALSE
 )
@@ -14,7 +14,7 @@ summariseLGRtrapDaily(
 \arguments{
 \item{trap_df}{data.frame as created by \code{readLGRtrapDB}.}
 
-\item{spp}{species to summarise trap data for. Possible species are: \code{Chinook} and \code{Steelhead}.}
+\item{spp}{species to summarise trap data for. Possible species are: \code{Chinook}, \code{Steelhead}, and \code{Coho}.}
 
 \item{incl_clip_sthd}{should clipped steelhead in the trap be included in this summary? Should match with the window counts. Default is \code{TRUE}.}
 

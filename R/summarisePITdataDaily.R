@@ -18,7 +18,7 @@ summarisePITdataDaily = function(pit_data) {
                            levels = c('D', 'N')),
            ReAscent = if_else(!is.na(TagIdAscentCount) & TagIdAscentCount > 1,
                               T, F),
-           SpawnYear = if_else(Species == 'Chinook',
+           SpawnYear = if_else(Species %in% c('Chinook', 'Coho'),
                                Year,
                                if_else(Species == 'Steelhead' & Date >= ymd(paste0(Year, '0701')),
                                        Year + 1,

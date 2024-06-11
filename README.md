@@ -84,10 +84,10 @@ vignette, accessed by typing `browseVignettes(package = 'STADEM')`
 
 STADEM is a collaborative project, with the primary contributors being:
 
--   Kevin See (Biomark, Inc.)
--   Ryan N. Kinzer (Nez Perce Tribe)
--   Rick Orme (Nez Perce Tribe)
--   Mike Ackerman (Biomark, Inc.)
+- Kevin See (WDFW)
+- Ryan N. Kinzer (Nez Perce Tribe)
+- Rick Orme (Nez Perce Tribe)
+- Mike Ackerman (Nez Perce Tribe)
 
 ### Licenses
 

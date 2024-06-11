@@ -6,7 +6,7 @@
 \usage{
 compileGRAdata(
   yr,
-  spp = c("Chinook", "Steelhead"),
+  spp = c("Chinook", "Steelhead", "Coho"),
   dam = c("LWG", "WFF", "BON", "TDA", "JDA", "MCN", "IHR", "LMN", "LGS", "PRO", "ROZ",
     "PRD", "WAN", "RIS", "TUM", "RRH", "WEL", "ZOS"),
   start_date = NULL,
@@ -38,7 +38,7 @@ compileGRAdata(
 \item{sthd_type}{should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.}
 
 \item{damPIT}{the dam code for the dam you wish to query for PIT tag data.
-Currently only available for Lower Granite Dam (\code{GRA}).}
+Currently only available for Lower Granite Dam (\code{LWG}) and Priest Rapids Dam (\code{PRA}).}
 
 \item{strata_beg}{3 letter code for the day of the week each weekly strata
 should begin on. Default value is \code{'Mon'}.}
@@ -50,10 +50,10 @@ value is 3.}
 defined as wild steelhead greater than 780mm in length. Default is
 \code{FALSE}.}
 
-\item{trap_dbase}{data frame object containing the GRA trapping data with
-identical data types as in tblLGDMasterCombineExportJodyW; required fields
+\item{trap_dbase}{data frame object containing the LWG trapping data with
+identical data types as in tblLGDMasterCombineExport; required fields
 include MasterID, LGDNumPIT, CollectionDate, SRR, LGDSpecies, LGDRear,
-LGDLifeStage, LGDMarkAD, LGDValid, LGDFlmm, PTAGISSxCGRAObse.}
+LGDLifeStage, LGDMarkAD, LGDValid, LGDFLmm, PTAgisSxCGRAObs.}
 
 \item{useDARTrate}{should the DART query for the trap rate be used? Default
 is \code{FALSE}, which implies the trap rate is estimated by PIT tags.}
