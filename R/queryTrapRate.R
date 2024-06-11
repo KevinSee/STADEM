@@ -5,7 +5,7 @@
 #' @author Kevin See
 #'
 #' @param week_strata vector of intervals delimiting the weekly strata to summarize mark-recapture data over, as returned by \code{weeklyStrata()}.
-#' @param spp species to query trap rate for. Possible choices are: \code{Chinook} or \code{Steelhead}
+#' @param spp species to query trap rate for. Possible choices are: \code{Chinook}, \code{Steelhead}, or \code{Coho}.
 #' @param return_weekly Should the results be summarised on weekly basis? Default is \code{TRUE}.
 #'
 #' @source \url{https://www.cbr.washington.edu/dart}
@@ -15,7 +15,7 @@
 #' @return NULL
 
 queryTrapRate = function(week_strata = NULL,
-                         spp = c('Steelhead', 'Chinook'),
+                         spp = c('Steelhead', 'Chinook', 'Coho'),
                          return_weekly = T) {
 
   # match up species code with species name
