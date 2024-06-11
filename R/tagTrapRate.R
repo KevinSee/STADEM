@@ -1,6 +1,6 @@
 #' @title PIT tag based trap rate
 #'
-#' @description Estimate the trap rate at Lower Granite by using the proportion of previously PIT tagged fish observed pass a location that were found in the fish trap at that location.
+#' @description Estimate the trap rate at Lower Granite by using the proportion of previously PIT tagged fish observed passing Lower Granite and at a "later" location that were found in the fish trap.
 #'
 #' @author Kevin See
 #'
