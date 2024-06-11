@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">STADEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -73,7 +73,8 @@
 <span>  parallel <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  DIC <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  win_model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"neg_bin"</span>, <span class="st">"neg_bin2"</span>, <span class="st">"pois"</span>, <span class="st">"quasi_pois"</span>, <span class="st">"log_space"</span><span class="op">)</span>,</span>
-<span>  trap_est <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  trap_est <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  use_jagsUI <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -127,10 +128,20 @@
 <dd><p>should an estimate of escapement based on the adult fish trap rate be used as a second observation of true total escapement, together with the window counts? Default is <code>TRUE</code>. If <code>FALSE</code>, <code>win_model</code> is automatically set to <code>pois</code>.</p></dd>
 
 
+<dt>use_jagsUI</dt>
+<dd><p>should the `jagsUI` package be used to fit the model? Default is `FALSE`, meaning the `rjags` package is used instead.</p></dd>
+
+
 <dt>mcmc_chainlength</dt>
 <dd><p>number of total samples in each MCMC chain</p></dd>
 
 </dl></div>
+    <div id="value">
+    <h2>Value</h2>
+    
+
+<p>mcmc.list</p>
+    </div>
     <div id="author">
     <h2>Author</h2>
     <p>Kevin See</p>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">STADEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -62,7 +62,7 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compileGRAdata</span><span class="op">(</span></span>
 <span>  <span class="va">yr</span>,</span>
-<span>  spp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Chinook"</span>, <span class="st">"Steelhead"</span><span class="op">)</span>,</span>
+<span>  spp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Chinook"</span>, <span class="st">"Steelhead"</span>, <span class="st">"Coho"</span><span class="op">)</span>,</span>
 <span>  dam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LWG"</span>, <span class="st">"WFF"</span>, <span class="st">"BON"</span>, <span class="st">"TDA"</span>, <span class="st">"JDA"</span>, <span class="st">"MCN"</span>, <span class="st">"IHR"</span>, <span class="st">"LMN"</span>, <span class="st">"LGS"</span>, <span class="st">"PRO"</span>, <span class="st">"ROZ"</span>,</span>
 <span>    <span class="st">"PRD"</span>, <span class="st">"WAN"</span>, <span class="st">"RIS"</span>, <span class="st">"TUM"</span>, <span class="st">"RRH"</span>, <span class="st">"WEL"</span>, <span class="st">"ZOS"</span><span class="op">)</span>,</span>
 <span>  start_date <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -109,7 +109,7 @@
 
 <dt>damPIT</dt>
 <dd><p>the dam code for the dam you wish to query for PIT tag data.
-Currently only available for Lower Granite Dam (<code>GRA</code>).</p></dd>
+Currently only available for Lower Granite Dam (<code>LWG</code>) and Priest Rapids Dam (<code>PRA</code>).</p></dd>
 
 
 <dt>strata_beg</dt>
@@ -129,10 +129,10 @@ defined as wild steelhead greater than 780mm in length. Default is
 
 
 <dt>trap_dbase</dt>
-<dd><p>data frame object containing the GRA trapping data with
-identical data types as in tblLGDMasterCombineExportJodyW; required fields
+<dd><p>data frame object containing the LWG trapping data with
+identical data types as in tblLGDMasterCombineExport; required fields
 include MasterID, LGDNumPIT, CollectionDate, SRR, LGDSpecies, LGDRear,
-LGDLifeStage, LGDMarkAD, LGDValid, LGDFlmm, PTAGISSxCGRAObse.</p></dd>
+LGDLifeStage, LGDMarkAD, LGDValid, LGDFLmm, PTAgisSxCGRAObs.</p></dd>
 
 
 <dt>useDARTrate</dt>

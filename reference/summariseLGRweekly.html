@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">STADEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -66,14 +66,14 @@
 <span>  trap_df <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  incl_clip_sthd <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sthd_B_run <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  incl_chnk_jacks <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  incl_jacks <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>wind_data</dt>
-<dd><p>data.frame containing window count data to summarise, queried using <code>queryWindCnts</code>, and potentially combined across calendar years</p></dd>
+<dd><p>data.frame containing window count data to summarise, queried using <code>queryWindowCnts</code>, and potentially combined across calendar years</p></dd>
 
 
 <dt>pit_all</dt>
@@ -88,8 +88,8 @@
 <dd><p>should clipped steelhead in the trap be included in this summary? Should match with the window counts. Default is <code>FALSE</code>.</p></dd>
 
 
-<dt>incl_chnk_jacks</dt>
-<dd><p>should window counts of Chinook jacks be included with adult counts? Default is <code>TRUE</code></p></dd>
+<dt>incl_jacks</dt>
+<dd><p>should window counts of Chinook and coho jacks be included with adult counts? Default is <code>TRUE</code></p></dd>
 
 </dl></div>
     <div id="author">

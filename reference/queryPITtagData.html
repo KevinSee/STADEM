@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">STADEM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.0</span>
       </span>
     </div>
 
@@ -70,7 +70,7 @@
 
     <div id="source">
     <h2>Source</h2>
-    <p><a href="http://www.cbr.washington.edu/dart" class="external-link">http://www.cbr.washington.edu/dart</a></p>
+    <p><a href="https://www.cbr.washington.edu/dart" class="external-link">https://www.cbr.washington.edu/dart</a></p>
     </div>
     <div id="arguments">
     <h2>Arguments</h2>
@@ -98,7 +98,25 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">queryPITtagData</span><span class="op">(</span>start_date <span class="op">=</span> <span class="st">'20150701'</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in curl::curl_fetch_memory(url, handle = handle):</span> schannel: failed to receive handshake, SSL/TLS connection failed</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 53,370 × 25</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Ladder  Year Species SpCode TagId    WindowDetectionFlag ClockHour Date      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   1 0900      2015-07-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   0 0900      2015-07-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   0 0900      2015-07-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   0 0900      2015-07-13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   1 0700      2015-07-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   0 0700      2015-07-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   0 0700      2015-07-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   0 0700      2015-07-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   1 0900      2015-07-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> GRA     <span style="text-decoration: underline;">2</span>016 Chinook      1 384.3B2…                   0 0900      2015-07-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 53,360 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 17 more variables: WindowCountHours &lt;chr&gt;, Period &lt;chr&gt;, RearType &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   TagStage &lt;chr&gt;, Coil &lt;chr&gt;, DetectionDateTime &lt;dttm&gt;, TravelTime &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   TagIdAscentCount &lt;dbl&gt;, ReleaseYear &lt;dbl&gt;, ReleaseDateTime &lt;dttm&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   Run &lt;dbl&gt;, Length &lt;dbl&gt;, CaptureMethod &lt;chr&gt;, FlagCodes &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ReleaseSite &lt;chr&gt;, TagFile &lt;chr&gt;, ReleaseRKM &lt;chr&gt;</span></span>
 </code></pre></div>
     </div>
   </div>
