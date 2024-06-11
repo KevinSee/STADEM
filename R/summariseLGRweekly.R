@@ -8,9 +8,10 @@
 #' @param pit_all data.frame containing data about individual PIT tags detected at Lower Granite Dam, produced using \code{queryPITtagData}
 #' @param trap_df data.frame as created by \code{readLGRtrapDB}.
 #' @param incl_clip_sthd should clipped steelhead in the trap be included in this summary? Should match with the window counts. Default is \code{FALSE}.
-#' @param incl_chnk_jacks should window counts of Chinook jacks be included with adult counts? Default is \code{TRUE}
+#' @param incl_jacks should window counts of Chinook and coho jacks be included with adult counts? Default is \code{TRUE}
 #'
 #' @import lubridate dplyr
+#' @export
 #' @return NULL
 
 summariseLGRweekly = function(wind_data = NULL,
@@ -18,16 +19,18 @@ summariseLGRweekly = function(wind_data = NULL,
                               trap_df = NULL,
                               incl_clip_sthd = FALSE,
                               sthd_B_run = FALSE,
-                              incl_chnk_jacks = TRUE) {
+                              incl_jacks = TRUE) {
 
   stopifnot(!is.null(wind_data),
             !is.null(pit_all),
             !is.null(trap_df))
 
-  yr_range = min(unique(year(wind_data$Date))):max(unique(year(wind_data$Date)))
+  #yr_range = min(unique(year(wind_data$Date))):max(unique(year(wind_data$Date)))
+  start_date = format(min(unique(wind_data$Date)), "%Y%m%d")
+  end_date = format(max(unique(wind_data$Date)), "%Y%m%d")
 
   # determine weekly strata
-  week_strata = weeklyStrata(yr_range)
+  week_strata = weeklyStrata(start_date, end_date)
 
   # For trap database, summarise by spawnyear, species and day
   lgr_trap_daily = summariseLGRtrapDaily(trap_df,
@@ -52,9 +55,10 @@ summariseLGRweekly = function(wind_data = NULL,
     mutate_at(vars(-Year, -Date, -window_open),
               list(~ifelse(is.na(.), 0, .)))
 
-  if(incl_chnk_jacks) wind_data = wind_data %>%
-    mutate(Chinook = Chinook + Jack_Chinook) %>%
-    select(-Jack_Chinook)
+  if(incl_jacks) wind_data = wind_data %>%
+    mutate(Chinook = Chinook + Jack_Chinook,
+           Coho = Coho + Jack_Coho) %>%
+    select(-Jack_Chinook, -Jack_Coho)
 
   if(!incl_clip_sthd) wind_data = wind_data %>%
     select(-Steelhead) %>%
@@ -62,9 +66,10 @@ summariseLGRweekly = function(wind_data = NULL,
 
   wind_long = wind_data %>%
     tidyr::gather(Species, win_cnt, -Year, -Date, -window_open) %>%
-    filter(Species %in% c('Chinook', 'Steelhead')) %>%
+    filter(Species %in% c('Chinook', 'Steelhead', 'Coho')) %>%
     mutate(SpawnYear = ifelse(Species == 'Chinook', lubridate::year(Date),
-                              ifelse(Species == 'Steelhead' & Date >= lubridate::ymd(paste0(lubridate::year(Date), '0701')), lubridate::year(Date) + 1, lubridate::year(Date)))) %>%
+                              ifelse(Species == 'Coho', lubridate::year(Date),
+                                     ifelse(Species == 'Steelhead' & Date >= lubridate::ymd(paste0(lubridate::year(Date), '0701')), lubridate::year(Date) + 1, lubridate::year(Date))))) %>%
     select(Species, SpawnYear, Date, window_open, win_cnt)
 
 
