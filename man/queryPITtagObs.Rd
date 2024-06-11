@@ -15,7 +15,7 @@ queryPITtagObs(
 )
 }
 \arguments{
-\item{site}{The site to query observations for.}
+\item{site}{The site to query observations for. Query only set up for Lower Granite Dam Adult Fishway (GRA) at this time.}
 
 \item{spp}{species to query PIT tag observations for. Possible choices are: Chinook, Coho, Steelhead, Sockeye}
 
