@@ -5,7 +5,7 @@
 #' @author Kevin See
 #'
 #' @param trap_df data.frame as created by \code{readLGRtrapDB}.
-#' @param spp species to summarise trap data for. Possible species are: \code{Chinook} and \code{Steelhead}.
+#' @param spp species to summarise trap data for. Possible species are: \code{Chinook}, \code{Steelhead}, and \code{Coho}.
 #' @param incl_clip_sthd should clipped steelhead in the trap be included in this summary? Should match with the window counts. Default is \code{TRUE}.
 #' @param sthd_B_run should numbers of B run steelhead be reported? These are defined as wild steelhead greater than 780mm in length. Default is \code{FALSE}.
 #'
@@ -15,7 +15,7 @@
 #' @examples #summariseLGRtrapDaily(readLGRtrapDB())
 
 summariseLGRtrapDaily = function(trap_df,
-                                 spp = c('Chinook', 'Steelhead'),
+                                 spp = c('Chinook', 'Steelhead', 'Coho'),
                                  incl_clip_sthd = TRUE,
                                  sthd_B_run = FALSE) {
 
@@ -27,7 +27,7 @@ summariseLGRtrapDaily = function(trap_df,
 
   # drop unclipped steelhead if only focusing on unclipped fish
   if(!incl_clip_sthd & spp == 'Steelhead') trap_df = trap_df %>%
-    # use only unclipped steelhead (to match with windown counts)
+    # use only unclipped steelhead (to match with window counts)
     filter(LGDMarkAD == 'AI')
 
   # summarise by spawnyear, species and day

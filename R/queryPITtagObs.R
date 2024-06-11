@@ -4,12 +4,12 @@
 #'
 #' @author Kevin See
 #'
-#' @param site The site to query observations for.
+#' @param site The site to query observations for. Query only set up for Lower Granite Dam Adult Fishway (GRA) at this time.
 #' @param spp species to query PIT tag observations for. Possible choices are: Chinook, Coho, Steelhead, Sockeye
 #' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
 #' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #'
-#' @source \url{http://www.cbr.washington.edu/dart}
+#' @source \url{https://www.cbr.washington.edu/dart}
 #'
 #' @import lubridate readr httr dplyr
 #' @export

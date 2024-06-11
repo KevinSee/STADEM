@@ -9,14 +9,14 @@
 #' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
 #' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #'
-#' @source \url{http://www.cbr.washington.edu/dart}
+#' @source \url{https://www.cbr.washington.edu/dart}
 #'
 #' @import lubridate httr dplyr readr janitor
 #' @export
 #' @return NULL
 #' @examples queryPITtagData(start_date = '20150701')
 
-queryPITtagData = function(damPIT = c('GRA', 'PRA', "RIA", "RRF"),
+queryPITtagData = function(damPIT = c('GRA', 'PRA', 'RIA', 'RRF'),
                            spp = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
                            start_date = NULL,
                            end_date = NULL) {

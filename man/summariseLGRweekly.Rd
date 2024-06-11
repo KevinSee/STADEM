@@ -10,11 +10,11 @@ summariseLGRweekly(
   trap_df = NULL,
   incl_clip_sthd = FALSE,
   sthd_B_run = FALSE,
-  incl_chnk_jacks = TRUE
+  incl_jacks = TRUE
 )
 }
 \arguments{
-\item{wind_data}{data.frame containing window count data to summarise, queried using \code{queryWindCnts}, and potentially combined across calendar years}
+\item{wind_data}{data.frame containing window count data to summarise, queried using \code{queryWindowCnts}, and potentially combined across calendar years}
 
 \item{pit_all}{data.frame containing data about individual PIT tags detected at Lower Granite Dam, produced using \code{queryPITtagData}}
 
@@ -22,7 +22,7 @@ summariseLGRweekly(
 
 \item{incl_clip_sthd}{should clipped steelhead in the trap be included in this summary? Should match with the window counts. Default is \code{FALSE}.}
 
-\item{incl_chnk_jacks}{should window counts of Chinook jacks be included with adult counts? Default is \code{TRUE}}
+\item{incl_jacks}{should window counts of Chinook and coho jacks be included with adult counts? Default is \code{TRUE}}
 }
 \description{
 Combine window counts and PIT tag data on weekly time-steps

@@ -7,7 +7,7 @@
 #' @inheritParams getWindowCounts
 #' @param yr spawn year.
 #' @param damPIT the dam code for the dam you wish to query for PIT tag data.
-#'   Currently only available for Lower Granite Dam (\code{GRA}).
+#'   Currently only available for Lower Granite Dam (\code{LWG}) and Priest Rapids Dam (\code{PRA}).
 #' @param strata_beg 3 letter code for the day of the week each weekly strata
 #'   should begin on. Default value is \code{'Mon'}.
 #' @param last_strata_min minimum length (in days) for the final strata. Default
@@ -15,10 +15,10 @@
 #' @param sthd_B_run should numbers of B run steelhead be reported? These are
 #'   defined as wild steelhead greater than 780mm in length. Default is
 #'   \code{FALSE}.
-#' @param trap_dbase data frame object containing the GRA trapping data with
-#'   identical data types as in tblLGDMasterCombineExportJodyW; required fields
+#' @param trap_dbase data frame object containing the LWG trapping data with
+#'   identical data types as in tblLGDMasterCombineExport; required fields
 #'   include MasterID, LGDNumPIT, CollectionDate, SRR, LGDSpecies, LGDRear,
-#'   LGDLifeStage, LGDMarkAD, LGDValid, LGDFlmm, PTAGISSxCGRAObse.
+#'   LGDLifeStage, LGDMarkAD, LGDValid, LGDFLmm, PTAgisSxCGRAObs.
 #' @param useDARTrate should the DART query for the trap rate be used? Default
 #'   is \code{FALSE}, which implies the trap rate is estimated by PIT tags.
 #' @param trap_rate_cv constant coefficient of variation (CV) that should be
@@ -34,7 +34,7 @@
 #' @examples compileGRAdata(2012)
 
 compileGRAdata = function(yr,
-                          spp = c('Chinook', 'Steelhead'),
+                          spp = c('Chinook', 'Steelhead', 'Coho'),
                           dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IHR', 'LMN', 'LGS', 'PRO', 'ROZ', 'PRD', 'WAN', 'RIS', 'TUM', 'RRH', 'WEL', 'ZOS'),
                           # dam = c('LWG'),
                           start_date = NULL,
@@ -70,10 +70,10 @@ compileGRAdata = function(yr,
   }
 
   if(is.null(incl_jacks)) {
-    incl_jacks = ifelse(spp == 'Chinook', T, F)
+    incl_jacks = ifelse(spp %in% c('Chinook', 'Coho'), T, F)
   }
 
-  # currently pit tag query only works for Lower Granite
+  # currently pit tag query only works for Lower Granite and Priest Rapids
   try( if(!damPIT %in% c('GRA', 'PRA')) stop('PIT tag queries currently only work for Lower Granite (code GRA) and Priest Rapids (PRA)') )
 
   cat(paste0('Compiling data for ', spp, ' spawn year ', lubridate::year(lubridate::ymd(end_date)),'\n'))
@@ -104,7 +104,7 @@ compileGRAdata = function(yr,
                              strata_beg = strata_beg,
                              last_strata_min = last_strata_min)
 
-  # read in data for Chinook and steelhead
+  # read in data for Chinook, steelhead, and coho
   cat('Getting LGR trap data\n')
   trap_yr = trap_dbase %>%
     rename(Tag.ID = LGDNumPIT) %>%
@@ -112,8 +112,8 @@ compileGRAdata = function(yr,
            SppCode = LGDSpecies,
            Tag.ID = as.character(Tag.ID),
            Tag.ID = ifelse(nchar(Tag.ID) < 3, NA, Tag.ID),
-           Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', NA))) %>%
-    filter(Species %in% c('Chinook', 'Steelhead'),   # drop data from other species, and other runs of Chinook
+           Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', ifelse(SppCode == 2, 'Coho', NA)))) %>%
+    filter(Species %in% c('Chinook', 'Steelhead', 'Coho'),   # drop data from other species, and other runs of Chinook
            Date >= lubridate::ymd(lubridate::int_start(week_strata[1])), # filter out records outside dates of interest
            Date < lubridate::ymd(lubridate::int_end(week_strata[length(week_strata)]) + lubridate::dseconds(1)),
            LGDLifeStage == 'RF', # filter out juveniles, keep only adults

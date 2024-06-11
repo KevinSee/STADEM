@@ -9,7 +9,7 @@
 #' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
 #' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #'
-#' @source \url{http://www.cbr.washington.edu/dart}
+#' @source \url{https://www.cbr.washington.edu/dart}
 #'
 #' @import lubridate readr httr dplyr tidyr
 #' @export
@@ -95,7 +95,6 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
 
   # what encoding to use?
   # stringi::stri_enc_detect(content(web_req, "raw"))
-
 
   # parse the response
   parsed = suppressWarnings(

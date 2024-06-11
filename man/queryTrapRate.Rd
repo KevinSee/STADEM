@@ -4,19 +4,19 @@
 \alias{queryTrapRate}
 \title{DART reported trap rate}
 \source{
-\url{http://www.cbr.washington.edu/dart}
+\url{https://www.cbr.washington.edu/dart}
 }
 \usage{
 queryTrapRate(
   week_strata = NULL,
-  spp = c("Steelhead", "Chinook"),
+  spp = c("Steelhead", "Chinook", "Coho"),
   return_weekly = T
 )
 }
 \arguments{
 \item{week_strata}{vector of intervals delimiting the weekly strata to summarize mark-recapture data over, as returned by \code{weeklyStrata()}.}
 
-\item{spp}{species to query trap rate for. Possible choices are: \code{Chinook} or \code{Steelhead}}
+\item{spp}{species to query trap rate for. Possible choices are: \code{Chinook}, \code{Steelhead}, or \code{Coho}.}
 
 \item{return_weekly}{Should the results be summarised on weekly basis? Default is \code{TRUE}.}
 }

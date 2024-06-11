@@ -18,7 +18,7 @@ tagTrapRate(
 \item{mark_site}{PTAGIS code for the site at the location being queried for trap rate. This is used to filter out fish that were marked at the fish trap.}
 }
 \description{
-Estimate the trap rate at Lower Granite by using the proportion of previously PIT tagged fish observed pass a location that were found in the fish trap at that location.
+Estimate the trap rate at Lower Granite by using the proportion of previously PIT tagged fish observed passing Lower Granite and at a "later" location that were found in the fish trap.
 }
 \author{
 Kevin See

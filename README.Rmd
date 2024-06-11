@@ -71,10 +71,10 @@ Further instructions on how to use STADEM can be found in the package vignette, 
 
 STADEM is a collaborative project, with the primary contributors being:
   
-* Kevin See (Biomark, Inc.)
+* Kevin See (WDFW)
 * Ryan N. Kinzer (Nez Perce Tribe)
 * Rick Orme (Nez Perce Tribe)
-* Mike Ackerman (Biomark, Inc.)
+* Mike Ackerman (Nez Perce Tribe)
 
 
 ### Licenses
