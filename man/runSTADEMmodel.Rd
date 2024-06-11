@@ -17,7 +17,8 @@ runSTADEMmodel(
   parallel = TRUE,
   DIC = FALSE,
   win_model = c("neg_bin", "neg_bin2", "pois", "quasi_pois", "log_space"),
-  trap_est = TRUE
+  trap_est = TRUE,
+  use_jagsUI = FALSE
 )
 }
 \arguments{
@@ -45,7 +46,12 @@ runSTADEMmodel(
 
 \item{trap_est}{should an estimate of escapement based on the adult fish trap rate be used as a second observation of true total escapement, together with the window counts? Default is \code{TRUE}. If \code{FALSE}, \code{win_model} is automatically set to \code{pois}.}
 
+\item{use_jagsUI}{should the `jagsUI` package be used to fit the model? Default is `FALSE`, meaning the `rjags` package is used instead.}
+
 \item{mcmc_chainlength}{number of total samples in each MCMC chain}
+}
+\value{
+mcmc.list
 }
 \description{
 Run the JAGS model

@@ -4,7 +4,7 @@
 \alias{queryWindowCnts}
 \title{DART Window Counts}
 \source{
-\url{http://www.cbr.washington.edu/dart}
+\url{https://www.cbr.washington.edu/dart}
 }
 \usage{
 queryWindowCnts(

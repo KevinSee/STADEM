@@ -7,7 +7,7 @@
 plotTimeSeries(stadem_mod = NULL, weeklyData = NULL)
 }
 \arguments{
-\item{stadem_mod}{jagsUI object returned from running \code{runSTADEMmodel}.}
+\item{stadem_mod}{`mcmc.list` or `jagsUI` object returned from running \code{runSTADEMmodel}.}
 
 \item{weeklyData}{weekly data compiled by \code{compileGRAdata}, with the name \code{weeklyData} in the resulting list.}
 }

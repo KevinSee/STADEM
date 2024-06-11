@@ -4,7 +4,7 @@
 \alias{queryTrapRate}
 \title{DART reported trap rate}
 \source{
-\url{http://www.cbr.washington.edu/dart}
+\url{https://www.cbr.washington.edu/dart}
 }
 \usage{
 queryTrapRate(

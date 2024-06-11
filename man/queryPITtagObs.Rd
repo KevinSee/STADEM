@@ -4,7 +4,7 @@
 \alias{queryPITtagObs}
 \title{PIT tag data}
 \source{
-\url{http://www.cbr.washington.edu/dart}
+\url{https://www.cbr.washington.edu/dart}
 }
 \usage{
 queryPITtagObs(

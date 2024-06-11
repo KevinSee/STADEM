@@ -12,7 +12,7 @@ STADEMtoSCBOI(
 )
 }
 \arguments{
-\item{stadem_mod}{results of STADEM model, of class \code{jagsUI}.}
+\item{stadem_mod}{results of STADEM model, of class \code{mcmc.list} or `jagsUI`.}
 
 \item{lgr_weekly}{weekly data from Lower Granite dam, compiled by \code{compileGRAdata}.}
 
