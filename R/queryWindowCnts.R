@@ -135,6 +135,7 @@ queryWindowCnts = function(dam = c('LWG', 'WFF', 'BON', 'TDA', 'JDA', 'MCN', 'IH
     dplyr::mutate(Species = dplyr::case_match(parameter,
                                               'Chin' ~ 'Chinook',
                                               'JChin' ~ 'Jack_Chinook',
+                                              'Coho' ~ 'Coho',
                                               'JCoho' ~ 'Jack_Coho',
                                               'JStlhd' ~ 'Jack_Steelhead',
                                               'Lmpry' ~ 'Lamprey',
