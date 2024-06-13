@@ -109,7 +109,7 @@ compileGRAdata = function(yr,
   trap_yr = trap_dbase %>%
     rename(Tag.ID = LGDNumPIT) %>%
     mutate(Date = lubridate::floor_date(CollectionDate, unit = 'day'),
-           SppCode = LGDSpecies,
+           SppCode = as.numeric(substr(SRR, 1, 1)),
            Tag.ID = as.character(Tag.ID),
            Tag.ID = ifelse(nchar(Tag.ID) < 3, NA, Tag.ID),
            Species = ifelse(SppCode == 1, 'Chinook', ifelse(SppCode == 3, 'Steelhead', ifelse(SppCode == 2, 'Coho', NA)))) %>%
