@@ -108,7 +108,12 @@ queryPITtagObs = function(site = 'GRA',
       dplyr::mutate(Year = as.integer(Year))
   ))
 
-  if(class(parsed)[1] == 'try-error') stop(paste('DART returned no PIT tag observations for', spp, 'in', yr))
+  #if(class(parsed)[1] == 'try-error') stop(paste('DART returned no PIT tag observations for', spp, 'in', yr))
+
+  if (class(parsed)[1] == 'try-error') {
+    warning(paste('DART returned no PIT tag observations for', spp, 'in', yr, ". Returning an empty data frame."))  # Optional: show a warning instead of stopping
+    parsed = data.frame()  # Assign an empty data frame
+  }
 
   names(parsed) = gsub(' ', '', names(parsed))
 
