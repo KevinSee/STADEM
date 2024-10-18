@@ -29,7 +29,13 @@ queryPITtagData = function(damPIT = c('GRA', 'PRA', 'RIA', 'RRF'),
   spp = match.arg(spp, several.ok = F)
 
   # set default end date (1 year after start date)
-  if(is.null(end_date)) end_date = format(lubridate::ymd(start_date) + years(1) - days(1), '%Y%m%d')
+  if(is.null(end_date) | lubridate::ymd(end_date) > lubridate::today()) {
+    poss_end_date <- lubridate::ymd(start_date) + years(1) - days(1)
+    end_date <-
+      format(min(poss_end_date,
+                 lubridate::today()),
+             "%Y%m%d")
+  }
 
   # turn start / end date character vectors into actual date objects
   startDate = lubridate::ymd(start_date)
