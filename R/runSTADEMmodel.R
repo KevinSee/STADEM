@@ -17,7 +17,7 @@
 #' @param DIC passed to the \code{jags} function
 #' @param use_jagsUI should the `jagsUI` package be used to fit the model? Default is `FALSE`, meaning the `rjags` package is used instead.
 #'
-#' @import rjags jagsUI
+#' @import rjags
 #' @export
 #' @return mcmc.list
 #' @examples #runSTADEMmodel()
