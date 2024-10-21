@@ -31,7 +31,6 @@ Suggests:
     ggpubr (>= 0.4.0),
     Hmisc (>= 4.6.0),
     rjags (>= 4.12),
-    jagsUI (>= 1.5.2),
     kableExtra (>= 1.3.4),
     knitr (>= 1.42),
     rmarkdown (>= 2.20)
