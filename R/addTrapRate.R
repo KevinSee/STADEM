@@ -4,23 +4,23 @@
 #'
 #' @author Kevin See
 #'
-#' @param lgr_weekly dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summariseLGRweekly}.
+#' @param dam_weekly dataframe containing weekly summaries of window counts and trap data. Part of what is returned by \code{summariseLGRweekly}.
 #' @param trap_rate dataframe containing estimates of trap rate
 #' @param trap_rate_dist distributional form for trap rate prior. \code{beta} returns alpha and beta parameters for beta distribution. \code{logit} returns mean and standard deviation in logit space. Default is \code{beta}. Support for logit distribution is coming in future versions of STADEM.
 #'
 #' @import dplyr
 #' @return NULL
 #'
-addTrapRate = function(lgr_weekly = NULL,
+addTrapRate = function(dam_weekly = NULL,
                        trap_rate = NULL,
                        trap_rate_dist = c('beta', 'logit')) {
 
-  stopifnot(!is.null(lgr_weekly))
+  stopifnot(!is.null(dam_weekly))
   stopifnot(!is.null(trap_rate))
 
-  lgr_week_trapRate = lgr_weekly %>%
+  dam_week_trapRate = dam_weekly %>%
     left_join(trap_rate,
-              by = join_by(start_date,
+              by = join_by(Start_Date,
                            week_num)) |>
               # by = c('Start_Date', 'week_num')) %>%
     mutate(trap_open = ifelse(is.na(trap_open), F, trap_open)) %>%
@@ -52,7 +52,7 @@ addTrapRate = function(lgr_weekly = NULL,
     #        trap_valid = ifelse(!trap_open, F, trap_valid))
 
   if(trap_rate_dist == 'beta') {
-    lgr_week_trapRate = lgr_week_trapRate %>%
+    dam_week_trapRate = dam_week_trapRate %>%
       # set up parameters describing trap rate as a beta distribution
       mutate(trap_alpha = ((1 - trap_rate) / trap_rate_se^2 - 1 / trap_rate) * trap_rate^2,
              trap_alpha = ifelse(trap_alpha < 0, 0.01, trap_alpha),
@@ -65,7 +65,7 @@ addTrapRate = function(lgr_weekly = NULL,
   }
 
   if(trap_rate_dist == 'logit') {
-    lgr_week_trapRate = lgr_week_trapRate %>%
+    dam_week_trapRate = dam_week_trapRate %>%
       # set up parameters describing trap rate as a logit distribution
       mutate(trap_mu = ifelse(trap_open, boot::logit(trap_rate), 1e-12),
              trap_sd = ifelse(trap_open, (1 / n_trap_tags) + (1 / (n_poss_tags - n_trap_tags)), 0)) %>%
@@ -74,5 +74,5 @@ addTrapRate = function(lgr_weekly = NULL,
              trap_sd = ifelse(trap_open & trap_valid, trap_sd, 0))
   }
 
-  return(lgr_week_trapRate)
+  return(dam_week_trapRate)
 }
