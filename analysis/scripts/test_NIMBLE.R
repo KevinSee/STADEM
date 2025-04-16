@@ -14,19 +14,26 @@ library(janitor)
 #-----------------------------------------------------------------
 # set species and spawn year
 species = c("Steelhead",
-            "Chinook")[1]
+            "Chinook")[2]
 yr = 2019
 dam_code = c("PRD",
-             "LWG")[1]
+             "LWG")[2]
 
 # what dates should window counts cover?
-if(species == "Steelhead") {
-  window_dates <- c(paste0(yr-1, "0701"),
-                    paste0(yr, "0630"))
-} else if(species == "Chinook") {
-  window_dates <- c(paste0(yr, "0301"),
-                    paste0(yr, "0817"))
-}
+window_dates <-
+  case_when(species == "Steelhead" &
+              dam_code == "LWG" ~ c(paste0(yr-1, "0701"),
+                                    paste0(yr, "0630")),
+            species == "Steelhead" &
+              dam_code == "PRD" ~ c(paste0(yr-1, "0601"),
+                                    paste0(yr, "0531")),
+            species == "Chinook" &
+              dam_code == "LWG" ~ c(paste0(yr, "0301"),
+                                    paste0(yr, "0817")),
+            species == "Chinook" &
+              dam_code == "PRD" ~ c(paste0(yr, "0301"),
+                                    paste0(yr, "0615")))
+
 
 if(dam_code == "PRD") {
   trap_dbase <- read_rds("O:Documents/Git/MyProjects/DabomPriestRapidsSthd/analysis/data/derived_data/Bio_Data_2011_2024.rds") |>
@@ -309,7 +316,7 @@ data_list <-
 
 
 # what kind of hatchery / wild calls should be used?
-hw_type = c("PBT", "Morph")[2]
+hw_type = c("PBT", "Morph")[1]
 
 # pull out certain pieces of data to feed into model
 jags_data_list <- prepJAGS(data_list$weeklyData,
