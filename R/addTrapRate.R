@@ -20,7 +20,7 @@ addTrapRate = function(lgr_weekly = NULL,
 
   lgr_week_trapRate = lgr_weekly %>%
     left_join(trap_rate,
-              by = join_by(start_date,
+              by = join_by(Start_Date,
                            week_num)) |>
               # by = c('Start_Date', 'week_num')) %>%
     mutate(trap_open = ifelse(is.na(trap_open), F, trap_open)) %>%
