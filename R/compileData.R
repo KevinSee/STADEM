@@ -186,20 +186,30 @@ compileData = function(spp = c('Chinook', 'Steelhead', 'Coho'),
       }
 
 
-    } else if(dam == "PRD" & spp == "Steelhead") {
+    } else if(dam == "PRD") {
+      message('Getting PRD trap data\n')
 
       # trap_yr <-
       #   read_rds("O:Documents/Git/MyProjects/DabomPriestRapidsSthd/analysis/data/derived_data/Bio_Data_2011_2024.rds") |>
       #   filter(spawn_year == spawn_yr)
 
-      trap_yr <- trap_dbase |>
+      trap_yr <-
+        trap_dbase |>
         rename(tag_code = pit_tag) |>
+        filter(between(event_date,
+                       min(int_start(week_strata)),
+                       max(int_end(week_strata)))) |>
         # assign week numbers to each day
         rowwise() |>
         mutate(week_num = which(event_date %within% week_strata)) |>
         ungroup() |>
         relocate(week_num,
-                 .after = "event_date")
+                 .after = "event_date") |>
+        mutate(ad_clip = case_when(str_detect(conditional_comments, "AD") ~ T,
+                                   str_detect(conditional_comments, "AI") ~ F,
+                                   .default = NA),
+               cwt = case_when(str_detect(conditional_comments, "CW") ~ T,
+                               .default = F))
     }
 
     # summarise by date for particular species

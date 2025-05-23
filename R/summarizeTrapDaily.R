@@ -99,6 +99,9 @@ summarizeTrapDaily = function(trap_df,
 
   # summarise by spawnyear, species and day
   trap_daily = trap_df %>%
+    mutate(across(date,
+                  ~ lubridate::floor_date(.,
+                                        unit = "days"))) |>
     group_by(date) %>%
     summarize(trap_fish = n(),
               Wild.morph = sum(origin == 'W'),
