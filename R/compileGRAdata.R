@@ -230,7 +230,7 @@ compileGRAdata = function(yr,
   dam_weekly = dam_daily %>%
     group_by(week_num) %>%
     summarise(Species = unique(Species),
-              Start_Date = min(Date)) %>%
+              start_date = min(Date)) %>%
     ungroup() %>%
     left_join(dam_daily %>%
                 group_by(week_num) %>%
@@ -241,7 +241,7 @@ compileGRAdata = function(yr,
                 mutate_at(vars(win_cnt:n_invalid),
                           list(~ifelse(is.na(.), 0, .))), by = 'week_num') %>%
     mutate(window_open = ifelse(win_cnt > 0, T, F)) %>%
-    select(Species, Start_Date, week_num, everything())
+    select(Species, start_date, week_num, everything())
 
   if(incl_trapRate) {
     dam_weekly = addTrapRate(dam_weekly,
