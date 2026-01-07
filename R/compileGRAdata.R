@@ -140,15 +140,15 @@ compileGRAdata = function(yr,
       trap_rate = tagTrapRate(trap_dataframe = trap_yr,
                               week_strata = week_strata) %>%
         # mutate(trap_open = ifelse(n_trap > 0, T, F)) %>%
-        left_join(tibble(Start_Date = lubridate::int_start(week_strata),
+        left_join(tibble(start_date = lubridate::int_start(week_strata),
                          week_num = 1:length(week_strata)), by = 'week_num') %>%
-        mutate(Start_Date = lubridate::ymd(Start_Date)) %>%
+        mutate(start_date = lubridate::ymd(start_date)) %>%
         rename(n_trap_tags = n_trap,
                n_poss_tags = n_tot, # include the tag counts going into trap rate calc.
                trap_rate = rate,
                trap_rate_se = rate_se) %>%
         mutate(trap_open = if_else(n_trap_tags > 0, T, F)) %>%
-        select(Start_Date,
+        select(start_date,
                week_num,
                trap_open,
                everything())
@@ -164,7 +164,7 @@ compileGRAdata = function(yr,
                # add some error
                trap_rate_se = trap_rate * trap_rate_cv) %>%
         mutate(trap_open = if_else(trap_rate > 0, T, F)) %>%
-        select(Start_Date,
+        select(start_date = Start_Date,
                week_num,
                trap_open,
                everything())
