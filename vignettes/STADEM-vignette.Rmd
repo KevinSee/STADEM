@@ -38,6 +38,8 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
 library(ggplot2)
 library(ggpubr)
+library(stringr)
+library(tidyr)
 library(kableExtra)
 
 ```
@@ -367,7 +369,8 @@ week_df <- summ$statistics |>
 pt_est_tab = week_df %>%
   select(-sd) %>%
   mutate(mean = round(mean)) %>%
-  spread(param, mean) %>%
+  pivot_wider(names_from = param, 
+              values_from = mean) %>%
   left_join(stadem_list[['weeklyData']] %>%
               mutate(week = 1:n())) %>%
   select(Week = week,
