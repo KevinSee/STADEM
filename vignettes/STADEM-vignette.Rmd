@@ -217,14 +217,15 @@ yr = 2019
 spp = 'Chinook'
 
 # pull together all data
-stadem_list = compileGRAdata(spp = spp,
-                             start_date = paste0(yr, '0301'),
-                             end_date = paste0(yr, '0817'),
-                             strata_beg = 'Mon',
-                             trap_dbase = readLGRtrapDB(system.file("extdata", 
-                                                                    "Chnk2019_TrapDatabase.csv", 
-                                                                    package = "STADEM",
-                                                                    mustWork = TRUE)))
+stadem_list = compileData(spp = spp,
+                          dam = "LWG",
+                          start_date = paste0(yr, '0301'),
+                          end_date = paste0(yr, '0817'),
+                          strata_beg = 'Mon',
+                          trap_dbase = readLGRtrapDB(system.file("extdata", 
+                                                                 "Chnk2019_TrapDatabase.csv", 
+                                                                 package = "STADEM",
+                                                                 mustWork = TRUE)))
 ```
 
 ```{r eval = F, echo = F}

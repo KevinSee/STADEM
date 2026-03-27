@@ -17,7 +17,7 @@ queryPITtagData(
 \arguments{
 \item{damPIT}{the dam code for the dam you wish to query for PIT tag data. Currently only available for Lower Granite Dam (GRA), Priest Rapids (PRA), Rock Island (RIA) and Rocky Reach (RRF).}
 
-\item{spp}{species to query PIT tag data for. Possible choices are: Chinook, Coho, Steelhead, Sockeye}
+\item{spp}{species to query PIT tag observations for. Possible choices are: `Chinook`, `Coho`, `Steelhead`, `Sockeye`}
 
 \item{start_date}{character vector of date (\code{YYYYMMDD}) when query should start}
 
@@ -27,7 +27,7 @@ queryPITtagData(
 Query and download PIT tag data about night passage and re-ascension at particular dams for specific species and year, using DART.
 }
 \examples{
-queryPITtagData(start_date = '20150701')
+queryPITtagData(spp = "Steelhead", start_date = "20180701")
 }
 \author{
 Kevin See

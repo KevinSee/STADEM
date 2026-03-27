@@ -41,7 +41,7 @@ tagTrapRate = function(trap_dataframe = NULL,
   # filter out tags that were put in at Lower Granite
   gra_tags = pit_gra %>%
     filter(MarkSite %in% mark_site) %>%  # look for more than one mark_site
-    select(TagID) %>%
+    select(TagCode) %>%
     distinct() %>%
     as.matrix() %>%
     as.character()
@@ -51,8 +51,8 @@ tagTrapRate = function(trap_dataframe = NULL,
            !is.na(Tag.ID)) %>%
     select(TagID = Tag.ID, TrapDate = Date, SRR) %>%
     full_join(pit_gra %>%
-                filter(!TagID %in% gra_tags) %>%
-                select(TagID, SpRRT, MarkSite, ReleaseDate, matches('Time')),
+                filter(!TagCode %in% gra_tags) %>%
+                select(TagID = TagCode, SpRRT = SpRrt, MarkSite, ReleaseDate, matches('Time')),
               by = 'TagID') %>%
     mutate(Species = ifelse(grepl('^1', SpRRT) | grepl('^1', SRR),
                             'Chinook',

@@ -17,7 +17,7 @@
 #' @param DIC passed to the \code{jags} function
 #' @param use_jagsUI should the `jagsUI` package be used to fit the model? Default is `FALSE`, meaning the `rjags` package is used instead.
 #'
-#' @import rjags jagsUI
+#' @import rjags
 #' @export
 #' @return mcmc.list
 #' @examples #runSTADEMmodel()
@@ -58,7 +58,21 @@ runSTADEMmodel = function(file_name = NULL,
   if(win_model == 'log_space') jags_data$Y.window.log = log(jags_data$Y.window)
 
   # which parameters to save
-  jags_params = c('X.tot.all', 'X.tot.day', 'X.tot.night', 'X.tot.reasc', 'X.tot.new.all', 'X.tot.new.wild', 'X.tot.new.hatch', 'X.tot.new.hnc', 'X.tot.night.wild', 'X.tot.reasc.wild', 'X.sigma','day.sigma', 'reasc.sigma', 'org.sigma', 'prop.tagged')
+  jags_params = c('X.tot.all',
+                  'X.tot.day',
+                  'X.tot.night',
+                  'X.tot.reasc',
+                  'X.tot.new.all',
+                  'X.tot.new.wild',
+                  'X.tot.new.hatch',
+                  'X.tot.new.hnc',
+                  'X.tot.night.wild',
+                  'X.tot.reasc.wild',
+                  'X.sigma',
+                  'day.sigma',
+                  'reasc.sigma',
+                  'org.sigma',
+                  'prop.tagged')
 
   if(win_model == 'neg_bin')  jags_params = c(jags_params, 'r', 'k')
   if(win_model == 'neg_bin2')  jags_params = c(jags_params, 'theta', 'omega')
@@ -66,7 +80,24 @@ runSTADEMmodel = function(file_name = NULL,
   if(win_model == 'log_space')  jags_params = c(jags_params, 'win.sigma')
 
   # add some weekly parameters if desired
-  if(weekly_params) jags_params = c(jags_params, 'X.all', 'X.day', 'X.night', 'X.reasc', 'X.all.wild', 'X.all.hatch', 'X.all.hnc', 'X.new.tot', 'X.new.wild', 'X.new.hatch', 'X.new.hnc', 'X.night.wild', 'X.reasc.wild', 'day.true', 'reasc.true', 'org.prop', 'trap.rate.true')
+  if(weekly_params) jags_params = c(jags_params,
+                                    'X.all',
+                                    'X.day',
+                                    'X.night',
+                                    'X.reasc',
+                                    'X.all.wild',
+                                    'X.all.hatch',
+                                    'X.all.hnc',
+                                    'X.new.tot',
+                                    'X.new.wild',
+                                    'X.new.hatch',
+                                    'X.new.hnc',
+                                    'X.night.wild',
+                                    'X.reasc.wild',
+                                    'day.true',
+                                    'reasc.true',
+                                    'org.prop',
+                                    'trap.rate.true')
 
   # set initial values
   if(!is.null(seed)) set.seed(seed)

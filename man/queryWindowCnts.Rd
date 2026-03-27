@@ -10,8 +10,7 @@
 queryWindowCnts(
   dam = c("LWG", "WFF", "BON", "TDA", "JDA", "MCN", "IHR", "LMN", "LGS", "PRO", "ROZ",
     "PRD", "WAN", "RIS", "TUM", "RRH", "WEL", "ZOS"),
-  spp_code = c("fc", "fk", "fb", "fs", "fsw", "fa", "fcj", "fkj", "fbj", "fsj", "fl",
-    "ft"),
+  spp_code = c("fc", "fk", "fb", "fs", "fsw", "fa", "fcj", "fkj", "fl", "ft"),
   start_date = NULL,
   end_date = NULL
 )
@@ -29,7 +28,7 @@ queryWindowCnts(
 Query and download window counts at a dam by species and year using DART
 }
 \examples{
-queryWindowCnts(spawn_yr = 2015)
+queryWindowCnts(dam = "LWG", spp_code = "fc", start_date = '20150301', end_date = '20150817')
 }
 \author{
 Kevin See

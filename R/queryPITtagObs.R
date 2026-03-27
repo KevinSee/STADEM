@@ -4,43 +4,46 @@
 #'
 #' @author Kevin See
 #'
-#' @param site The site to query observations for. Query only set up for Lower Granite Dam Adult Fishway (GRA) at this time.
-#' @param spp species to query PIT tag observations for. Possible choices are: Chinook, Coho, Steelhead, Sockeye
+#' @param site The site to query observations for. Query only set up for Lower Granite Dam Adult Fishway (GRA) and Priest Rapids fishway (PRA) at this time.
+#' @param spp species to query PIT tag observations for. Possible choices are: `Chinook`, `Coho`, `Steelhead`, `Sockeye`
 #' @param start_date character vector of date (\code{YYYYMMDD}) when query should start
 #' @param end_date character vector of date (\code{YYYYMMDD}) when query should end
 #'
 #' @source \url{https://www.cbr.washington.edu/dart}
 #'
-#' @import lubridate readr httr dplyr
+#' @import lubridate httr2 dplyr vroom janitor
 #' @export
 #' @return NULL
-#' @examples queryPITtagObs(yr = 2013)
+#' @examples queryPITtagObs(spp = "Steelhead", start_date = "20180701")
 
-queryPITtagObs = function(site = 'GRA',
+queryPITtagObs = function(site = c('GRA', 'PRA'),
                           spp = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
                           start_date = NULL,
                           end_date = NULL) {
 
-  # need a start date
-  stopifnot(!is.null(start_date))
-
-  # set default end date (1 year after start date)
-  if(is.null(end_date)) end_date = format(lubridate::ymd(start_date) + years(1) - days(1), '%Y%m%d')
-
-  # set year to match end_date
-  yr = lubridate::year(lubridate::ymd(end_date))
-
-  if(site != 'GRA') stop('Query only set up for GRA at this time')
-  if(site == 'GRA') proj = 'GRA:Lower Granite Dam Adult Fishway (GRA) rkm 522.173'
+  site <- match.arg(site)
+  if(!site %in% c('GRA', 'PRA')) stop('Query only set up for GRA and PRA at this time')
 
   # default values
   spp = match.arg(spp)
 
   # match up species code with species name
-  spp_code_df = data.frame(Species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
-                           code = 1:4)
+  spp_code <- dplyr::case_when(spp == "Chinook" ~ 1,
+                               spp == "Coho" ~ 2,
+                               spp == "Steelhead" ~ 3,
+                               spp == "Sockeye" ~ 4,
+                               .default = NA_real_)
+  if(is.na(spp_code)) {
+    stop("Species name not part of this query")
+  }
 
-  spp_code = spp_code_df$code[match(spp, spp_code_df$Species)]
+  # need a start date
+  stopifnot(!is.null(start_date))
+
+  # set default end date (1 year after start date)
+  if(is.null(end_date)) {
+    end_date = format(lubridate::ymd(start_date) + years(1) - days(1), '%Y%m%d')
+  }
 
   # turn start / end date character vectors into actual date objects
   startDate = lubridate::ymd(start_date)
@@ -55,8 +58,12 @@ queryPITtagObs = function(site = 'GRA',
   span_yrs = dplyr::if_else(lubridate::year(startDate) != lubridate::year(endDate),
                             'yes', 'no')
 
+  # set year to match end_date
+  yr = lubridate::year(lubridate::ymd(end_date))
+
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/KevinSee/STADEM')
+  # ua = httr::user_agent('https://github.com/KevinSee/STADEM')
+  ua = 'https://github.com/KevinSee/STADEM'
 
   # compose url with query
   url_req = 'https://www.cbr.washington.edu/dart/cs/php/rpt/pitall_obs_de.php?'
@@ -66,56 +73,75 @@ queryPITtagObs = function(site = 'GRA',
                    queryName = 'pit_obs_de',
                    stage = 'A',
                    outputFormat = 'csv',
-                   year = yr,
-                   # proj = proj,
+                   year = lubridate::year(startDate),
                    proj = site,
                    species = spp_code,
                    run = NULL,
                    rear_type = NULL,
-                   span = span_yrs,
+                   span = 'no',
                    startdate = start_day,
                    enddate = end_day,
                    reltype = 'alpha',
                    summary = 'yes')
 
 
-  if(span_yrs == 'yes') {
+  if(lubridate::year(endDate) > lubridate::year(startDate)) {
     queryList[['span']] = 'yes'
     queryList = c(queryList,
-                  list(syear = yr - 1,
-                       eyear = yr))
-    queryList[['year']] = yr - 1
+                  list(syear = lubridate::year(startDate),
+                       eyear = lubridate::year(endDate)))
   }
+
+  # construct a request
+  req <-
+    httr2::request(url_req) |>
+    httr2::req_user_agent(ua) |>
+    httr2::req_url_query(!!!queryList) |>
+    httr2::req_retry(max_tries = 3,
+              retry_on_failure = T)
+
+  # req |>
+  #   req_dry_run()
 
   # send query to DART
-  web_req = httr::GET(url_req,
-                      ua,
-                      query = queryList)
+  resp <-
+    req |>
+    httr2::req_perform()
 
-  # if any problems
-  httr::stop_for_status(web_req,
-                        task = 'query data from DART')
+  # resp |>
+  #   resp_status_desc()
 
-  # parse the response
-  parsed = try(suppressWarnings(
-    httr::content(web_req,
-                  'text',
-                  encoding = 'ISO-8859-1') |>
-      readr::read_delim(delim = ',',
-                        col_names = T,
-                        show_col_types = FALSE) |>
-      dplyr::filter(!is.na(`Tag ID`)) |>
-      dplyr::mutate(Year = as.integer(Year))
-  ))
-
-  #if(class(parsed)[1] == 'try-error') stop(paste('DART returned no PIT tag observations for', spp, 'in', yr))
-
-  if (class(parsed)[1] == 'try-error') {
-    warning(paste('DART returned no PIT tag observations for', spp, 'in', yr, ". Returning an empty data frame."))  # Optional: show a warning instead of stopping
-    parsed = data.frame()  # Assign an empty data frame
+  if(httr2::resp_status(resp) != 200) {
+    message(
+      sprintf(
+        "GitHub API request failed [%s]\n%s\n<%s>",
+        httr2::resp_status(resp),
+        httr2::resp_status_desc(resp),
+        resp$url
+      ))
+    stop()
   }
 
-  names(parsed) = gsub(' ', '', names(parsed))
+  if(httr2::resp_content_type(resp) != "text/csv") {
+    warning(paste('DART returned no PIT tag observations for', spp, 'in', yr, ". Returning an empty data frame."))  # Optional: show a warning instead of stopping
+    parsed = data.frame()  # Assign an empty data frame
+    return(parsed)
+  }
+
+  # parse the response
+  parsed <-
+    resp |>
+    httr2::resp_body_string(encoding = 'UTF-8') |>
+    vroom::vroom(delim = ',',
+                 col_names = T,
+                 show_col_types = FALSE) |>
+    clean_names("upper_camel") |>
+    filter(!is.na(TagFile)) |>
+    suppressWarnings() |>
+    mutate(across(Year,
+                  as.integer)) |>
+    dplyr::rename(TagCode = TagId) |>
+    arrange(ObsTime)
 
   return(parsed)
 }

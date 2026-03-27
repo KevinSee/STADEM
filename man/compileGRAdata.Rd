@@ -33,7 +33,7 @@ compileGRAdata(
 
 \item{end_date}{character vector of date (\code{YYYYMMDD}) when query should end}
 
-\item{incl_jacks}{should jacks be included in the window count totals? \code{T / F}}
+\item{incl_jacks}{should jacks be included in the window count totals? \code{T / F} Default is `FALSE`}
 
 \item{sthd_type}{should window counts of steelhead be for all steelhead, or only unclipped (i.e. wild) fish? Default is \code{all}.}
 

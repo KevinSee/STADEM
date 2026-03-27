@@ -7,8 +7,7 @@
 #' @param trap_path file path where a csv file containing the data from the fish trap is located
 #' @param date_range vector of length 2, with minimum and maximum dates to read.
 #'
-#' @import lubridate dplyr
-#' @importFrom readr read_csv
+#' @import lubridate dplyr vroom
 #' @importFrom Hmisc mdb.get
 #' @export
 #' @return NULL
@@ -22,7 +21,10 @@ readLGRtrapDB = function(trap_path = NULL,
   }
 
   if(grepl('csv$', trap_path)) {
-    lgr_trap = readr::read_csv(trap_path)
+    lgr_trap <-
+      vroom::vroom(trap_path,
+                   show_col_types = FALSE) |>
+      suppressWarnings()
   }
 
   if(grepl('accdb$', trap_path)) {

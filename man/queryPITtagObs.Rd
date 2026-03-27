@@ -8,16 +8,16 @@
 }
 \usage{
 queryPITtagObs(
-  site = "GRA",
+  site = c("GRA", "PRA"),
   spp = c("Chinook", "Coho", "Steelhead", "Sockeye"),
   start_date = NULL,
   end_date = NULL
 )
 }
 \arguments{
-\item{site}{The site to query observations for. Query only set up for Lower Granite Dam Adult Fishway (GRA) at this time.}
+\item{site}{The site to query observations for. Query only set up for Lower Granite Dam Adult Fishway (GRA) and Priest Rapids fishway (PRA) at this time.}
 
-\item{spp}{species to query PIT tag observations for. Possible choices are: Chinook, Coho, Steelhead, Sockeye}
+\item{spp}{species to query PIT tag observations for. Possible choices are: `Chinook`, `Coho`, `Steelhead`, `Sockeye`}
 
 \item{start_date}{character vector of date (\code{YYYYMMDD}) when query should start}
 
@@ -27,7 +27,7 @@ queryPITtagObs(
 Query and download data about PIT tags observed crossing a particular site, using DART.
 }
 \examples{
-queryPITtagObs(yr = 2013)
+queryPITtagObs(spp = "Steelhead", start_date = "20180701")
 }
 \author{
 Kevin See

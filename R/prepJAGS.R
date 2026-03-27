@@ -87,6 +87,11 @@ prepJAGS = function(lgr_weekly = NULL,
                           pull(Day_tags)
   )
 
+  # set any negative window counts to 0
+  if(sum(jags_data_list$Y.window < 0, na.rm = T) > 0) {
+    jags_data_list$Y.window[jags_data_list$Y.window < 0] = 0
+  }
+
   if(wild_tags) {
     jags_data_list[['Tot.Tags']] = lgr_weekly %>%
       mutate(Tot_tags = ifelse(is.na(tot_tags_W), 0, tot_tags_W)) %>%

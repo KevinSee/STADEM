@@ -10,7 +10,7 @@
 #'
 #' @source \url{https://www.cbr.washington.edu/dart}
 #'
-#' @import lubridate dplyr readr
+#' @import lubridate dplyr vroom
 #' @export
 #' @return NULL
 
@@ -18,13 +18,18 @@ queryTrapRate = function(week_strata = NULL,
                          spp = c('Steelhead', 'Chinook', 'Coho'),
                          return_weekly = T) {
 
-  # match up species code with species name
-  spp_code_df = data.frame(Species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
-                           code = 1:4)
-
   # use steelhead as default
   spp = match.arg(spp)
-  spp_code = spp_code_df$code[match(spp, spp_code_df$Species)]
+
+  # match up species code with species name
+  spp_code <- dplyr::case_when(spp == "Chinook" ~ 1,
+                               spp == "Coho" ~ 2,
+                               spp == "Steelhead" ~ 3,
+                               spp == "Sockeye" ~ 4,
+                               .default = NA_real_)
+  if(is.na(spp_code)) {
+    stop("Species name not part of this query")
+  }
 
   # assign user agent to the GitHub repo for this package
   # ua = httr::user_agent('https://github.com/KevinSee/STADEM')
@@ -33,11 +38,12 @@ queryTrapRate = function(week_strata = NULL,
 
   trap_rate_dart = NULL
   for(yr in sort(unique(lubridate::year(lubridate::int_start(week_strata))))) {
-    parsed = try(readr::read_csv(paste(url_req,
-                                       paste0('pit_adult_valid_', yr, '_', spp_code, '.csv'),
-                                       sep = "/"),
-                                 show_col_types = F))
-    if(class(parsed)[1] == "try-error") {
+    parsed = vroom::vroom(paste(url_req,
+                                paste0('pit_adult_valid_', yr, '_', spp_code, '.csv'),
+                                sep = "/"),
+                          show_col_types = F) |>
+      try()
+    if(inherits(parsed, "try-error")) {
       message(paste('DART returned no trap rate data for',
                     spp,
                     'in',
@@ -86,7 +92,7 @@ queryTrapRate = function(week_strata = NULL,
     trap_rate_obs$week_num[with(trap_rate_obs, which(Date %within% week_strata[i]))] = i
   }
 
-  # summarise by week
+  # summarize by week
   trap_rate_obs_wk = trap_rate_obs %>%
     dplyr::filter(!is.na(week_num)) %>%
     dplyr::group_by(Year, week_num) %>%
