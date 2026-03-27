@@ -45,7 +45,7 @@ STADEMtoSCBOI = function(stadem_mod = NULL,
                   SE = SD) %>%
     dplyr::mutate(
       dplyr::across(Estimate,
-                    ~ round(.,,
+                    ~ round(.,
                             digits = 0))) %>%
     dplyr::mutate(Collapse = NA)
 
