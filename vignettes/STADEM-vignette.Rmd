@@ -164,7 +164,8 @@ Some of the data needed for STADEM is available at other dams, and the package d
 
 STADEM relies on the following R packages which can be downloaded via [CRAN](https://cran.r-project.org/web/packages/available_packages_by_name.html) or by using the function `install.packages()`:
 
-* `dplyr`, `lubridate`, `httr`: can all be installed by installing the `tidyverse` package
+* `dplyr` and `lubridate` can both be installed by installing the `tidyverse` package
+* `httr2`
 * `rjags`
 * `boot`
 
@@ -190,10 +191,11 @@ plot(examp_p)
 
 # Compiling data
 
-The STADEM package relies on many functions from two other packages, `tidyverse` for many data manipulation functions and `lubridate` for dates and intervals. It also depends upon the `rjags` package to run the JAGS program from within R.
+The STADEM package relies on many functions from two other packages, `dplyr` for many data manipulation functions and `lubridate` for dates and intervals. It uses the `httr2` package for many queries of data. It also depends upon the `rjags` package to run the JAGS program from within R.
 
 ```{r load-packages}
-library(tidyverse)
+library(dplyr)
+library(httr2)
 library(lubridate)
 library(STADEM)
 library(rjags)
