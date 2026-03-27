@@ -29,7 +29,7 @@ Imports:
     xfun (>= 0.45),
     vroom,
     purrr
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 Suggests: 
     ggpubr (>= 0.4.0),
