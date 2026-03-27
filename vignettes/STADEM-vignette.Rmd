@@ -423,7 +423,7 @@ rate_est = summ$quantiles |>
             by = c('week' = 'week_num'))
 
 rate_est %>%
-  ggplot(aes(x = Start_Date,
+  ggplot(aes(x = start_date,
              y = `50%`)) +
   geom_ribbon(aes(ymin = `2.5%`,
                   ymax = `97.5%`,

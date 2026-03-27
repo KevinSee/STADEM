@@ -50,7 +50,7 @@ plotTimeSeries = function(stadem_mod = NULL,
 
   plot_df %>%
     filter(param == 'all') %>%
-    ggplot(aes(x = Start_Date)) +
+    ggplot(aes(x = start_date)) +
     geom_ribbon(aes(ymin = `2.5%`,
                     ymax = `97.5%`),
                 alpha = 0.2) +

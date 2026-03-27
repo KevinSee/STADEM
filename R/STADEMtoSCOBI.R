@@ -37,15 +37,15 @@ STADEMtoSCBOI = function(stadem_mod = NULL,
                      by = c('week' = 'week_num'))
 
   scobi_input = week_est %>%
-    dplyr::mutate(Strata = lubridate::week(Start_Date)) %>%
+    dplyr::mutate(Strata = lubridate::week(start_date)) %>%
     dplyr::select(model_week = week,
-                  StartDate = Start_Date,
+                  StartDate = start_date,
                   Strata,
                   Estimate = Mean,
                   SE = SD) %>%
     dplyr::mutate(
       dplyr::across(Estimate,
-                    ~ round(.,,
+                    ~ round(.,
                             digits = 0))) %>%
     dplyr::mutate(Collapse = NA)
 
