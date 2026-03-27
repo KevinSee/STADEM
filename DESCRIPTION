@@ -19,7 +19,7 @@ Imports:
     coda (>= 0.19.4),
     dplyr (>= 1.1.2),
     ggplot2 (>= 3.4.2),
-    httr (>= 1.4.6),
+    httr2,
     janitor (>= 2.2.0),
     lubridate (>= 1.9.2),
     readr (>= 2.1.2),
@@ -34,6 +34,7 @@ VignetteBuilder: knitr
 Suggests: 
     ggpubr (>= 0.4.0),
     Hmisc (>= 4.6.0),
+    httr,
     kableExtra (>= 1.3.4),
     knitr (>= 1.42),
     rmarkdown (>= 2.20)
