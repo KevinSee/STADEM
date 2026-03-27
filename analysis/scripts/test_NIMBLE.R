@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: test STADEM using NIMBLE
 # Created: 10/30/24
-# Last Modified: 11/1/24
+# Last Modified: 11/7/24
 # Notes: NIMBLE help pages: https://r-nimble.org/html_manual/cha-welcome-nimble.html
 
 #-----------------------------------------------------------------
@@ -14,19 +14,26 @@ library(janitor)
 #-----------------------------------------------------------------
 # set species and spawn year
 species = c("Steelhead",
-            "Chinook")[1]
+            "Chinook")[2]
 yr = 2019
 dam_code = c("PRD",
-             "LWG")[1]
+             "LWG")[2]
 
 # what dates should window counts cover?
-if(species == "Steelhead") {
-  window_dates <- c(paste0(yr-1, "0701"),
-                    paste0(yr, "0630"))
-} else if(species == "Chinook") {
-  window_dates <- c(paste0(yr, "0301"),
-                    paste0(yr, "0817"))
-}
+window_dates <-
+  case_when(species == "Steelhead" &
+              dam_code == "LWG" ~ c(paste0(yr-1, "0701"),
+                                    paste0(yr, "0630")),
+            species == "Steelhead" &
+              dam_code == "PRD" ~ c(paste0(yr-1, "0601"),
+                                    paste0(yr, "0531")),
+            species == "Chinook" &
+              dam_code == "LWG" ~ c(paste0(yr, "0301"),
+                                    paste0(yr, "0817")),
+            species == "Chinook" &
+              dam_code == "PRD" ~ c(paste0(yr, "0301"),
+                                    paste0(yr, "0615")))
+
 
 if(dam_code == "PRD") {
   trap_dbase <- read_rds("O:Documents/Git/MyProjects/DabomPriestRapidsSthd/analysis/data/derived_data/Bio_Data_2011_2024.rds") |>
@@ -58,10 +65,8 @@ data_list <-
               incl_trapRate = T)
 
 #-------------------------------------------------------
-dam_pit_code = case_when(dam_code == "PRD" ~ "PRA",
-                         dam_code == "LWG" ~ "GRA")
-# what kind of hatchery / wild calls should be used?
-hw_type = c("PBT", "Morph")[2]
+# dam_pit_code = case_when(dam_code == "PRD" ~ "PRA",
+#                          dam_code == "LWG" ~ "GRA")
 
 # #--------------------------------------------------------
 # # determine weekly strata
@@ -309,61 +314,65 @@ hw_type = c("PBT", "Morph")[2]
 #   adorn_pct_formatting()
 #
 
+
+# what kind of hatchery / wild calls should be used?
+hw_type = c("PBT", "Morph")[1]
+
 # pull out certain pieces of data to feed into model
 jags_data_list <- prepJAGS(data_list$weeklyData,
-                           hw_type = "PBT")
-# jags_data_list <-
-#   list(
-#     'TotLadderWeeks' = nrow(dam_weekly),
-#     'ladder' = dam_weekly |>
-#       pull(window_open) |>
-#       as.integer(),
-#     'Y.window' = dam_weekly %>%
-#       mutate(win_cnt = ifelse(!window_open, NA, win_cnt)) %>%
-#       pull(win_cnt),
-#     'Y.trap' = dam_weekly %>%
-#       mutate(y_trap = trap_fish,
-#              y_trap = ifelse(!trap_open | !trap_valid, NA, y_trap)) %>%
-#       pull(y_trap),
-#     'trap.fish' = dam_weekly %>%
-#       mutate(trap_fish = wild_fish + hnc_fish + hatch_fish) %>%
-#       pull(trap_fish),
-#     'trap.fish.matrix' = dam_weekly %>%
-#       select(wild_fish, hnc_fish, hatch_fish) %>%
-#       as.matrix(),
-#     'org.exist' = dam_weekly %>%
-#       select(wild_fish, hnc_fish, hatch_fish) %>%
-#       summarize(across(everything(),
-#                        sum)) |>
-#       mutate(across(everything(),
-#                     ~ if_else(. > 0, 1, 0))) |>
-#       as.matrix() |>
-#       as.vector(),
-#     'trap.rate' = dam_weekly %>%
-#       mutate(trap_rate = ifelse(!trap_open | !trap_valid | is.na(trap_fish), 0, trap_rate)) %>%
-#       pull(trap_rate),
-#     # 'trap.alpha' = dam_weekly %>%
-#     #   pull(trap_alpha),
-#     # 'trap.beta' = dam_weekly %>%
-#     #   pull(trap_beta),
-#     'n.trap.tags' = dam_weekly %>%
-#       mutate(n_tags = if_else(trap_valid & trap_open & !is.na(n_poss_tags), n_trap_tags, NA_integer_)) %>%
-#       pull(n_tags),
-#     'n.poss.tags' = dam_weekly %>%
-#       mutate(n_poss_tags = if_else(is.na(n_poss_tags), as.integer(0), n_poss_tags)) %>%
-#       pull(n_poss_tags),
-#     'Tot.tags' = dam_weekly %>%
-#       mutate(Tot_tags = ifelse(is.na(tot_tags), 0, tot_tags)) %>%
-#       pull(Tot_tags),
-#     'ReAsc.tags' = dam_weekly %>%
-#       mutate(ReAsc_tags = ifelse(reascent_tags > tot_tags, tot_tags, reascent_tags),
-#              ReAsc_tags = ifelse(!window_open, NA, ReAsc_tags)) %>%
-#       pull(ReAsc_tags),
-#     'DC.tags' = dam_weekly %>%
-#       mutate(Day_tags = ifelse(day_tags > tot_tags, tot_tags, day_tags),
-#              Day_tags = ifelse(!window_open, NA, Day_tags)) %>%
-#       pull(Day_tags)
-#   )
+                           hw_type = hw_type)
+jags_data_list <-
+  list(
+    'TotLadderWeeks' = nrow(dam_weekly),
+    'ladder' = dam_weekly |>
+      pull(window_open) |>
+      as.integer(),
+    'Y.window' = dam_weekly %>%
+      mutate(win_cnt = ifelse(!window_open, NA, win_cnt)) %>%
+      pull(win_cnt),
+    # 'Y.trap' = dam_weekly %>%
+    #   mutate(y_trap = trap_fish,
+    #          y_trap = ifelse(!trap_open | !trap_valid, NA, y_trap)) %>%
+    #   pull(y_trap),
+    # 'trap.fish' = dam_weekly %>%
+    #   mutate(trap_fish = wild_fish + hnc_fish + hatch_fish) %>%
+    #   pull(trap_fish),
+    # 'trap.fish.matrix' = dam_weekly %>%
+    #   select(wild_fish, hnc_fish, hatch_fish) %>%
+    #   as.matrix(),
+    # 'org.exist' = dam_weekly %>%
+    #   select(wild_fish, hnc_fish, hatch_fish) %>%
+    #   summarize(across(everything(),
+    #                    sum)) |>
+    #   mutate(across(everything(),
+    #                 ~ if_else(. > 0, 1, 0))) |>
+    #   as.matrix() |>
+    #   as.vector(),
+    # 'trap.rate' = dam_weekly %>%
+    #   mutate(trap_rate = ifelse(!trap_open | !trap_valid | is.na(trap_fish), 0, trap_rate)) %>%
+    #   pull(trap_rate),
+    # 'trap.alpha' = dam_weekly %>%
+    #   pull(trap_alpha),
+    # 'trap.beta' = dam_weekly %>%
+    #   pull(trap_beta),
+    # 'n.trap.tags' = dam_weekly %>%
+    #   mutate(n_tags = if_else(trap_valid & trap_open & !is.na(n_poss_tags), n_trap_tags, NA_integer_)) %>%
+    #   pull(n_tags),
+    # 'n.poss.tags' = dam_weekly %>%
+    #   mutate(n_poss_tags = if_else(is.na(n_poss_tags), as.integer(0), n_poss_tags)) %>%
+    #   pull(n_poss_tags),
+    'Tot.tags' = dam_weekly %>%
+      mutate(Tot_tags = ifelse(is.na(tot_tags), 0, tot_tags)) %>%
+      pull(Tot_tags),
+    'ReAsc.tags' = dam_weekly %>%
+      mutate(ReAsc_tags = ifelse(reascent_tags > tot_tags, tot_tags, reascent_tags),
+             ReAsc_tags = ifelse(!window_open, NA, ReAsc_tags)) %>%
+      pull(ReAsc_tags),
+    'DC.tags' = dam_weekly %>%
+      mutate(Day_tags = ifelse(day_tags > tot_tags, tot_tags, day_tags),
+             Day_tags = ifelse(!window_open, NA, Day_tags)) %>%
+      pull(Day_tags)
+  )
 
 #----------------------------------------------------------
 # NIMBLE models
@@ -373,6 +382,7 @@ mc <- mc_pois
 mc <- mc_nb
 mc <- mc_no_trap
 mc <- mc_nb_origin
+mc <- mc_origin_no_trap
 
 #----------------------------------------------------------
 # what parameters to monitor?
@@ -398,10 +408,27 @@ jags_params = c('X.tot.all',
                 'prop.tagged',
                 'X.all')
 
+# determine if some parameters should be dropped because they don't appear in model code
+keep_params <-
+  map_lgl(jags_params,
+          .f = function(x) {
+            keep <- sum(str_detect(as.character(mc), x)) > 0
+            if(x %in% c("r", "k") & sum(str_detect(as.character(mc), "dnegbin")) == 0) {
+              keep = FALSE
+            }
+            return(keep)
+          })
+
+# jags_params[!keep_params]
+jags_params <- jags_params[keep_params]
+
+
+# set some constants
 nimble_constants <-
   jags_data_list[c(which(str_detect(names(jags_data_list), "TotLadderWeeks")),
                    which(str_detect(names(jags_data_list), "org.exist")))]
 
+# set the data to be fed to NIMBLE
 nimble_data <-
   jags_data_list[-c(which(str_detect(names(jags_data_list), "TotLadderWeeks")),
                     which(str_detect(names(jags_data_list), "org.exist")))]
